@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model version="4.0.1" links="0">
+ <documentation>Grundgerüst für die Ansteuerung einer LED-Kette mit dem Arduino UNO.
+Die Werte kommen per Bluetooth von einer Handy-App.
+Da die Ansteuerung der LEDs zeitkritisch ist, darf während dessen keine andere Aktivität laufen. Vor allen Dingen würde es Konflikte mit einer gleichzeitigen Kommunikation zwischen der Handy-App und dem Arduino geben. Deshalb wird nur ein in der Hardware laufender Timer im Hintergrund gestartet, um von Zeit zu Zeit nachzuschauen, ob eine Kommunikationsanfrage von der Handy-App im ebenfalls im Hintergrund laufenden Empfangsspeicher liegt. Entsprechend wird dann in die Kommunikation verzweigt, um den neuen Befehl von der Handy-App zu bekommen oder zurück in die LED-Ansteuerung verzweigt.</documentation>
+ <framework name="qpn"/>
+ <package name="AOs" stereotype="0x02">
+  <class name="LEDviaApp" superclass="qpn::QActive">
+   <documentation>digitalWrite(DEBUG_LED, HIGH);
+digitalWrite(DEBUG_LED, LOW);</documentation>
+   <attribute name="wert" type="uint8_t" visibility="0x02" properties="0x00"/>
+   <attribute name="rot" type="uint8_t" visibility="0x02" properties="0x00"/>
+   <attribute name="gruen" type="uint8_t" visibility="0x02" properties="0x00"/>
+   <attribute name="blau" type="uint8_t" visibility="0x02" properties="0x00"/>
+   <attribute name="programm" type="uint8_t" visibility="0x02" properties="0x00"/>
+   <attribute name="led_index" type="uint8_t" visibility="0x02" properties="0x00">
+    <documentation>index of the LED in the stripe</documentation>
+   </attribute>
+   <attribute name="led_x" type="uint8_t" visibility="0x02" properties="0x00">
+    <documentation>processed LED</documentation>
+   </attribute>
+   <attribute name="helligkeit" type="uint8_t" visibility="0x02" properties="0x00"/>
+   <statechart>
+    <initial target="../1">
+     <initial_glyph conn="2,2,4,3,2,2">
+      <action box="1,-2,4,2"/>
+     </initial_glyph>
+    </initial>
+    <state name="Verzweigung">
+     <documentation>Zuerst wird geprüft, ob im Serial receive buffer ein 'R' als Übertragungsanfrage der App steht. Wenn ja, wird ein &quot;T&quot; als Übertragungsfreigabe gesendet und in den State Kommunikation verzweigt.
+Ansonsten wird in das zuletzt aktive Programm verzweigt oder ins Progamm Anzeige, um mindestens einen Timer für die Rückkehr zur Verzweigung zu starten.</documentation>
+     <entry brief="Kommunikations-Check, Programmwahl">if (Serial.read() == 'R') {
+    Serial.print(F(&quot;T&quot;));
+    QACTIVE_POST((QActive *)me, KOMMUNIKATION_SIG, 0U);
+}
+else {
+    if (me-&gt;programm == 1)
+        QACTIVE_POST((QActive *)me, ANZEIGE_SIG, 0U);
+    else if (me-&gt;programm == 2)
+        QACTIVE_POST((QActive *)me, LAUFLICHT_SIG, 0U);
+    else if (me-&gt;programm == 3)
+        QACTIVE_POST((QActive *)me, DIMMEN_SIG, 0U);
+    else
+        QACTIVE_POST((QActive *)me, ANZEIGE_SIG, 0U);
+}</entry>
+     <tran trig="KOMMUNIKATION" target="../../2">
+      <tran_glyph conn="4,12,3,3,52">
+       <action box="0,-2,14,2"/>
+      </tran_glyph>
+     </tran>
+     <tran trig="ANZEIGE" target="../../3">
+      <tran_glyph conn="4,16,3,3,22">
+       <action box="0,-2,8,2"/>
+      </tran_glyph>
+     </tran>
+     <tran trig="LAUFLICHT" target="../../4">
+      <tran_glyph conn="4,34,3,3,22">
+       <action box="0,-2,10,2"/>
+      </tran_glyph>
+     </tran>
+     <tran trig="DIMMEN" target="../../5">
+      <tran_glyph conn="4,52,3,3,22">
+       <action box="0,-2,8,2"/>
+      </tran_glyph>
+     </tran>
+     <state_glyph node="4,2,19,66">
+      <entry box="1,2,18,4"/>
+     </state_glyph>
+    </state>
+    <state name="Kommunikation">
+     <documentation>Da die App nicht so schnell auf die Übertragungsfreigabe reagieren kann (asynchrone Kommunikation), wird erst ein Timer gestartet.
+Wenn nach Ablauf des Timers im Serial receive buffer das Startzeichen '&lt;' erkannt wird, beginnt das Verarbeiten der Daten in Farb- oder Programmwerte.
+Die Variable wert wird genullt.</documentation>
+     <entry brief="Kommunikations-Timer starten">QActive_armX((QActive *)me, 0U, KOMMUNIKATIONSTIMER, 0U);</entry>
+     <exit brief="Kommunikations-Timer stoppen">QActive_disarmX((QActive *)me, 0U);</exit>
+     <tran trig="Q_TIMEOUT">
+      <choice target="../../1">
+       <guard brief="Startzeichen-Erkennung">Serial.read() == '&lt;'</guard>
+       <action brief="Initialisierung">me-&gt;wert = 0U;</action>
+       <choice_glyph conn="67,20,4,3,8,3">
+        <action box="0,1,19,4"/>
+       </choice_glyph>
+      </choice>
+      <tran_glyph conn="56,20,3,-1,11">
+       <action box="0,-2,11,2"/>
+      </tran_glyph>
+     </tran>
+     <state name="Datenverarbeitung">
+      <documentation>Datenformat für die Farbe und das Programm:
+XY, XXY, XXXY
+X    = Wert
+Y    = Farbe, Programm
+Es wird pro Kommunikationszyklus nur ein Wert und die Farbe oder ein Wert und das Programm übertragen.
+Mit dem Stoppzeichen '&gt;' endet das Paket und es wird ein 'A' an die App übertragen, als Signal für das Kommunikationsende.
+Dann wird in den State Verzweigung gesprungen.</documentation>
+      <entry brief="Wert, Farbe, Programm, STOPP">while (Serial.available()) {
+    uint8_t daten = Serial.read();
+    switch (daten) {
+        case '0' ... '9':
+            me-&gt;wert *= 10;
+            me-&gt;wert += daten - '0';
+            break;
+        case 'r':
+            me-&gt;rot = me-&gt;wert;
+            break;
+        case 'g':
+            me-&gt;gruen = me-&gt;wert;
+            break;
+        case 'b':
+            me-&gt;blau = me-&gt;wert;
+            break;
+        case 'p':
+            me-&gt;programm = me-&gt;wert;
+            break;
+        case '&gt;':
+            QACTIVE_POST((QActive *)me, STOPP_SIG, 0U);
+            break;
+    }
+}</entry>
+      <tran trig="STOPP" target="../../../1">
+       <action brief="Kommunikations-Ende, LED nullen">Serial.print(F(&quot;A&quot;));</action>
+       <tran_glyph conn="88,40,1,3,-34,30,-52,-64,2">
+        <action box="-17,-6,17,6"/>
+       </tran_glyph>
+      </tran>
+      <state_glyph node="70,26,18,16">
+       <entry box="1,2,15,4"/>
+      </state_glyph>
+     </state>
+     <state_glyph node="56,10,34,34">
+      <entry box="1,2,26,2"/>
+      <exit box="1,4,26,2"/>
+     </state_glyph>
+    </state>
+    <state name="Anzeige">
+     <documentation>Das Anzeigeprogramm ist statisch.
+Parallel wird ein Timer gestartet, um regelmäßig in den State Verzweigung zu springen und einen Kommunikations-Check zu machen.</documentation>
+     <entry brief="LED anzeigen, Kommunikations-Timer starten">showColor(PIXELS, me-&gt;rot, me-&gt;gruen, me-&gt;blau);
+
+QActive_armX((QActive *)me, 0U, KOMMUNIKATIONSTIMER, 0U);</entry>
+     <exit brief="Kommunikations-Timer stoppen">QActive_disarmX((QActive *)me, 0U);</exit>
+     <tran trig="Q_TIMEOUT" target="../../1">
+      <tran_glyph conn="51,28,1,1,-28">
+       <action box="-9,-2,10,2"/>
+      </tran_glyph>
+     </tran>
+     <state_glyph node="26,14,25,16">
+      <entry box="1,2,24,4"/>
+      <exit box="1,6,19,4"/>
+     </state_glyph>
+    </state>
+    <state name="Lauflicht">
+     <documentation>Der Lauflicht-Takt dient gleichzeitig zum zyklischen Sprung in den State Verzweigung zum Zwecke des Kommunikations-Checks.
+Vor jedem Beschreiben des LED-stripes müssen die Interrupts abgeschaltet werden, damit das Timing über den SPI-Bus nicht gestört wird (s. Nick Gammon).
+Am Ende wird der LED-Index bis zum Maximum der LEDs erhöht.</documentation>
+     <entry brief="LED nullen, LED Lauflicht, LED inkrementieren, Lauflicht-Takt starten">if (me-&gt;led_index == PIXELS) {
+    me-&gt;led_index = 0U;
+    }
+
+QF_INT_DISABLE();
+for (me-&gt;led_x = 0U; me-&gt;led_x &lt; PIXELS; me-&gt;led_x++) {
+    if (me-&gt;led_x == me-&gt;led_index) {
+        sendPixel(me-&gt;rot, me-&gt;gruen, me-&gt;blau);
+        }
+    else {
+        sendPixel(0U, 0U, 0U);
+        }
+}
+QF_INT_ENABLE();
+
+show();
+
+me-&gt;led_index++;
+
+QActive_armX(&amp;me-&gt;super, 0U, LAUFLICHTTAKT, 0U);</entry>
+     <exit brief="Lauflicht-Takt stoppen">QActive_disarmX((QActive *)me, 0U);</exit>
+     <tran trig="Q_TIMEOUT" target="../../1">
+      <tran_glyph conn="52,46,1,1,-29">
+       <action box="-9,-2,10,2"/>
+      </tran_glyph>
+     </tran>
+     <state_glyph node="26,32,26,16">
+      <entry box="1,2,24,6"/>
+      <exit box="1,8,19,2"/>
+     </state_glyph>
+    </state>
+    <state name="Dimmen">
+     <documentation>Der Dimmen-Takt dient gleichzeitig zum zyklischen Sprung in den State Verzweigung zum Zwecke des Kommunikations-Checks.
+Am Ende wird die Helligkeit erhöht. Dann erfolgt ein Überlauf.</documentation>
+     <entry brief="LED dimmen, Helligkeit inkrementieren, Dimmen-Takt starten">showColor(PIXELS,
+    me-&gt;rot / 255.0 * me-&gt;helligkeit,
+    me-&gt;gruen / 255.0 * me-&gt;helligkeit,
+    me-&gt;blau / 255.0 * me-&gt;helligkeit);
+
+me-&gt;helligkeit = me-&gt;helligkeit + 4U;
+
+QActive_armX(&amp;me-&gt;super, 0U, DIMMENTAKT, 0U);</entry>
+     <exit brief="Kommunikations-Timer stoppen">QActive_disarmX((QActive *)me, 0U);</exit>
+     <tran trig="Q_TIMEOUT" target="../../1">
+      <tran_glyph conn="47,66,1,1,-24">
+       <action box="-9,-2,11,2"/>
+      </tran_glyph>
+     </tran>
+     <state_glyph node="26,50,21,18">
+      <entry box="1,2,19,6"/>
+      <exit box="1,8,15,4"/>
+     </state_glyph>
+    </state>
+    <state_diagram size="92,72"/>
+   </statechart>
+  </class>
+ </package>
+ <directory name=".">
+  <file name="LEDviaApp.ino">
+   <text>#include &quot;qpn.h&quot;                       // QP-nano framework
+#include &quot;Arduino.h&quot;                   // Arduino API
+
+#include &lt;NeoPixels_SPI.h&gt;             // from Nick Gammon
+#include &lt;SPI.h&gt;                       // Pin 11 = MOSI
+
+//============================================================================
+// declare all AO classes...
+$declare(AOs::LEDviaApp)
+//...
+
+// AO instances and event queue buffers for them...
+LEDviaApp AO_LEDviaApp;
+static QEvt l_ledviaappQSto[10]; // Event queue storage for LEDviaApp
+//...
+
+//============================================================================
+// QF_active[] array defines all active object control blocks ----------------
+QActiveCB const Q_ROM QF_active[] = {
+    { (QActive *)0,             (QEvt *)0,       0U                     },
+    { (QActive *)&amp;AO_LEDviaApp, l_ledviaappQSto, Q_DIM(l_ledviaappQSto) }
+};
+
+//============================================================================
+// various constants for the application...
+enum {
+// number of system clock ticks in one second
+    BSP_TICKS_PER_SEC       = 100,
+
+    // verschiedene Timer
+    KOMMUNIKATIONSTIMER     = BSP_TICKS_PER_SEC / 5U,
+    LAUFLICHTTAKT           = BSP_TICKS_PER_SEC,
+    DIMMENTAKT              = BSP_TICKS_PER_SEC / 20U,
+
+    PIXELS = 8,                        // Anzahl der LEDs des NeoPixel-Stick
+    BLUETOOTH_POWER = 4,
+
+    STOPP_SIG,                         // Datenende
+
+    KOMMUNIKATION_SIG,
+    ANZEIGE_SIG,
+    LAUFLICHT_SIG,
+    DIMMEN_SIG,
+
+    DEBUG_LED = 7                      // LED zur Fehlersuche
+};
+
+//............................................................................
+void setup() {
+    // initialize the QF-nano framework
+    QF_init(Q_DIM(QF_active));
+
+    // initialize all AOs...
+    QActive_ctor(&amp;AO_LEDviaApp.super, Q_STATE_CAST(&amp;LEDviaApp_initial));
+
+    // initialize the hardware used in this sketch...
+    pinMode(DEBUG_LED, OUTPUT); // set the DEBUG_LED pin to output
+
+    pinMode(BLUETOOTH_POWER, OUTPUT);  // Bluetooth ein/aus
+    delay(3000); // verzögert einschalten um uploads durchführen zu können
+    digitalWrite(BLUETOOTH_POWER, HIGH); // Bluetooth einschalten
+
+    Serial.begin(115200); // set the highest standard baud rate of 115200 bps
+
+    ledsetup();                        // Setup SPI
+    showColor(PIXELS, 0, 0, 0);        // alle Led aus
+}
+
+//............................................................................
+void loop() {
+    QF_run(); // run the QF-nano framework
+}
+
+//============================================================================
+// interrupts...
+ISR(TIMER2_COMPA_vect) {
+    QF_tickXISR(0U); // process time events for tick rate 0
+}
+
+//============================================================================
+// QF callbacks...
+void QF_onStartup(void) {
+    // set Timer2 in CTC mode, 1/1024 prescaler, start the timer ticking...
+    TCCR2A = (1U &lt;&lt; WGM21) | (0U &lt;&lt; WGM20);
+    TCCR2B = (1U &lt;&lt; CS22 ) | (1U &lt;&lt; CS21) | (1U &lt;&lt; CS20); // 1/2^10
+    ASSR  &amp;= ~(1U &lt;&lt; AS2);
+    TIMSK2 = (1U &lt;&lt; OCIE2A); // enable TIMER2 compare Interrupt
+    TCNT2  = 0U;
+
+    // set the output-compare register based on the desired tick frequency
+    OCR2A  = (F_CPU / BSP_TICKS_PER_SEC / 1024U) - 1U;
+}
+
+//............................................................................
+void QV_onIdle(void) {   // called with interrupts DISABLED
+    // Put the CPU and peripherals to the low-power mode. You might
+    // need to customize the clock management for your application,
+    // see the datasheet for your particular AVR MCU.
+    SMCR = (0 &lt;&lt; SM0) | (1 &lt;&lt; SE); // idle mode, adjust to your project
+    QV_CPU_SLEEP();  // atomically go to sleep and enable interrupts
+}
+
+//............................................................................
+void Q_onAssert(char const Q_ROM * const file, int line) {
+    // implement the error-handling policy for your application!!!
+    QF_INT_DISABLE(); // disable all interrupts
+    QF_RESET();  // reset the CPU
+}
+
+//============================================================================
+// define all AO classes (state machine)...
+$define(AOs::LEDviaApp)
+//...
+</text>
+  </file>
+ </directory>
+</model>
