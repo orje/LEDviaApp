@@ -1,0 +1,11 @@
+
+*.d
+*.eep
+*.elf
+*.hex
+*.map
+*.o
+*.a
+*.cpp
+*.h
+*.txt
