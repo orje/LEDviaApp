@@ -12,8 +12,6 @@ Weitere wertvolle Hilfe zum MIT App Inventor 2 im Allgemeinen und zur Bluetooth-
 Mit all diesen Informationen konnte ich einen ersten ino-Sketch und eine erste App erstellen.
 
 Als Problem stellte sich heraus, dass sich die Kommunikation mit dem Handy und die Ansteuerung des LED-Streifens gegenseitig stören, was zu Hängern und undefiniertem Verhalten führt.
-Insbesondere, wenn ich die Werte der Farb Slider in der App so programmiere, dass sie permanent die Änderung der Werte übertragen.
-Zum Verständnis der seriellen Kommunikation halfen mir die Forum-Diskussionen von Robin2  http://forum.arduino.cc/index.php?topic=288234.0 und wiederum Nick Gammon http://www.gammon.com.au/serial
+Insbesondere, wenn ich die Werte der Farb-Slider in der App so programmiere, dass sie permanent die Änderung der Werte übertragen.
 
-Dadurch wurde mir klar, dass ich die Kommunikation zwischen UNO und Handy und die Ansteuerung des LED Stripes durch den UNO prinzipiell trennen muss.
-Und das ich eine Art von Handshake für die Kommuniukation zwischen dem UNO und dem Handy benötige, da diese asynchron verläuft. D.h. keiner wartet per se auf den anderen, sondern man muss die Kommunikation regeln.
+Zum Verständnis der seriellen Kommunikation halfen mir die Forum-Diskussionen von Robin2  http://forum.arduino.cc/index.php?topic=288234.0 und wiederum Nick Gammon http://www.gammon.com.au/serial Dadurch wurde mir klar, dass ich die Kommunikation zwischen UNO und Handy und die Ansteuerung des LED-Stripe durch den UNO prinzipiell trennen muss. Und das ich eine Art von Handshake für die Kommuniukation zwischen dem UNO und dem Handy benötige, da diese asynchron verläuft. D.h. keiner wartet per se auf den anderen, sondern man muss die Kommunikation regeln.
