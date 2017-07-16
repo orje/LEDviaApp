@@ -14,6 +14,10 @@ Mit all diesen Informationen konnte ich einen ersten ino-Sketch und eine erste A
 Als Problem stellte sich heraus, dass sich die Kommunikation mit dem Handy und die Ansteuerung des LED-Streifens gegenseitig stören, was zu Hängern und undefiniertem Verhalten führt.
 Insbesondere, wenn ich die Werte der Farb-Slider in der App so programmiere, dass sie permanent die Änderung der Werte übertragen.
 
-Zum Verständnis der seriellen Kommunikation halfen mir die Forum-Diskussionen von Robin2  http://forum.arduino.cc/index.php?topic=288234.0  und wiederum Nick Gammon  http://www.gammon.com.au/serial  Dadurch wurde mir klar, dass ich die Kommunikation zwischen UNO und Handy und die Ansteuerung des LED-Stripe durch den UNO prinzipiell trennen muss. Und das ich eine Art von Handshake für die Kommuniukation zwischen dem UNO und dem Handy benötige, da diese asynchron verläuft. D.h. keiner wartet per se auf den anderen, sondern man muss die Kommunikation regeln.
+Zum Verständnis der seriellen Kommunikation halfen mir die Forum-Diskussionen von Robin2  http://forum.arduino.cc/index.php?topic=288234.0  und wiederum Nick Gammon  http://www.gammon.com.au/serial  Dadurch wurde mir klar, dass ich die Kommunikation zwischen UNO und Handy und die Ansteuerung des LED-Stripe durch den UNO prinzipiell trennen muss. Hintergrund ist, dass die LED-Ansteuerung aufgrund von Timing-Anforderungen die Interruptverarbeitung zeitweise abschalten muss, wogegen die serielle Kommunikation Interrupts benötigt. Fehlen ihr diese, können Kommunikationsdaten verloren gehen.
+Ferner benötige ich eine Art von Handshake für die Kommuniukation zwischen dem UNO und dem Handy, da diese asynchron verläuft. D.h. keiner wartet per se auf den anderen, sondern man muss die Kommunikation regeln.
 
-
+Letztendlich habe ich mich dafür entschieden, 
+1. die Datenübertragung klein zu halten. Es wird immer nur ein Zeichen für die über das Handy gewählte Farbe oder das gewählte Anzeige-Programm plus dem Farb- oder Programmwert übertragen.
+2. dass das Handy zuerst nur ein Zeichen als Anfrage überträgt.
+3. der Sketch / das model zeitgetriggert im Empfangsbuffer nachschaut, ob ein Anfrage-Zeichen vorliegt und dann von der LED-Ansteuerung zur Kommunikation umschaltet.
