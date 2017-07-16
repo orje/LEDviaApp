@@ -1,5 +1,10 @@
-*.apk = lauffähige App  
-*.aia = Source-Code der App für den MIT App Inventor 2  
-*.fzz = Source-Datei für das fritzing-Programm  
+Sketch_Verzeichnis.PNG = benötigte libaries im Sketch-Ordner für das Modeling Tool  
+
 *.png = diverse Informationsbilder  
-Sketch_Verzeichnis.PNG = Information über die Organisierung der benötigten libaries für das Modeling Tool  
+
+*.fzz = Source-Datei für das fritzing-Programm  
+
+*.aia = Source-Code der App für den MIT App Inventor 2  
+Es muss allerdings die Bluetooth-Adresse des eigenen Bluetooth-Moduls eingetragen werden.  
+*.apk = lauffähige App  
+Nur für meinen Eigenbedarf, da die Bluetooth-Adresse meines Bluetooth-Modul integriert ist.
