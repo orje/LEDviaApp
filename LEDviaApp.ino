@@ -78,7 +78,7 @@ enum {
     LAUFLICHTTAKT           = BSP_TICKS_PER_SEC,
     DIMMENTAKT              = BSP_TICKS_PER_SEC / 20U,
 
-    PIXELS = 8,                        // Anzahl der LEDs des NeoPixel-Stick
+    PIXELS = 120,                        // Anzahl der LEDs des NeoPixel-Stick
     BLUETOOTH_POWER = 4,
 
     STOPP_SIG,                         // Datenende
