@@ -1,5 +1,7 @@
 # LEDviaApp
 
+Hier ein Demo-Video: https://www.youtube.com/watch?v=ySMSormm9lA
+
 Der Weg zur Umsetzung dieses Projekts war/ist für einen newbie in der embedded world schon ganz schön anspruchsvoll. Deshalb will ich dazu ein paar Bemerkungen posten.
 
 Zu allererst musste ich die Ansteuerung des WS2812B 5050 RGB Stripe mit WS2811 Controller bewältigen. Dazu gibt es überlicherweise die libary des Distributors Adafruit Industries  https://github.com/adafruit/Adafruit_NeoPixel  oder als Alternative die libary von FastLED  https://github.com/FastLED/FastLED  , welche in Internet-Foren als schneller gilt. Beide liefern tolle Sketche mit verschiedenen Effekten aus. Ich habe mich nach einigen Versuchen für eine weitere alternative libary von Nick Gammon  https://github.com/nickgammon/NeoPixels_SPI  entschieden, da sie mir die "bare metal" Ansteuerung des LED-Streifens zur Verfügung stellt. Damit konnte ich schon einige Variationen für die direkte Ansteuerung des RGB Stripe mit der Arduino IDE realisieren.
@@ -26,5 +28,3 @@ Letztendlich habe ich mich dafür entschieden,
 2. dass das Handy zuerst nur ein Zeichen als Anfrage überträgt. Denn das landet auf jeden Fall hardwaregesteuert im Empfangsbuffer.
 3. dass der Sketch / das model zeitgetriggert im Empfangsbuffer nachschaut, ob ein Anfrage-Zeichen vorliegt und dann von der LED-Ansteuerung zur Kommunikation umschaltet.
 4. dass die Daten von einem Start- und einem Endzeichen eingerahmt werden, um den Beginn der Datenübernahme zu starten und das Ende der Kommunikation zu erkennen und zu quittieren.
-
-Hier ein Demo-Video: https://www.youtube.com/watch?v=ySMSormm9lA
