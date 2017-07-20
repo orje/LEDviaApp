@@ -27,5 +27,4 @@ Letztendlich habe ich mich dafür entschieden,
 3. dass der Sketch / das model zeitgetriggert im Empfangsbuffer nachschaut, ob ein Anfrage-Zeichen vorliegt und dann von der LED-Ansteuerung zur Kommunikation umschaltet.
 4. dass die Daten von einem Start- und einem Endzeichen eingerahmt werden, um den Beginn der Datenübernahme zu starten und das Ende der Kommunikation zu erkennen und zu quittieren.
 
-Hier ein Demo-Video: https://www.youtube.com/watch?v=6JWBNUmyF58
-
+Hier ein Demo-Video: https://www.youtube.com/watch?v=ySMSormm9lA
