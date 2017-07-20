@@ -20,7 +20,7 @@ Zum Verständnis der seriellen Kommunikation halfen mir die Forum-Diskussionen v
 Ferner benötige ich eine Art von Handshake für die Kommuniukation zwischen dem UNO und dem Handy, da diese asynchron verläuft. D.h. keiner wartet per se auf den anderen, sondern man muss die Kommunikation regeln.
 
 Bei der Umsetzung meines Sketches und meiner App wandte ich die allgemein empfohlene Programmstrukturierung an, Aufgaben in möglichst kleine Funktionen zu gliedern, die Aufrufstruktur möglichst mit switch/case umzusetzen und nicht die blockierende delay()-Funktion zu benutzen.
-Da ich mich als newbie parallel zur Umsetzung dieses Projektes, weiterhin mit dem Thema C-Programmierung im allgemeinen und die Frage der Strukturierung von Programmen im besonderen hineinlas, stieß ich auf das framework plus dem modeling tool von Miro Samek  http://playground.arduino.cc/Code/QP  Das framework setzt nicht nur die allgemein postulierten Programmstrukturtechniken um, sondern stellt mit dem modeling tool auch eine Möglichkeit (kein Muss) zur Verfügung, die Struktur optisch zu kreieren.
+Da ich mich als newbie parallel zur Umsetzung dieses Projektes, weiterhin mit dem Thema C-Programmierung im allgemeinen und die Frage der Strukturierung von Programmen im besonderen hineinlas, stieß ich auf das framework plus dem modeling tool von Miro Samek  http://playground.arduino.cc/Code/QP  Das framework setzt nicht nur die allgemein postulierten Programmstrukturtechniken um, sondern stellt mit dem modeling tool auch eine Möglichkeit (kein Muss) zur Verfügung, die Struktur graphisch zu kreieren.
 Allerdings erfordert es eine intensive Einarbeitung. Als Ergebnis habe ich aber nun ein m.M. nach übersichtliches Programm.
 
 Letztendlich habe ich mich dafür entschieden, 
