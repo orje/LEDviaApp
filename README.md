@@ -23,7 +23,7 @@ Bei der Umsetzung meines Sketches und meiner App wandte ich die allgemein empfoh
 Da ich mich als newbie parallel zur Umsetzung dieses Projektes, weiterhin mit dem Thema C-Programmierung im allgemeinen und die Frage der Strukturierung von Programmen im besonderen hineinlas, stieß ich auf das framework plus dem modeling tool von Miro Samek  http://playground.arduino.cc/Code/QP  Das framework setzt nicht nur die allgemein postulierten Programmstrukturtechniken um, sondern stellt mit dem modeling tool auch eine Möglichkeit (kein Muss) zur Verfügung, die Struktur graphisch zu kreieren.
 Allerdings erfordert es eine intensive Einarbeitung. Als Ergebnis habe ich aber nun ein m.M. nach übersichtliches Programm.
 
-Letztendlich habe ich mich dafür entschieden, 
+Letztendlich habe ich mich beim Programmdesign dafür entschieden, 
 1. die Datenübertragung klein zu halten. Es wird immer nur ein Zeichen für die über das Handy gewählte Farbe oder das gewählte Anzeige-Programm plus dem Farb- oder Programmwert übertragen.
 2. dass das Handy zuerst nur ein Zeichen als Anfrage überträgt. Denn das landet auf jeden Fall hardwaregesteuert im Empfangsbuffer.
 3. dass der Sketch / das model zeitgetriggert im Empfangsbuffer nachschaut, ob ein Anfrage-Zeichen vorliegt und dann von der LED-Ansteuerung zur Kommunikation umschaltet.
