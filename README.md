@@ -26,5 +26,5 @@ Allerdings erfordert es eine intensive Einarbeitung. Als Ergebnis habe ich aber 
 Letztendlich habe ich mich beim Programmdesign dafür entschieden, 
 1. die Datenübertragung klein zu halten. Es wird immer nur ein Zeichen für die über das Handy gewählte Farbe oder das gewählte Anzeige-Programm plus dem Farb- oder Programmwert übertragen.
 2. dass das Handy zuerst nur ein Zeichen als Anfrage überträgt. Denn das landet auf jeden Fall hardwaregesteuert im Empfangsbuffer.
-3. dass der Sketch / das model zeitgetriggert im Empfangsbuffer nachschaut, ob ein Anfrage-Zeichen vorliegt und dann von der LED-Ansteuerung zur Kommunikation umschaltet.
+3. dass der Sketch / das model zeitgetriggert im Empfangsbuffer nachschaut, ob ein Anfrage-Zeichen vorliegt und dann von der LED-Ansteuerung zur Kommunikation umschaltet. Dabei nutze ich bei den LED-Animationsprogrammen die Pause zwischen den Animationstakten.
 4. dass die Daten von einem Start- und einem Endzeichen eingerahmt werden, um den Beginn der Datenübernahme zu starten und das Ende der Kommunikation zu erkennen und zu quittieren.
