@@ -2,7 +2,10 @@
 <model version="4.0.1" links="0">
  <documentation>Grundgerüst für die Ansteuerung einer LED-Kette mit dem Arduino UNO.
 Die Werte kommen per Bluetooth von einer Handy-App.
-Da die Ansteuerung der LEDs zeitkritisch ist, darf während dessen keine andere Aktivität laufen. Vor allen Dingen würde es Konflikte mit einer gleichzeitigen Kommunikation zwischen der Handy-App und dem Arduino geben. Deshalb wird nur ein in der Hardware laufender Timer im Hintergrund gestartet, um von Zeit zu Zeit nachzuschauen, ob eine Kommunikationsanfrage von der Handy-App im ebenfalls im Hintergrund laufenden Empfangsspeicher liegt. Entsprechend wird dann in die Kommunikation verzweigt, um den neuen Befehl von der Handy-App zu bekommen oder zurück in die LED-Ansteuerung verzweigt.</documentation>
+Da die Ansteuerung der LEDs zeitkritisch ist, darf während dessen keine andere Aktivität laufen. Vor allen Dingen würde es Konflikte mit einer gleichzeitigen Kommunikation zwischen der Handy-App und dem Arduino geben. Deshalb wird nur ein in der Hardware laufender Timer im Hintergrund gestartet, um von Zeit zu Zeit nachzuschauen, ob eine Kommunikationsanfrage von der Handy-App im ebenfalls im Hintergrund laufenden Empfangsspeicher liegt. Entsprechend wird dann in die Kommunikation verzweigt, um den neuen Befehl von der Handy-App zu bekommen oder zurück in die LED-Ansteuerung verzweigt.
+
+Das Stoppen des Kommunikations-Timers mit QActive_disarmX((QActive *)me, 0U);
+ist an sich nicht nötig, da der Timer ein One-Shot-Ereignis ist, also nicht wieder gestartet wird, aber es wird von Miro Samek als &quot;sauberer&quot; Programmierstil empfohlen.</documentation>
  <framework name="qpn"/>
  <package name="AOs" stereotype="0x02">
   <class name="LEDviaApp" superclass="qpn::QActive">
