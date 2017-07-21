@@ -1,5 +1,7 @@
 # LEDviaApp
 
+https://github.com/orje/LEDviaApp/blob/master/doc/SM%20of%20LEDviaApp.png
+
 Hier ein Demo-Video: https://www.youtube.com/watch?v=ySMSormm9lA
 
 Der Weg zur Umsetzung dieses Projekts war/ist für einen newbie in der embedded world schon ganz schön anspruchsvoll. Deshalb will ich dazu ein paar Bemerkungen posten.
