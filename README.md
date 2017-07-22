@@ -1,6 +1,6 @@
 # LEDviaApp
 
-[Bild der state machine](doc/SM%20of%20LEDviaApp.png)
+![state machine](doc/SM%20of%20LEDviaApp.png)
 
 Hier ein Demo-Video: https://www.youtube.com/watch?v=ySMSormm9lA
 
