@@ -31,8 +31,8 @@ digitalWrite(DEBUG_LED, LOW);</documentation>
     </initial>
     <state name="Verzweigung">
      <documentation>Zuerst wird geprüft, ob im Serial receive buffer ein 'R' als Übertragungsanfrage der App steht. Wenn ja, wird ein &quot;T&quot; als Übertragungsfreigabe gesendet und in den State Kommunikation verzweigt.
-Ansonsten wird in das zuletzt aktive Programm verzweigt oder ins Progamm Anzeige, um mindestens einen Timer für die Rückkehr zur Verzweigung zu starten.</documentation>
-     <entry brief="Kommunikations-Check, Programmwahl">if (Serial.read() == 'R') {
+Ansonsten wird in das zuletzt aktive Programm verzweigt.</documentation>
+     <entry brief="Kommunikations-Check, Programmwahl, Kommunikations-Timer starten">if (Serial.read() == 'R') {
     Serial.print(F(&quot;T&quot;));
     QACTIVE_POST((QActive *)me, KOMMUNIKATION_SIG, 0U);
 }
@@ -43,35 +43,85 @@ else {
         QACTIVE_POST((QActive *)me, LAUFLICHT_SIG, 0U);
     else if (me-&gt;programm == 3)
         QACTIVE_POST((QActive *)me, DIMMEN_SIG, 0U);
-    else
-        QACTIVE_POST((QActive *)me, ANZEIGE_SIG, 0U);
-}</entry>
+}
+
+QActive_armX((QActive *)me, 0U, KOMMUNIKATIONSTIMER, 0U);</entry>
+     <exit brief="Kommunikations-Timer stoppen">QActive_disarmX((QActive *)me, 0U);</exit>
      <tran trig="KOMMUNIKATION" target="../../2">
-      <tran_glyph conn="4,12,3,3,52">
+      <tran_glyph conn="4,18,3,3,38">
        <action box="0,-2,14,2"/>
       </tran_glyph>
      </tran>
-     <tran trig="ANZEIGE" target="../../3">
-      <tran_glyph conn="4,16,3,3,22">
-       <action box="0,-2,8,2"/>
+     <tran trig="ANZEIGE" target="../5">
+      <tran_glyph conn="4,22,3,3,12">
+       <action box="0,-2,9,2"/>
       </tran_glyph>
      </tran>
-     <tran trig="LAUFLICHT" target="../../4">
-      <tran_glyph conn="4,34,3,3,22">
+     <tran trig="LAUFLICHT" target="../6">
+      <tran_glyph conn="4,30,3,3,12">
        <action box="0,-2,10,2"/>
       </tran_glyph>
      </tran>
-     <tran trig="DIMMEN" target="../../5">
-      <tran_glyph conn="4,52,3,3,22">
+     <tran trig="DIMMEN" target="../7">
+      <tran_glyph conn="4,44,3,3,12">
        <action box="0,-2,8,2"/>
       </tran_glyph>
      </tran>
-     <state_glyph node="4,2,19,66">
-      <entry box="1,2,18,4"/>
+     <tran trig="Q_TIMEOUT" target="..">
+      <tran_glyph conn="38,56,1,3,-34">
+       <action box="-10,-2,10,2"/>
+      </tran_glyph>
+     </tran>
+     <state name="Anzeige">
+      <entry brief="LED anzeigen">showColor(PIXELS, me-&gt;rot, me-&gt;gruen, me-&gt;blau);</entry>
+      <state_glyph node="16,20,15,6">
+       <entry box="1,2,14,2"/>
+      </state_glyph>
+     </state>
+     <state name="Lauflicht">
+      <documentation>Vor jedem Beschreiben des LED-stripes müssen die Interrupts abgeschaltet werden, damit das Timing über den SPI-Bus nicht gestört wird (s. Nick Gammon).
+Am Ende wird der LED-Index bis zum Maximum der LEDs erhöht.</documentation>
+      <entry brief="LED nullen, LED Lauflicht, LED inkrementieren">if (me-&gt;led_index == PIXELS) {
+    me-&gt;led_index = 0U;
+    }
+
+QF_INT_DISABLE();
+for (me-&gt;led_x = 0U; me-&gt;led_x &lt; PIXELS; me-&gt;led_x++) {
+    if (me-&gt;led_x == me-&gt;led_index) {
+        sendPixel(me-&gt;rot, me-&gt;gruen, me-&gt;blau);
+        }
+    else {
+        sendPixel(0U, 0U, 0U);
+        }
+}
+QF_INT_ENABLE();
+
+show();
+
+me-&gt;led_index++;</entry>
+      <state_glyph node="16,28,14,12">
+       <entry box="1,2,13,8"/>
+      </state_glyph>
+     </state>
+     <state name="Dimmen">
+      <documentation>Am Ende wird die Helligkeit bis zum Überlauf erhöht.</documentation>
+      <entry brief="LED dimmen, Helligkeit inkrementieren">showColor(PIXELS,
+    me-&gt;rot / 255.0 * me-&gt;helligkeit,
+    me-&gt;gruen / 255.0 * me-&gt;helligkeit,
+    me-&gt;blau / 255.0 * me-&gt;helligkeit);
+
+me-&gt;helligkeit = me-&gt;helligkeit + 8U;</entry>
+      <state_glyph node="16,42,14,10">
+       <entry box="1,2,13,6"/>
+      </state_glyph>
+     </state>
+     <state_glyph node="4,2,34,56">
+      <entry box="1,2,22,8"/>
+      <exit box="1,10,26,2"/>
      </state_glyph>
     </state>
     <state name="Kommunikation">
-     <documentation>Da die App nicht so schnell auf die Übertragungsfreigabe reagieren kann (asynchrone Kommunikation), wird erst ein Timer gestartet.
+     <documentation>Da die App (, bzw. das Handy) nicht so schnell auf die Übertragungsfreigabe reagieren kann (asynchrone Kommunikation), wird erst ein Timer gestartet.
 Wenn nach Ablauf des Timers im Serial receive buffer das Startzeichen '&lt;' erkannt wird, beginnt das Verarbeiten der Daten in Farb- oder Programmwerte.
 Die Variable wert wird genullt.</documentation>
      <entry brief="Kommunikations-Timer starten">QActive_armX((QActive *)me, 0U, KOMMUNIKATIONSTIMER, 0U);</entry>
@@ -80,11 +130,11 @@ Die Variable wert wird genullt.</documentation>
       <choice target="../../1">
        <guard brief="Startzeichen-Erkennung">Serial.read() == '&lt;'</guard>
        <action brief="Initialisierung">me-&gt;wert = 0U;</action>
-       <choice_glyph conn="67,20,4,3,8,3">
+       <choice_glyph conn="53,28,4,3,9,3">
         <action box="0,1,19,4"/>
        </choice_glyph>
       </choice>
-      <tran_glyph conn="56,20,3,-1,11">
+      <tran_glyph conn="42,28,3,-1,11">
        <action box="0,-2,11,2"/>
       </tran_glyph>
      </tran>
@@ -122,94 +172,20 @@ Dann wird in den State Verzweigung gesprungen.</documentation>
 }</entry>
       <tran trig="STOPP" target="../../../1">
        <action brief="Kommunikations-Ende, LED nullen">Serial.print(F(&quot;A&quot;));</action>
-       <tran_glyph conn="88,40,1,3,-34,30,-52,-64,2">
+       <tran_glyph conn="74,49,1,3,-34,11,-38,-54,2">
         <action box="-17,-6,17,6"/>
        </tran_glyph>
       </tran>
-      <state_glyph node="70,26,18,16">
+      <state_glyph node="56,35,18,16">
        <entry box="1,2,15,4"/>
       </state_glyph>
      </state>
-     <state_glyph node="56,10,34,34">
-      <entry box="1,2,26,2"/>
-      <exit box="1,4,26,2"/>
+     <state_glyph node="42,16,34,37">
+      <entry box="1,2,25,4"/>
+      <exit box="1,6,26,2"/>
      </state_glyph>
     </state>
-    <state name="Anzeige">
-     <documentation>Das Anzeigeprogramm ist statisch.
-Parallel wird ein Timer gestartet, um regelmäßig in den State Verzweigung zu springen und einen Kommunikations-Check zu machen.</documentation>
-     <entry brief="LED anzeigen, Kommunikations-Timer starten">showColor(PIXELS, me-&gt;rot, me-&gt;gruen, me-&gt;blau);
-
-QActive_armX((QActive *)me, 0U, KOMMUNIKATIONSTIMER, 0U);</entry>
-     <exit brief="Kommunikations-Timer stoppen">QActive_disarmX((QActive *)me, 0U);</exit>
-     <tran trig="Q_TIMEOUT" target="../../1">
-      <tran_glyph conn="51,28,1,1,-28">
-       <action box="-9,-2,10,2"/>
-      </tran_glyph>
-     </tran>
-     <state_glyph node="26,14,25,16">
-      <entry box="1,2,24,4"/>
-      <exit box="1,6,19,4"/>
-     </state_glyph>
-    </state>
-    <state name="Lauflicht">
-     <documentation>Der Lauflicht-Takt dient gleichzeitig zum zyklischen Sprung in den State Verzweigung zum Zwecke des Kommunikations-Checks.
-Vor jedem Beschreiben des LED-stripes müssen die Interrupts abgeschaltet werden, damit das Timing über den SPI-Bus nicht gestört wird (s. Nick Gammon).
-Am Ende wird der LED-Index bis zum Maximum der LEDs erhöht.</documentation>
-     <entry brief="LED nullen, LED Lauflicht, LED inkrementieren, Lauflicht-Takt starten">if (me-&gt;led_index == PIXELS) {
-    me-&gt;led_index = 0U;
-    }
-
-QF_INT_DISABLE();
-for (me-&gt;led_x = 0U; me-&gt;led_x &lt; PIXELS; me-&gt;led_x++) {
-    if (me-&gt;led_x == me-&gt;led_index) {
-        sendPixel(me-&gt;rot, me-&gt;gruen, me-&gt;blau);
-        }
-    else {
-        sendPixel(0U, 0U, 0U);
-        }
-}
-QF_INT_ENABLE();
-
-show();
-
-me-&gt;led_index++;
-
-QActive_armX(&amp;me-&gt;super, 0U, LAUFLICHTTAKT, 0U);</entry>
-     <exit brief="Lauflicht-Takt stoppen">QActive_disarmX((QActive *)me, 0U);</exit>
-     <tran trig="Q_TIMEOUT" target="../../1">
-      <tran_glyph conn="52,46,1,1,-29">
-       <action box="-9,-2,10,2"/>
-      </tran_glyph>
-     </tran>
-     <state_glyph node="26,32,26,16">
-      <entry box="1,2,24,6"/>
-      <exit box="1,8,19,2"/>
-     </state_glyph>
-    </state>
-    <state name="Dimmen">
-     <documentation>Der Dimmen-Takt dient gleichzeitig zum zyklischen Sprung in den State Verzweigung zum Zwecke des Kommunikations-Checks.
-Am Ende wird die Helligkeit erhöht. Dann erfolgt ein Überlauf.</documentation>
-     <entry brief="LED dimmen, Helligkeit inkrementieren, Dimmen-Takt starten">showColor(PIXELS,
-    me-&gt;rot / 255.0 * me-&gt;helligkeit,
-    me-&gt;gruen / 255.0 * me-&gt;helligkeit,
-    me-&gt;blau / 255.0 * me-&gt;helligkeit);
-
-me-&gt;helligkeit = me-&gt;helligkeit + 4U;
-
-QActive_armX(&amp;me-&gt;super, 0U, DIMMENTAKT, 0U);</entry>
-     <exit brief="Kommunikations-Timer stoppen">QActive_disarmX((QActive *)me, 0U);</exit>
-     <tran trig="Q_TIMEOUT" target="../../1">
-      <tran_glyph conn="47,66,1,1,-24">
-       <action box="-9,-2,11,2"/>
-      </tran_glyph>
-     </tran>
-     <state_glyph node="26,50,21,18">
-      <entry box="1,2,19,6"/>
-      <exit box="1,8,15,4"/>
-     </state_glyph>
-    </state>
-    <state_diagram size="92,72"/>
+    <state_diagram size="78,62"/>
    </statechart>
   </class>
  </package>
@@ -246,10 +222,9 @@ enum {
 
     // verschiedene Timer
     KOMMUNIKATIONSTIMER     = BSP_TICKS_PER_SEC / 5U,
-    LAUFLICHTTAKT           = BSP_TICKS_PER_SEC,
-    DIMMENTAKT              = BSP_TICKS_PER_SEC / 20U,
 
     PIXELS = 120,                        // Anzahl der LEDs des NeoPixel-Stick
+
     BLUETOOTH_POWER = 4,
 
     STOPP_SIG,                         // Datenende

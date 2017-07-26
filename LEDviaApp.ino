@@ -47,11 +47,11 @@ typedef struct LEDviaApp {
 /* protected: */
 static QState LEDviaApp_initial(LEDviaApp * const me);
 static QState LEDviaApp_Verzweigung(LEDviaApp * const me);
-static QState LEDviaApp_Kommunikation(LEDviaApp * const me);
-static QState LEDviaApp_Datenverarbeitung(LEDviaApp * const me);
 static QState LEDviaApp_Anzeige(LEDviaApp * const me);
 static QState LEDviaApp_Lauflicht(LEDviaApp * const me);
 static QState LEDviaApp_Dimmen(LEDviaApp * const me);
+static QState LEDviaApp_Kommunikation(LEDviaApp * const me);
+static QState LEDviaApp_Datenverarbeitung(LEDviaApp * const me);
 
 //...
 
@@ -75,10 +75,9 @@ enum {
 
     // verschiedene Timer
     KOMMUNIKATIONSTIMER     = BSP_TICKS_PER_SEC / 5U,
-    LAUFLICHTTAKT           = BSP_TICKS_PER_SEC,
-    DIMMENTAKT              = BSP_TICKS_PER_SEC / 20U,
 
     PIXELS = 120,                        // Anzahl der LEDs des NeoPixel-Stick
+
     BLUETOOTH_POWER = 4,
 
     STOPP_SIG,                         // Datenende
@@ -178,9 +177,15 @@ static QState LEDviaApp_Verzweigung(LEDviaApp * const me) {
                     QACTIVE_POST((QActive *)me, LAUFLICHT_SIG, 0U);
                 else if (me->programm == 3)
                     QACTIVE_POST((QActive *)me, DIMMEN_SIG, 0U);
-                else
-                    QACTIVE_POST((QActive *)me, ANZEIGE_SIG, 0U);
             }
+
+            QActive_armX((QActive *)me, 0U, KOMMUNIKATIONSTIMER, 0U);
+            status_ = Q_HANDLED();
+            break;
+        }
+        /* ${AOs::LEDviaApp::SM::Verzweigung} */
+        case Q_EXIT_SIG: {
+            QActive_disarmX((QActive *)me, 0U);
             status_ = Q_HANDLED();
             break;
         }
@@ -204,8 +209,86 @@ static QState LEDviaApp_Verzweigung(LEDviaApp * const me) {
             status_ = Q_TRAN(&LEDviaApp_Dimmen);
             break;
         }
+        /* ${AOs::LEDviaApp::SM::Verzweigung::Q_TIMEOUT} */
+        case Q_TIMEOUT_SIG: {
+            status_ = Q_TRAN(&LEDviaApp_Verzweigung);
+            break;
+        }
         default: {
             status_ = Q_SUPER(&QHsm_top);
+            break;
+        }
+    }
+    return status_;
+}
+/*${AOs::LEDviaApp::SM::Verzweigung::Anzeige} ..............................*/
+static QState LEDviaApp_Anzeige(LEDviaApp * const me) {
+    QState status_;
+    switch (Q_SIG(me)) {
+        /* ${AOs::LEDviaApp::SM::Verzweigung::Anzeige} */
+        case Q_ENTRY_SIG: {
+            showColor(PIXELS, me->rot, me->gruen, me->blau);
+            status_ = Q_HANDLED();
+            break;
+        }
+        default: {
+            status_ = Q_SUPER(&LEDviaApp_Verzweigung);
+            break;
+        }
+    }
+    return status_;
+}
+/*${AOs::LEDviaApp::SM::Verzweigung::Lauflicht} ............................*/
+static QState LEDviaApp_Lauflicht(LEDviaApp * const me) {
+    QState status_;
+    switch (Q_SIG(me)) {
+        /* ${AOs::LEDviaApp::SM::Verzweigung::Lauflicht} */
+        case Q_ENTRY_SIG: {
+            if (me->led_index == PIXELS) {
+                me->led_index = 0U;
+                }
+
+            QF_INT_DISABLE();
+            for (me->led_x = 0U; me->led_x < PIXELS; me->led_x++) {
+                if (me->led_x == me->led_index) {
+                    sendPixel(me->rot, me->gruen, me->blau);
+                    }
+                else {
+                    sendPixel(0U, 0U, 0U);
+                    }
+            }
+            QF_INT_ENABLE();
+
+            show();
+
+            me->led_index++;
+            status_ = Q_HANDLED();
+            break;
+        }
+        default: {
+            status_ = Q_SUPER(&LEDviaApp_Verzweigung);
+            break;
+        }
+    }
+    return status_;
+}
+/*${AOs::LEDviaApp::SM::Verzweigung::Dimmen} ...............................*/
+static QState LEDviaApp_Dimmen(LEDviaApp * const me) {
+    QState status_;
+    switch (Q_SIG(me)) {
+        /* ${AOs::LEDviaApp::SM::Verzweigung::Dimmen} */
+        case Q_ENTRY_SIG: {
+            showColor(PIXELS,
+                me->rot / 255.0 * me->helligkeit,
+                me->gruen / 255.0 * me->helligkeit,
+                me->blau / 255.0 * me->helligkeit);
+
+            me->helligkeit = me->helligkeit + 8U;
+            status_ = Q_HANDLED();
+            break;
+        }
+        default: {
+            status_ = Q_SUPER(&LEDviaApp_Verzweigung);
             break;
         }
     }
@@ -287,118 +370,6 @@ static QState LEDviaApp_Datenverarbeitung(LEDviaApp * const me) {
         }
         default: {
             status_ = Q_SUPER(&LEDviaApp_Kommunikation);
-            break;
-        }
-    }
-    return status_;
-}
-/*${AOs::LEDviaApp::SM::Anzeige} ...........................................*/
-static QState LEDviaApp_Anzeige(LEDviaApp * const me) {
-    QState status_;
-    switch (Q_SIG(me)) {
-        /* ${AOs::LEDviaApp::SM::Anzeige} */
-        case Q_ENTRY_SIG: {
-            showColor(PIXELS, me->rot, me->gruen, me->blau);
-
-            QActive_armX((QActive *)me, 0U, KOMMUNIKATIONSTIMER, 0U);
-            status_ = Q_HANDLED();
-            break;
-        }
-        /* ${AOs::LEDviaApp::SM::Anzeige} */
-        case Q_EXIT_SIG: {
-            QActive_disarmX((QActive *)me, 0U);
-            status_ = Q_HANDLED();
-            break;
-        }
-        /* ${AOs::LEDviaApp::SM::Anzeige::Q_TIMEOUT} */
-        case Q_TIMEOUT_SIG: {
-            status_ = Q_TRAN(&LEDviaApp_Verzweigung);
-            break;
-        }
-        default: {
-            status_ = Q_SUPER(&QHsm_top);
-            break;
-        }
-    }
-    return status_;
-}
-/*${AOs::LEDviaApp::SM::Lauflicht} .........................................*/
-static QState LEDviaApp_Lauflicht(LEDviaApp * const me) {
-    QState status_;
-    switch (Q_SIG(me)) {
-        /* ${AOs::LEDviaApp::SM::Lauflicht} */
-        case Q_ENTRY_SIG: {
-            if (me->led_index == PIXELS) {
-                me->led_index = 0U;
-                }
-
-            QF_INT_DISABLE();
-            for (me->led_x = 0U; me->led_x < PIXELS; me->led_x++) {
-                if (me->led_x == me->led_index) {
-                    sendPixel(me->rot, me->gruen, me->blau);
-                    }
-                else {
-                    sendPixel(0U, 0U, 0U);
-                    }
-            }
-            QF_INT_ENABLE();
-
-            show();
-
-            me->led_index++;
-
-            QActive_armX(&me->super, 0U, LAUFLICHTTAKT, 0U);
-            status_ = Q_HANDLED();
-            break;
-        }
-        /* ${AOs::LEDviaApp::SM::Lauflicht} */
-        case Q_EXIT_SIG: {
-            QActive_disarmX((QActive *)me, 0U);
-            status_ = Q_HANDLED();
-            break;
-        }
-        /* ${AOs::LEDviaApp::SM::Lauflicht::Q_TIMEOUT} */
-        case Q_TIMEOUT_SIG: {
-            status_ = Q_TRAN(&LEDviaApp_Verzweigung);
-            break;
-        }
-        default: {
-            status_ = Q_SUPER(&QHsm_top);
-            break;
-        }
-    }
-    return status_;
-}
-/*${AOs::LEDviaApp::SM::Dimmen} ............................................*/
-static QState LEDviaApp_Dimmen(LEDviaApp * const me) {
-    QState status_;
-    switch (Q_SIG(me)) {
-        /* ${AOs::LEDviaApp::SM::Dimmen} */
-        case Q_ENTRY_SIG: {
-            showColor(PIXELS,
-                me->rot / 255.0 * me->helligkeit,
-                me->gruen / 255.0 * me->helligkeit,
-                me->blau / 255.0 * me->helligkeit);
-
-            me->helligkeit = me->helligkeit + 4U;
-
-            QActive_armX(&me->super, 0U, DIMMENTAKT, 0U);
-            status_ = Q_HANDLED();
-            break;
-        }
-        /* ${AOs::LEDviaApp::SM::Dimmen} */
-        case Q_EXIT_SIG: {
-            QActive_disarmX((QActive *)me, 0U);
-            status_ = Q_HANDLED();
-            break;
-        }
-        /* ${AOs::LEDviaApp::SM::Dimmen::Q_TIMEOUT} */
-        case Q_TIMEOUT_SIG: {
-            status_ = Q_TRAN(&LEDviaApp_Verzweigung);
-            break;
-        }
-        default: {
-            status_ = Q_SUPER(&QHsm_top);
             break;
         }
     }
