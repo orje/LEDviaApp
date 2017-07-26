@@ -2,8 +2,6 @@
 <session version="4.0.1">
  <item name="license">GPL</item>
  <group name="locked">
-  <item name="item">${.}</item>
-  <item name="item">${AOs}</item>
   <item name="item">~</item>
  </group>
  <group name="settings">
