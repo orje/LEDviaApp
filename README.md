@@ -2,31 +2,111 @@
 
 ![state machine](doc/SM%20of%20LEDviaApp.png)
 
-Hier ein Demo-Video: https://www.youtube.com/watch?v=ySMSormm9lA
+Demo video: https://www.youtube.com/watch?v=ySMSormm9lA
 
-Der Weg zur Umsetzung dieses Projekts war/ist für einen newbie in der embedded world schon ganz schön anspruchsvoll. Deshalb will ich dazu ein paar Bemerkungen posten.
+ 1  Introduction  
+In the beginning a short introduction of myself.  
+Professionally I work as an industrial electronics since many years. I put production machines into operation, optimize and repair them and do the troubleshooting. To do this one task is to look into the programmings of the controls. And from time to time I do some changes in the programs. Most of the PLC controls are from Siemens.  
+With Arduino and the C language as a hobby I started in my free time about 3 years ago. I bought the Arduino starter Kit and tried a few things. As an advanced project I wanted to program a Zumo Robot form Pololu. But this turned out to be to much for me yet. It was a little bit overwhelming because compared to the PLC controls programming an embedded system in C is pretty less structured. You have the setup, the loop, many libraries, examples in the internet and than: Good luck!  
+First I tried to find some German lessons and books in the Internet. Finally I landed with Kernighan & Ritchie - C Programming Language 2 and Steven Prata - C Primer Plus Sixth Edition. With these books I learned something about the C Language but not very much about structuring a program for an embedded system. In the Internet I stumbled over terms like finite state machine and conceptions from Moore and Mealy. That was the addition to C that I was looking for.  
+And right on the Arduino homepage I found the framework plus the modeling tool of Miro Samek http://playground.arduino.cc/Code/QP .
+First of all I left the robot aside and started the project of controlling a LED stripe with a handy.  
+Like I said I'm doing this for my hobby and so I can't put that much time in it. So it took me over 2 years to understand Miro's framework and model to end up this project. Puh!  
+So please don't mind if I'm sometimes a little bit euphoric.  
 
-Zu allererst musste ich die Ansteuerung des WS2812B 5050 RGB Stripe mit WS2811 Controller bewältigen. Dazu gibt es überlicherweise die libary des Distributors Adafruit Industries  https://github.com/adafruit/Adafruit_NeoPixel  oder als Alternative die libary von FastLED  https://github.com/FastLED/FastLED  , welche in Internet-Foren als schneller gilt. Beide liefern tolle Sketche mit verschiedenen Effekten aus. Ich habe mich nach einigen Versuchen für eine weitere alternative libary von Nick Gammon  https://github.com/nickgammon/NeoPixels_SPI  entschieden, da sie mir die "bare metal" Ansteuerung des LED-Streifens zur Verfügung stellt. Damit konnte ich schon einige Variationen für die direkte Ansteuerung des RGB Stripe mit der Arduino IDE realisieren.
 
-Die nächste Herausforderung war die Kommunikationserweiterung des UNO durch das Bluetooth-Modul HC-06 mit einem Handy. Dazu fand ich sehr hilfreiche Informationen von Martyn Currey  http://www.martyncurrey.com/arduino-and-hc-06-zs-040/  und  http://www.martyncurrey.com/arduinobtcontrol/
 
-Jetzt fehlte nur noch die Programmierung einer App für das Handy. Glücklicherweise mußte ich dazu nicht erst Java lernen, sondern stieß u.a. durch Martyn Currey auf den MIT App Inventor 2  http://appinventor.mit.edu/explore/get-started.html  Auch dazu hatte Martyn Currey schon gearbeitet  http://www.martyncurrey.com/arduinobtcontrol/
-Weitere wertvolle Hilfe zum MIT App Inventor 2 im allgemeinen und zur Bluetooth-Kommmunikation im speziellen findet man von Abraham Getzler  https://groups.google.com/forum/#!category-topic/mitappinventortest/2cd6Uz__xA0  und Taifun  https://puravidaapps.com/snippets.php#2enableBT
+ 2  Control of a LED stripe  
+First I had to learn how to program the WS2812B 5050 RGB stripe with the WS2811 Controller. I found the libaries from Adafruit https://github.com/adafruit/Adafruit_NeoPixel and the alternative FastLED https://github.com/FastLED/FastLED , which is mentioned in the Internet to be faster. Both libaries come with very nice examples. But I ended up with the small libary of Nick Gammon https://github.com/nickgammon/NeoPixels_SPI , because he shows the "bare metal" way to control the stripe. My intention was to get smaller code.  
 
-Mit all diesen Informationen konnte ich einen ersten ino-Sketch und eine erste App erstellen.
 
-Als Problem stellte sich heraus, dass sich die Kommunikation mit dem Handy und die Ansteuerung des LED-Streifens gegenseitig stören, was zu Hängern und undefiniertem Verhalten führt.  
-Insbesondere, wenn ich die Farb-Slider in der App so programmiere, dass sie permanent die Änderung der Werte übertragen. Als Lösung übetrage ich jetzt erst die Farbwerte, wenn die Slider losgelassen werden.
 
-Zum Verständnis der seriellen Kommunikation halfen mir die Forum-Diskussionen von Robin2  http://forum.arduino.cc/index.php?topic=288234.0  und wiederum Nick Gammon  http://www.gammon.com.au/serial  Dadurch wurde mir klar, dass ich die Kommunikation zwischen UNO und Handy und die Ansteuerung des LED-Stripe durch den UNO prinzipiell trennen muss. Hintergrund ist, dass die LED-Ansteuerung aufgrund von Timing-Anforderungen die Interruptverarbeitung zeitweise abschalten muss, wogegen die serielle Kommunikation Interrupts benötigt. Fehlen ihr diese, können Kommunikationsdaten verloren gehen.  
-Ferner benötige ich eine Art von Handshake für die Kommuniukation zwischen dem UNO und dem Handy, da diese asynchron verläuft. D.h. keiner wartet per se auf den anderen, sondern man muss die Kommunikation regeln.
+ 3  Starting with the Bluetooth-Moduls for the Arduino  
+The next step was to get the communication between my handy and the Arduino with the Bluetooth module HC-06 to run. For that purpose I found very helpful information from Martyn Currey http://www.martyncurrey.com/arduino-and-hc-06-zs-040/ and http://www.martyncurrey.com/arduinobtcontrol/ .  
 
-Bei der Umsetzung meines Sketches und meiner App wandte ich die allgemein empfohlene Programmstrukturierung an, Aufgaben in möglichst kleine Funktionen zu gliedern, die Aufrufstruktur möglichst mit switch/case umzusetzen und nicht die blockierende delay()-Funktion zu benutzen.
-Da ich mich als newbie parallel zur Umsetzung dieses Projektes, weiterhin mit dem Thema C-Programmierung im allgemeinen und die Frage der Strukturierung von Programmen im besonderen hineinlas, stieß ich auf das framework plus dem modeling tool von Miro Samek  http://playground.arduino.cc/Code/QP  Das framework setzt nicht nur die allgemein postulierten Programmstrukturtechniken um, sondern stellt mit dem modeling tool auch eine Möglichkeit (kein Muss) zur Verfügung, die Struktur graphisch zu kreieren.
-Allerdings erfordert es eine intensive Einarbeitung. Als Ergebnis habe ich aber nun ein m.M. nach übersichtliches Programm.
 
-Letztendlich habe ich mich beim Programmdesign dafür entschieden, 
-1. die Datenübertragung klein zu halten. Es wird immer nur ein Zeichen für die auf dem Handy gewählte Farbe oder das gewählte Anzeige-Programm plus dem Farb- oder Programmwert übertragen.
-2. dass das Handy zuerst nur ein Zeichen als Anfrage überträgt. Denn das landet auf jeden Fall hardwaregesteuert im Empfangsbuffer. Danach wartet die App zeitgetriggert auf die Übertragungsfreigabe.
-3. dass der Sketch / das model zeitgetriggert im Empfangsbuffer nachschaut, ob ein Anfrage-Zeichen vorliegt und dann von der LED-Ansteuerung zur Kommunikation umschaltet. Der Kommunikationscheck-Takt ist gleichzeitig der Animationstakt für die Anzeige-Programme.
-4. dass die Daten von einem Start- und einem Endzeichen eingerahmt werden, um den Beginn der Datenübernahme zu starten und das Ende der Kommunikation zu erkennen und zu quittieren.
+
+ 4  Programming of the handy app  
+The third challenge was to find something to program a handy app. Fortunately I didn't had to learn Java as I supposed because according to my information in the internet this is the most common language for that purpose. Presumably this would have cost me at least another year or more. So I was lucky to find the MIT App Inventor 2 http://appinventor.mit.edu/explore/get-started.html . Martyn Currey did already work on it in connection with the bluetooth modul and the Arduino http://www.martyncurrey.com/arduinobtcontrol/ .
+More usefull help in the Internet about the use of the App Inventor can be found from Abraham Getzler https://groups.google.com/forum/#!category-topic/mitappinventortest/2cd6Uz__xA0  and Taifun  https://puravidaapps.com/snippets.php#2enableBT .  
+
+
+
+ 5  First Arduino Sketch and handy App attempt  
+With all these information together I was able to realize a first sketch and an app – and got into trouble or let's say had to enter the next level in embedded programming: Dealing with the hardware. I simply transmitted rightaway the values that I generated with sliders in my app and soon the Arduino and the app got stuck.  
+Through this thread of Robin2 http://forum.arduino.cc/index.php?topic=288234.0 and that from Nick Gammon http://www.gammon.com.au/serial I learned something about the way of the function of the serial comminucation and that there are also interrupts involved. And the need of the interrupt for the serial communication and the strictly interdict of using interrupts while controling the LED stripe doesn't go together. If the interrupts are off the communication can lose data and if the interrupts are on the control of the stripe gets corrupted because of the strict timing that is nessecary. Furthermore I learned that the communication is asynchronous and I should use kind of a handshake and a frame around my data like a start and a stop sign for a tougher communication.  
+
+
+
+ 6  Structured programming  
+Eventough I tried to structure my sketch as general supposed like using small functions, using a switch/case structure und avoid blocking functions like delay() I was not very happy with the overview. I needed a few status variables and was jumping from function to function. And with every change I had to go almost through it all. This is the same experience I do in my job. As better structured a program is and if the structure is shown in a grafical manner the better it is to care for. For that reason I turned to the long way to learn to use the framework and the modeling tool from Miro Samek. I liked it rightaway eventough my knowledge doesn't reach into its totally depth. The grafical modeling tool gives me a good overview coupled with the ability of  using code in the states, in the transitions or even in the underlying sketch. Furthermore I can use hirachical states what saves me repetition. And last but not least the framework does only react on signals and events depending on the current state, so I don't have to lock them in other states manually like in sequential programs.  
+
+
+
+ 7  Concluding remarks  
+So finally I realized my project with the following cornerstones.  
+A) I let my data transfer only be 4 char long:  
+1 char for the selected color or the selected LED animation together with the selected value of  1 char. Ahead of these 2 chars comes 1 char as a start sign. And afterwards comes 1 char as a stop sign.  
+B) A handshake is implemented this way:  
+If I change a color or a LED animation in the app and there isn't already a communication going on, it first sends only 1 char as a request to the Arduino and wait for the answer. This blocking is wanted because I don't want to start a new communication before an ongoing is processed by both the Arduino and the app.  
+The char lands in the receive buffer of the UART. The sketch looks time triggered into the receive buffer and when it notices the request, it sends a transmit char to the app and stays in the communication state because like I said before, communication and LED control can't work parallel.  
+If the app notices the transmit char, also time triggered, it sends the 4 char data and wait aigan for the acknowledge of the Arduino.
+With the start sign the sketch processes the data until the stop sign shows up. Then it sends the acknowledge sign and turns to the LED control.  
+When the app receives the acknowledge sign it becomes ready for a next transmission.  
+C) I use the same time tick for the communication and the pause between the LED animation.  
+
+
+
+ 8  Technical specifications  
+Used hardware:  
+Samsung Galaxy S5, HC-06 Bluetooth-Modul, Arduino UNO, 2m 120 LEDs WS2812B 5050 RGB Stripe mit WS2811 Controller
+
+
+
+ 9  Links  
+A) To realize my project I used:  
+
+the online app Ide MIT App Inventor 2  
+http://appinventor.mit.edu/explore/get-started.html
+
+the Arduino IDE 1.8.x  
+https://www.arduino.cc/en/Main/Software  
+
+the QP-nano 5.8.2 for Arduino framework with its QM Graphical Modeling Tool 4.0.1  
+http://playground.arduino.cc/Code/QP  
+
+the LED libary from Nick Gammon  
+https://github.com/nickgammon/NeoPixels_SPI  
+
+the Arduino SPI libary from the installation path  
+%Arduino installation path%\Arduino\hardware\arduino\avr\libraries\SPI\src  
+
+To generate the sketch with the  QM Graphical Modeling Tool the libary from Nick Gammon and the SPI libary from Arduino has to be in the sketch path.  
+
+B) Again for information because I'm very thankful to them:  
+
+for sketch programming:  
+Robin2  
+	http://forum.arduino.cc/index.php?topic=288234.0
+
+Nick Gammon  
+	http://www.gammon.com.au/forum/?id=10894
+	http://www.gammon.com.au/serial
+	http://www.gammon.com.au/forum/?id=13357
+
+Martyn Currey  
+	http://www.martyncurrey.com/arduino-and-hc-06-zs-040/
+	http://www.martyncurrey.com/arduinobtcontrol/
+
+for QM programming:  
+	https://state-machine.com/arduino/
+
+for app programming:  
+MIT App Inventor 2 Forum  
+	https://groups.google.com/forum/#!forum/mitappinventortest/categories
+
+Taifun  
+	https://puravidaapps.com/snippets.php#2enableBT
+
+Abraham Getzler  
+	https://groups.google.com/forum/#!category-topic/mitappinventortest/2cd6Uz__xA0
