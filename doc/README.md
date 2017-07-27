@@ -16,6 +16,6 @@ LEDviaApp.aia = source code of the app for the MIT App Inventor 2
 (with the Bluetooth adress of my HC-06 module)  
 
 LEDviaApp.apk = runnable app  
-(only for my because of the integrated Bluetooth adress)
+(only for me because of the integrated Bluetooth adress)
 
 directory stuff = pictures for the app
