@@ -49,6 +49,8 @@ With the start sign the sketch processes the data until the stop sign shows up. 
 When the app receives the acknowledge sign it becomes ready for a next transmission.  
 C) I use the same time tick for the communication and the pause between the LED animation.  
 
+![handshake](doc/handshake.png)  
+
  8  Technical specifications  
 Used hardware:  
 Samsung Galaxy S5, HC-06 Bluetooth-Modul, Arduino UNO, 2m 120 LEDs WS2812B 5050 RGB Stripe mit WS2811 Controller
