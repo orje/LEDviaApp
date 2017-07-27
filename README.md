@@ -21,7 +21,7 @@ First I had to learn how to program the WS2812B 5050 RGB stripe with the WS2811 
 
 
 
- 3  Starting with the Bluetooth-Moduls for the Arduino  
+ 3  Starting with the Bluetooth module for the Arduino  
 The next step was to get the communication between my handy and the Arduino with the Bluetooth module HC-06 to run. For that purpose I found very helpful information from Martyn Currey http://www.martyncurrey.com/arduino-and-hc-06-zs-040/ and http://www.martyncurrey.com/arduinobtcontrol/ .  
 
 
@@ -32,7 +32,7 @@ More usefull help in the Internet about the use of the App Inventor can be found
 
 
 
- 5  First Arduino Sketch and handy App attempt  
+ 5  First Arduino sketch and handy app attempt  
 With all these information together I was able to realize a first sketch and an app – and got into trouble or let's say had to enter the next level in embedded programming: Dealing with the hardware. I simply transmitted rightaway the values that I generated with sliders in my app and soon the Arduino and the app got stuck.  
 Through this thread of Robin2 http://forum.arduino.cc/index.php?topic=288234.0 and that from Nick Gammon http://www.gammon.com.au/serial I learned something about the way of the function of the serial comminucation and that there are also interrupts involved. And the need of the interrupt for the serial communication and the strictly interdict of using interrupts while controling the LED stripe doesn't go together. If the interrupts are off the communication can lose data and if the interrupts are on the control of the stripe gets corrupted because of the strict timing that is nessecary. Furthermore I learned that the communication is asynchronous and I should use kind of a handshake and a frame around my data like a start and a stop sign for a tougher communication.  
 
