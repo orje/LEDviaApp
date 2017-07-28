@@ -76,8 +76,7 @@ the Arduino SPI libary from the installation path
 
 To generate the sketch with the  QM Graphical Modeling Tool the libary from Nick Gammon and the SPI libary from Arduino has to be in the sketch path.  
 
-B) Again for information because I'm very thankful to them:  
-
+B) Again for information because I'm very thankful to them:
 for sketch programming:  
 Robin2  
 	http://forum.arduino.cc/index.php?topic=288234.0
