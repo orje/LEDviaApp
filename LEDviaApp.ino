@@ -79,7 +79,7 @@ enum {
 
     BLUETOOTH_POWER = 4,               // Pin of the transitor control
 
-    STOPP_SIG,                         // end of data
+    STOP_SIG,                          // end of data
 
     COMMUNICATION_SIG,
     DISPLAY_SIG,
@@ -362,7 +362,7 @@ static QState LEDviaApp_process_data(LEDviaApp * const me) {
                         me->program = me->value;
                         break;
                     case '>':
-                        QACTIVE_POST((QActive *)me, STOPP_SIG, 0U);
+                        QACTIVE_POST((QActive *)me, STOP_SIG, 0U);
                         break;
                 }
             }
@@ -375,8 +375,8 @@ static QState LEDviaApp_process_data(LEDviaApp * const me) {
             status_ = Q_HANDLED();
             break;
         }
-        /* ${AOs::LEDviaApp::SM::communication::process_data::STOPP} */
-        case STOPP_SIG: {
+        /* ${AOs::LEDviaApp::SM::communication::process_data::STOP} */
+        case STOP_SIG: {
             status_ = Q_TRAN(&LEDviaApp_branch);
             break;
         }
