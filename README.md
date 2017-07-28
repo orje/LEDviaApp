@@ -35,12 +35,14 @@ Through this thread of Robin2 http://forum.arduino.cc/index.php?topic=288234.0 a
 
  6  Structured programming  
 Eventough I tried to structure my sketch as general supposed like using small functions, using a switch/case structure und avoid blocking functions like delay() I was not very happy with the overview. I needed a few status variables and was jumping from function to function. And with every change I had to go almost through it all.  
-This is the same experience I make in my job. As better structured a program is and if the structure is shown in a grafical manner the better it is to care for. For that reason I turned to the long way to learn to use the framework and the modeling tool from Miro Samek. I liked it rightaway eventough my knowledge doesn't reach into its totally depth. The grafical modeling tool gives me a good overview coupled with the ability of  using code in the states, in the transitions or even in the underlying sketch. Furthermore I can use hirachical states what saves me repetition. And last but not least the framework does only react on signals and events depending on the current state, so I don't have to lock them in other states manually like in sequential programs.  
+This is the same experience I make in my job. As better a program is structured and if the structure is shown in a grafical manner the better it is to care for.  
+For that reason I turned to the long way to learn to use the framework and the modeling tool from Miro Samek (link above). I liked it rightaway eventough my knowledge doesn't reach into its totally depth. The grafical modeling tool gives me a good overview coupled with the ability of  using code in the states, in the transitions or even in the underlying sketch. Furthermore I can use hirachical states what saves me repetition. And last but not least the framework does only react on signals and events depending on the current state, so I don't have to lock them in other states manually like in sequential programs.  
 
  7  Concluding remarks  
 So finally I realized my project with the following cornerstones.  
 A) I let my data transfer only be 4 char long:  
 1 char for the selected color or the selected LED animation together with the selected value of  1 char. Ahead of these 2 chars comes 1 char as a start sign. And afterwards comes 1 char as a stop sign.  
+<<<<<<< HEAD
 B) A handshake is implemented this way:  
 If I change a color or a LED animation in the app (3) and there isn't already a communication going on, it first sends only 1 char as a request to the Arduino and wait for the answer (4). This blocking is wanted because I don't want to start a new communication before an ongoing is processed by both the Arduino and the app.  
 The char lands in the receive buffer of the UART. The sketch looks time triggered into the receive buffer (5) and when it notices the request (6), it sends a transmit char to the app (7) and stays in the communication state because like I said before, communication and LED control can't work parallel.  
@@ -48,6 +50,15 @@ If the app notices the transmit char, also time triggered (8, 9), it sends the 4
 With the start sign the sketch processes the data until the stop sign shows up (11). Then it sends the acknowledge sign (12) and turns to the LED control (13).  
 When the app receives the acknowledge sign it becomes ready for a next transmission (12).  
 The sktech looks periodically into the receive buffer and turns back right away to the LED control if there is no new request (1, 2, 14, 15).  
+=======
+B) A handshake is implemented this way (see picture below):  
+If I change a color or a LED animation in the app (3, 4) and there isn't already a communication going on, it first sends only 1 char as a request to the Arduino and wait for the answer (5). This blocking is wanted because I don't want to start a new communication before an ongoing is processed by both the Arduino and the app.  
+The char lands in the receive buffer of the UART. The sketch looks time triggered into the receive buffer (6) and when it notices the request (7), it sends a transmit char to the app (8) and stays in the communication state because like I said before, communication and LED control can't work parallel.  
+If the app notices the transmit char, also time triggered (9, 10), it sends the 4 char data and wait aigan for the acknowledge of the Arduino. Because the sketch knows at this time that it awaits data it looks time triggered for the start sign (11).
+With the start sign the sketch processes the data until the stop sign shows up (12). Then it sends the acknowledge sign (13) and turns to the LED control (14).  
+When the app receives the acknowledge sign it becomes ready for a next transmission (13).  
+The sktech looks periodically into the receive buffer and turns back right away to the LED control if there is no new request (1, 2, 15, 16).  
+>>>>>>> e63474a278d963ae17e70f5a6bf65ce676ea860c
 C) I use the same time tick for the communication and the pause between the LED animation.  
 
 ![handshake](doc/handshake.png)  
