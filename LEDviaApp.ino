@@ -259,7 +259,11 @@ static QState LEDviaApp_running_light(LEDviaApp * const me) {
             QF_INT_ENABLE();
 
             show();
-
+            status_ = Q_HANDLED();
+            break;
+        }
+        /* ${AOs::LEDviaApp::SM::branch::running_light} */
+        case Q_EXIT_SIG: {
             me->led_index++;
             status_ = Q_HANDLED();
             break;
@@ -281,7 +285,11 @@ static QState LEDviaApp_dimming(LEDviaApp * const me) {
                 me->red / 255.0 * me->brightness,
                 me->green / 255.0 * me->brightness,
                 me->blue / 255.0 * me->brightness);
-
+            status_ = Q_HANDLED();
+            break;
+        }
+        /* ${AOs::LEDviaApp::SM::branch::dimming} */
+        case Q_EXIT_SIG: {
             me->brightness = me->brightness + 8U;
             status_ = Q_HANDLED();
             break;
@@ -361,9 +369,14 @@ static QState LEDviaApp_process_data(LEDviaApp * const me) {
             status_ = Q_HANDLED();
             break;
         }
+        /* ${AOs::LEDviaApp::SM::communication::process_data} */
+        case Q_EXIT_SIG: {
+            Serial.print(F("A"));
+            status_ = Q_HANDLED();
+            break;
+        }
         /* ${AOs::LEDviaApp::SM::communication::process_data::STOPP} */
         case STOPP_SIG: {
-            Serial.print(F("A"));
             status_ = Q_TRAN(&LEDviaApp_branch);
             break;
         }
