@@ -46,7 +46,7 @@ If I change a color or a LED animation in the app (3, 4) and there isn't already
 The char lands in the receive buffer of the UART. The sketch looks time triggered into the receive buffer (6) and when it notices the request (7), it sends a transmit char to the app (8) and stays in the communication state because like I said before, communication and LED control can't work parallel.  
 If the app notices the transmit char, also time triggered (9, 10), it sends the 4 char data and wait aigan for the acknowledge of the Arduino. Because the sketch knows at this time that it awaits data it looks time triggered for the start sign (11).
 With the start sign the sketch processes the data until the stop sign shows up (12). Then it sends the acknowledge sign (13) and turns to the LED control (14).  
-When the app receives the acknowledge sign it becomes ready for a next transmission (13).
+When the app receives the acknowledge sign it becomes ready for a next transmission (13).  
 The sktech looks periodically in the receive buffer and turns back right away to the LED control if there is no new request (1, 2, 15, 16).  
 C) I use the same time tick for the communication and the pause between the LED animation.  
 
