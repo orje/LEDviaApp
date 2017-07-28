@@ -57,8 +57,7 @@ Used hardware:
 Samsung Galaxy S5, HC-06 Bluetooth-Modul, Arduino UNO, 2m 120 LEDs WS2812B 5050 RGB Stripe mit WS2811 Controller
 
  9  Links  
-A) To realize my project I used:  
-
+A) To realize my project I used:
 the online app Ide MIT App Inventor 2  
 http://appinventor.mit.edu/explore/get-started.html
 
