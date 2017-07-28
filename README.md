@@ -55,7 +55,7 @@ C) I use the same time tick for the communication and the pause between the LED 
 
 ### 8  Technical specifications  
 Used hardware:  
-Samsung Galaxy S5, HC-06 Bluetooth-Modul, Arduino UNO, 2m 120 LEDs WS2812B 5050 RGB Stripe mit WS2811 Controller
+Samsung Galaxy S5, HC-06 Bluetooth-Modul, Arduino UNO, 2m 120 LEDs WS2812B 5050 RGB Stripe with WS2811 Controller, AC adapter YU0510 5VDC 10A
 
 ### 9  Links  
 A) To realize my project I used:
