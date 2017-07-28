@@ -149,7 +149,7 @@ Y = colour, program
 With the detecting of the stop sign it is changed back to the branch state with its LED control programs.
 
 At exit an acknowledge is send to the handy.</documentation>
-      <entry brief="value, colour, program, STOPP">while (Serial.available()) {
+      <entry brief="value, colour, program, stop sign">while (Serial.available()) {
     uint8_t data = Serial.read();
     switch (data) {
         case '0' ... '9':
@@ -180,7 +180,7 @@ At exit an acknowledge is send to the handy.</documentation>
        </tran_glyph>
       </tran>
       <state_glyph node="52,30,18,18">
-       <entry box="1,2,13,6"/>
+       <entry box="1,2,15,6"/>
        <exit box="1,8,12,4"/>
       </state_glyph>
      </state>
