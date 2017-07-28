@@ -41,15 +41,15 @@ For that reason I turned to the long way to learn to use the framework and the m
 ### 7  Concluding remarks  
 So finally I realized my project with the following cornerstones.  
 A) I let my data transfer only be 4 char long:  
-1 char for the selected color or the selected LED animation together with the selected value of  1 char. Ahead of these 2 chars comes 1 char as a start sign. And afterwards comes 1 char as a stop sign.  
+1 char for the selected color or the selected LED program together with the selected value of  1 char. Ahead of these 2 chars comes 1 char as a start sign. And afterwards comes 1 char as a stop sign.  
 B) A handshake is implemented this way (see picture below):  
-If I change a color or a LED animation in the app (4) and there isn't already a communication going on, it first sends only 1 char as a request to the Arduino and wait for the answer (5). This blocking is wanted because I don't want to start a new communication before an ongoing is processed by both the Arduino and the app.  
+If I change a color or a LED program in the app (4) and there isn't already a communication going on, it first sends only 1 char as a request to the Arduino and wait for the answer (5). This blocking is wanted because I don't want to start a new communication before an ongoing is processed by both the Arduino and the app.  
 The char lands in the receive buffer of the UART. The sketch looks time triggered (6) into the receive buffer and when it notices the request (7), it sends a transmit char to the app (8) and stays in the communication state because like I said before, communication and LED control can't work parallel.  
 If the app notices the transmit char, also time triggered (9), it sends the 4 char data (10) and wait aigan for the acknowledge of the Arduino. Because the sketch knows at this time that it awaits data it looks time triggered (11) for the start sign (12).
 With the start sign the sketch processes the data until the stop sign shows up. Then it sends the acknowledge sign (13) and turns to the LED control (14).  
 When the app receives the acknowledge sign it becomes ready for a next transmission (13).  
 The sktech looks periodically time triggered (1, 15) into the receive buffer and turns back right away to the LED control if there is no new request (2, 16).  
-C) I use the same time tick for the communication and the pause between the LED animation.  
+C) I use the same time tick for the communication and the pause between the LED program.  
 
 ![handshake](doc/handshake.png)  
 
