@@ -28,7 +28,7 @@ The third challenge was to find something to program a handy app.
 Fortunately I didn't had to learn Java as I supposed because according to my information in the internet this is the most common language for that purpose. Presumably this would have cost me at least another year or more.  
 So I was lucky to find the MIT App Inventor 2 http://appinventor.mit.edu/explore/get-started.html . Martyn Currey did already work on it in connection with the bluetooth module and the Arduino http://www.martyncurrey.com/arduinobtcontrol/ .  
 More usefull help in the Internet about the use of the App Inventor can be found from Abraham Getzler https://groups.google.com/forum/#!category-topic/mitappinventortest/2cd6Uz__xA0  and Taifun  https://puravidaapps.com/snippets.php#2enableBT .  
-The App Inventor is completly graphical. I had to get used to it, becaus esometimes this is irritating. But it works for my simple app. It is also event driven like Miro Samek's framework. I had to go used to it, but now I like it.  
+The App Inventor is completly graphical. I had to get used to it, becaus sometimes this is irritating. But it works for my simple app. It is also event driven like Miro Samek's framework. I had to go used to it, but now I like it.  
 
 ### 5  First Arduino sketch and handy app attempt  
 With all these information together I was able to realize a first sketch and an app – and got into trouble or let's say had to enter the next level in embedded programming: Dealing with the hardware. I simply transmitted rightaway the color values that I generated with sliders in my app and soon the Arduino and the app got stuck.  
