@@ -1,7 +1,5 @@
 # LEDviaApp
 
-![state machine](doc/SMofLEDviaApp.png)
-
 Demo video: https://www.youtube.com/watch?v=ySMSormm9lA
 
 ### 1  Introduction  
@@ -30,6 +28,8 @@ So I was lucky to find the MIT App Inventor 2 http://appinventor.mit.edu/explore
 More usefull help in the Internet about the use of the App Inventor can be found from Abraham Getzler https://groups.google.com/forum/#!category-topic/mitappinventortest/2cd6Uz__xA0  and Taifun  https://puravidaapps.com/snippets.php#2enableBT .  
 The App Inventor is completly graphical. I had to get used to it, becaus sometimes this is irritating. But it works for my simple app. It is also event driven like Miro Samek's framework. I had to go used to it, but now I like it.  
 
+![blocks](doc/blocks.png)
+
 ### 5  First Arduino sketch and handy app attempt  
 With all these information together I was able to realize a first sketch and an app – and got into trouble or let's say had to enter the next level in embedded programming: Dealing with the hardware. I simply transmitted rightaway the color values that I generated with sliders in my app and soon the Arduino and the app got stuck.  
 Through this thread of Robin2 http://forum.arduino.cc/index.php?topic=288234.0 and that from Nick Gammon http://www.gammon.com.au/serial I learned something about the function of the serial comminucation and that there are also interrupts involved. But the need of the interrupt for the serial communication and the strictly interdict of using interrupts while controling the LED stripe doesn't go together. If the interrupts are off the communication can lose data and if the interrupts are on the control of the stripe gets corrupted because of the strict timing that is nessecary. Furthermore I learned that the communication is asynchronous and I should use kind of a handshake and a frame around my data like a start and a stop sign for a tougher communication.  
@@ -38,6 +38,8 @@ Through this thread of Robin2 http://forum.arduino.cc/index.php?topic=288234.0 a
 Eventough I tried to structure my sketch as general supposed like using small functions, using a switch/case structure und avoid blocking functions like delay() I was not very happy with the overview. I needed a few status variables and was jumping from function to function. And with every change I had to go almost through it all.  
 This is the same experience I make in my job. As better a program is structured and if the structure is shown in a grafical manner the better it is to care for.  
 For that reason I turned to the long way to learn to use the framework and the modeling tool from Miro Samek (link above). I liked it rightaway eventough my knowledge doesn't reach into its totally depth. The grafical modeling tool gives me a good overview coupled with the ability of  using code in the states, in the transitions or even in the underlying sketch. Furthermore I can use hirachical states what saves me repetition. And last but not least the framework does only react on signals and events depending on the current state, so I don't have to lock them in other states manually like in sequential programs.  
+
+![state machine](doc/SMofLEDviaApp.png)
 
 ### 7  Concluding remarks  
 So finally I realized my project with the following cornerstones.  
