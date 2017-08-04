@@ -16,7 +16,7 @@ So please don't mind if I'm sometimes a little bit euphoric.
 First I had to learn how to program the WS2812B 5050 RGB stripe with the WS2811 Controller.  
 I found the libraries from Adafruit https://github.com/adafruit/Adafruit_NeoPixel and the alternative FastLED https://github.com/FastLED/FastLED which is mentioned in the Internet to be faster. Both libraries come with very nice examples. But I ended up with the small library of Nick Gammon https://github.com/nickgammon/NeoPixels_SPI , because he shows the "bare metal" way to control the stripe. My intention was to get smaller code.
 ### 3  Starting with the Bluetooth module for the Arduino
-The next step was to get the communication between my handy and the Arduino with the Bluetooth module HC-06 to run. For that purpose I found very helpful information from Martyn Currey http://www.martyncurrey.com/arduino-and-hc-06-zs-040/ and http://www.martyncurrey.com/arduinobtcontrol/ .
+The next step was to get the communication between my handy and the Arduino with the Bluetooth module HC-06 to run. For that purpose I found very helpful information from Martyn Currey http://www.martyncurrey.com/arduino-and-hc-06-zs-040/ .
 ### 4  Programming of the handy app
 The third challenge was to find something to program a handy app.  
 Fortunately I didn't had to learn Java as I suspected, because according to my information from the internet this is the most common language for that purpose. Presumably this would have cost me at least another year or more.  
