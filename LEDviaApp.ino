@@ -75,7 +75,8 @@ enum {
 
     COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 5U,
 
-    PIXELS = 120,                      // number of LED
+//    PIXELS = 120,                      // number of LEDs in the stripe
+    PIXELS = 8,                      // number of LED in the stick
 
     BLUETOOTH_POWER = 4,               // Pin of the transitor control
 
