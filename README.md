@@ -1,4 +1,5 @@
 # LEDviaApp
+![picture](doc/stuff/LEDviaApp.bmp)  
 Demo video: https://www.youtube.com/watch?v=NQhEtg-nRmY
 ### 1  Introduction
 In the beginning a short introduction of myself.  
