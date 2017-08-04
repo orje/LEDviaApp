@@ -140,7 +140,9 @@ If the start sign is detect the processing of the data starts.</documentation>
       </tran_glyph>
      </tran>
      <state name="process_data">
-      <documentation>Data format of the communication = &lt;XY&gt; (all char type)
+      <documentation>For processing the message char by char the value has to be transmitted first, because it is assigned with the incoming of the colour or program order.
+
+Data format of the communication = &lt;XY&gt; (all char type)
 &lt; = start sign
 X = value
 Y = colour, program
