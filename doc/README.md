@@ -18,4 +18,4 @@ LEDviaApp.aia = source code of the app for the MIT App Inventor 2
 LEDviaApp.apk = runnable app  
 (only for me because of the integrated Bluetooth adress)
 
-directory stuff = pictures for the app
+directory stuff = pictures for the app and others
