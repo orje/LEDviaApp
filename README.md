@@ -19,7 +19,7 @@ I found the libraries from Adafruit https://github.com/adafruit/Adafruit_NeoPixe
 The next step was to get the communication between my handy and the Arduino with the Bluetooth module HC-06 to run. For that purpose I found very helpful information from Martyn Currey http://www.martyncurrey.com/arduino-and-hc-06-zs-040/ and http://www.martyncurrey.com/arduinobtcontrol/ .
 ### 4  Programming of the handy app
 The third challenge was to find something to program a handy app.  
-Fortunately I didn't had to learn Java as I supposed, because according to my information from the internet this is the most common language for that purpose. Presumably this would have cost me at least another year or more.  
+Fortunately I didn't had to learn Java as I suspected, because according to my information from the internet this is the most common language for that purpose. Presumably this would have cost me at least another year or more.  
 So I was lucky to find the MIT App Inventor 2 http://appinventor.mit.edu/explore/get-started.html . Martyn Currey did already work on it in connection with the bluetooth module and the Arduino http://www.martyncurrey.com/arduinobtcontrol/ .  
 More useful help in the Internet about the use of the App Inventor can be found from Abraham Getzler https://groups.google.com/forum/#!category-topic/mitappinventortest/2cd6Uz__xA0  and Taifun  https://puravidaapps.com/snippets.php#2enableBT .  
 The App Inventor is completely graphical. I had to get used to it, because sometimes this is irritating. But it works for my simple app. It is also event driven like Miro Samek's framework. I had to go used to it, but now I like it.
