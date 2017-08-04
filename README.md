@@ -2,11 +2,11 @@
 ![picture](doc/stuff/LEDviaApp.jpg)  
 Demo video: https://www.youtube.com/watch?v=NQhEtg-nRmY
 ### 1  Introduction
-In the beginning a short introduction of myself.  
-Professionally I work as an industrial electronics since many years. I put production machines into operation, optimize and repair them and do the troubleshooting. To do this one task is to look into the programmings of the controls. And from time to time I do some changes in the programs. Most of the PLC controls are from Siemens.  
+For the beginning, a short introduction of myself.  
+Professionally I work as an industrial electronics since many years. I put production machines into operation, optimize and repair them and do the troubleshooting. To do this, one task is to look into the programmings of the controls. And from time to time I do some changes in the programs. Most of the PLC controls are from Siemens.  
 With Arduino and the C language as a hobby I started in my free time about 3 years ago.  
 I bought the Arduino starter Kit and tried a few things. As an advanced project I wanted to program a Zumo Robot form Pololu. But this turned out to be to much for me yet.  
-It was a little bit overwhelming because compared to the PLC controls programming an embedded system in C is pretty less structured. You have the setup, the loop, many libraries, examples in the internet and than: Good luck!  
+It was a little bit overwhelming, because compared to the PLC controls, programming an embedded system in C is pretty less structured. You have the setup, the loop, many libraries, examples in the internet and than: Good luck!  
 First I tried to find some German lessons and books in the Internet. Finally I landed with Kernighan & Ritchie - C Programming Language 2 and Steven Prata - C Primer Plus Sixth Edition. With these books I learned something about the C language but not very much about structuring a program for an embedded system.  
 In the Internet I stumbled over terms like finite state machine and conceptions from Moore and Mealy. That was the addition to C that I was looking for. And right on the Arduino homepage I found the framework plus the modeling tool of Miro Samek http://playground.arduino.cc/Code/QP .
 First of all I left the robot aside and started the project of controlling a LED stripe with a handy.  
@@ -19,13 +19,13 @@ I found the libraries from Adafruit https://github.com/adafruit/Adafruit_NeoPixe
 The next step was to get the communication between my handy and the Arduino with the Bluetooth module HC-06 to run. For that purpose I found very helpful information from Martyn Currey http://www.martyncurrey.com/arduino-and-hc-06-zs-040/ and http://www.martyncurrey.com/arduinobtcontrol/ .
 ### 4  Programming of the handy app
 The third challenge was to find something to program a handy app.  
-Fortunately I didn't had to learn Java as I supposed because according to my information in the internet this is the most common language for that purpose. Presumably this would have cost me at least another year or more.  
+Fortunately I didn't had to learn Java as I supposed, because according to my information from the internet this is the most common language for that purpose. Presumably this would have cost me at least another year or more.  
 So I was lucky to find the MIT App Inventor 2 http://appinventor.mit.edu/explore/get-started.html . Martyn Currey did already work on it in connection with the bluetooth module and the Arduino http://www.martyncurrey.com/arduinobtcontrol/ .  
 More useful help in the Internet about the use of the App Inventor can be found from Abraham Getzler https://groups.google.com/forum/#!category-topic/mitappinventortest/2cd6Uz__xA0  and Taifun  https://puravidaapps.com/snippets.php#2enableBT .  
 The App Inventor is completely graphical. I had to get used to it, because sometimes this is irritating. But it works for my simple app. It is also event driven like Miro Samek's framework. I had to go used to it, but now I like it.
 ### 5  First Arduino sketch and handy app attempt
 With all these information together I was able to realize a first sketch and an app – and got into trouble or let's say had to enter the next level in embedded programming: Dealing with the hardware. I simply transmitted right away the color values that I generated with sliders in my app and soon the Arduino and the app got stuck.  
-Through this thread of Robin2 http://forum.arduino.cc/index.php?topic=288234.0 and that from Nick Gammon http://www.gammon.com.au/serial I learned something about the function of the serial communication and that there are also interrupts involved. But the need of the interrupt for the serial communication and the strictly interdict of using interrupts while controlling the LED stripe doesn't go together. If the interrupts are off the communication can lose data and if the interrupts are on the control of the stripe gets corrupted because of the strict timing that is necessary. Furthermore I learned that the communication is asynchronous and I should use kind of a handshake and a frame around my data like a start and a stop sign for a tougher communication.  
+Through this thread of Robin2 http://forum.arduino.cc/index.php?topic=288234.0 and that from Nick Gammon http://www.gammon.com.au/serial I learned something about the function of the serial communication and that there are also interrupts involved. But the need of the interrupt for the serial communication and the strictly interdict of using interrupts while controlling the LED stripe doesn't go together. If the interrupts are off, the communication can lose data and if the interrupts are on, the control of the stripe gets corrupted, because of the strict timing that is necessary. Furthermore I learned that the communication is asynchronous and I should use kind of a handshake and a frame around my data like a start and a stop sign for a tougher communication.  
 
 ![blocks](doc/blocks.png)
 ### 6  Structured programming  
