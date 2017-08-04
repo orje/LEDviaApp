@@ -30,7 +30,7 @@ Through this thread of Robin2 http://forum.arduino.cc/index.php?topic=288234.0 a
 ![blocks](doc/blocks.png)
 ### 6  Structured programming  
 Even tough I tried to structure my sketch as general supposed like using small functions, using a switch/case structure and avoid blocking functions like delay(), I was not very happy with the overview. I needed a few status variables and was jumping from function to function. And with every change I had to go almost through the whole code.  
-This is the same experience I make in my job. As better a program is structured and if the structure is shown in a graphical manner the better it is to care for.  
+This is the same experience I make in my job. As better a program is structured and if the structure is shown in a graphical manner, the better it is to care for.  
 For that reason I turned to the long way to learn to use the framework and the modeling tool from Miro Samek (link above). I liked it right away even tough my knowledge doesn't reach into its totally depth. The graphical modeling tool gives me a good overview coupled with the ability of  using code in the states, in the transitions or even in the underlying sketch. Furthermore I can use hierachical states what saves me repetition. And last but not least the framework does only react on signals and events depending on the current state, so I don't have to lock them in other states manually like in sequential programs.  
 Some more information are within the documentation of the model.
 ![state machine](doc/SMofLEDviaApp.png)
