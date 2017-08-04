@@ -37,7 +37,7 @@ Some more informations are within the documentation of the model.
 ### 7  Concluding remarks
 So finally I realized my project with the following cornerstones.  
 A) I let my data transfer only be 4 char long:  
-1 char for the selected color or the selected LED program together with the selected value of  1 char. Ahead of these 2 chars comes 1 char as a start sign. And afterwards comes 1 char as a stop sign.  
+1 char for the selected value together with 1 char of the selected colour or the selected LED program. Ahead of these 2 chars comes 1 char as a start sign. And afterwards comes 1 char as a stop sign.  
 B) A handshake is implemented this way (see picture below):  
 If a color or a LED program is changed in the app (4) and there isn't already a communication going on, it first sends only 1 char 'R' as a request to the Arduino and waits for the answer (5). This blocking is wanted because no new communication shall be started before an ongoing is processed by both the Arduino and the app.  
 The char lands in the receive buffer of the UART. The sketch looks time triggered (6) into the receive buffer and when it sees the request (7), it sends a transmit char 'T' to the app (8) and stays in the communication state because like said before, communication and LED program can't work parallel.  
