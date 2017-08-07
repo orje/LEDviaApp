@@ -42,7 +42,7 @@ One important trick with state machines, respectively event driven transitions f
 ![state machine](doc/SMofLEDviaApp.png)
 ### 7  Concluding remarks
 So finally I realized my project with the following cornerstones:  
-A) To reduce the communication load I only transfer the changed values so it is only 4 char long:  
+A) To reduce the communication load I only transfer the changed values and so it is only 4 char long:  
 1 char for the selected value together with 1 char of the selected colour or the selected LED program. Ahead of these 2 chars comes 1 char as a start sign. And afterwards comes 1 char as a stop sign.  
 B) I don't use the USART Serial interrupt itself, because it could fire at any time and so causes problems with the LED control (explained above). Instead I look activly from time to time into the USART Serial receive buffer. So the handshake is implemented this way (see picture below):  
 If a colour or a LED program is changed in the app (4) and there isn't already a communication going on, it first sends only 1 char 'R' as a request to the Arduino and waits for the answer (5).  
