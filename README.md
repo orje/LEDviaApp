@@ -58,7 +58,7 @@ The sketch looks periodically time triggered (1, 16) into the receive buffer and
 ![handshake](doc/handshake.png)
 ### 8  Technical specifications
 Used hardware:  
-Samsung Galaxy S5, HC-06 Bluetooth-Modul, Arduino UNO REV3, 2m 120 LEDs WS2812B 5050 RGB Stripe with WS2811 Controller, AC adapter YU0510 5VDC 10A
+Samsung Galaxy S5, HC-06 Bluetooth-Modul, Arduino UNO Rev 3, 2m 120 LEDs WS2812B 5050 RGB Stripe with WS2811 Controller, AC adapter YU0510 5VDC 10A
 ### 9  Links
 A) To realize my project I used:  
 the online app Ide MIT App Inventor 2  
