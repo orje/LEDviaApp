@@ -29,7 +29,7 @@ Through this thread of Robin2 http://forum.arduino.cc/index.php?topic=288234.0 a
 Furthermore I learned that the communication is asynchronous and I'm supposed to use a kind of a handshake and a frame around my data like a start and a stop sign for a tougher communication. For the app I came out with this solution:  
 
 ![blocks](doc/blocks.png)  
-Note that I don't react to every changes of the slider right away but only when the sliders are let gone. That way only the final changes of the values will be communicated. This relieves the communication and shortened it to what is really necessary and so frees time for the LED conrol.  
+Note that I don't react to every changes of the sliders right away but only when the sliders are let gone. That way only the final changes of the values will be communicated. This relieves the communication and shortened it to what is really necessary and so frees time for the LED conrol.  
 Second the Bluetooth adress of my HC-06 module is integrated for faster connection and has to be changed when using a different one.
 ### 6  Structured programming  
 Even tough I tried to structure my sketch as general supposed like using small functions, using a switch/case structure and avoid blocking functions like delay(), I was not very happy with the overview. I needed a few status variables and was jumping from function to function. And with every change I had to go almost through the whole code.  
