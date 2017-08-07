@@ -3,7 +3,7 @@
 Demo video: https://www.youtube.com/watch?v=NQhEtg-nRmY
 ### 1  Introduction
 For the beginning, a short introduction of myself.  
-Professionally I work as an industrial electronics since many years. I put production machines into operation, optimize and repair them and do the troubleshooting. To do this, one task is to look into the programmings of the controls. And from time to time I do some changes in the programs. Most of the PLC controls are from the Siemens Simatic line or simular PLC.  
+I'm from Germany and professionally I work as an industrial electronics since many years. I put production machines into operation, optimize and repair them and do the troubleshooting. To do this, one task is to look into the programmings of the controls. And from time to time I do some changes in the programs. Most of the PLC controls are from the Siemens Simatic line or simular PLC.  
 With Arduino and the C language as a hobby I started in my free time about 3 years ago.  
 I bought the Arduino starter Kit and tried a few things.   
 It was a little bit overwhelming, because compared to the PLC controls, programming an embedded system in C is pretty less structured. You have the setup, the loop, many libraries, examples in the internet and than: Good luck!  
