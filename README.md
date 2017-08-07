@@ -37,7 +37,7 @@ Even tough I tried to structure my sketch as general supposed like using small f
 This is the same experience I make in my job. As better a program is structured and if the structure is shown in a graphical manner, the better it is to care for.  
 For that reason I turned to the long way to learn to use the framework and the modeling tool from Miro Samek (link above). I liked it right away even tough my knowledge doesn't reach into its totally depth. The graphical modeling tool gives me a good overview coupled with the ability of  using code in the states, in the transitions or even in the underlying sketch. Furthermore I can use hierachical states what saves me repetition. And last but not least the framework does only react on signals and events depending on the current state, so I don't have to lock them in other states manually like in sequential programs. All this togehter are great benefits.  
 With the state mashine implementation it is easy and clear to splitt the two functions that should never be active at the same time: the communication and the LED control.  
-One important trick with state mashines, respectively event driven transitions from state to state is to use a time tick if needed to repeat something or to move on. More information about the implementation are within the documentation of the model.
+One important trick with state mashines, respectively event driven transitions from state to state is to use a time tick if needed to repeat something or to move on. I use the same time tick for the periodically check of an app request, the handshake communication and the progress in the LED programs. If there are needed more (like in my first attempt) they can simply be created in the ino file within the model. More information about the implementation are within the documentation of the model.  
 ![state machine](doc/SMofLEDviaApp.png)
 ### 7  Concluding remarks
 So finally I realized my project with the following cornerstones.  
@@ -50,7 +50,6 @@ If the app sees the transmit char (10), also time triggered (9) by a Clock Timer
 With the start sign '<' the sketch processes the data until the stop sign '>' shows up (14). Then it sends the acknowledge sign 'A' (14) and turns to the LED program (15).  
 When the app receives the acknowledge sign it becomes ready for a next transmission (14).  
 The sketch looks periodically time triggered (1, 16) into the receive buffer and turns back right away to the LED program if there is no new request (2, 17).  
-C) I use the same time tick for the periodically check of an app request, the handshake communication and the progress in the LED programs. If there are needed more (like in my first attempt) they can simply be created in the ino file within the model.  
 ![handshake](doc/handshake.png)
 ### 8  Technical specifications
 Used hardware:  
