@@ -10,7 +10,7 @@ It was a little bit overwhelming, because compared to the PLC controls, programm
 First I tried to find some German lessons and books in the Internet. Finally I landed with Kernighan & Ritchie - C Programming Language 2 and Steven Prata - C Primer Plus Sixth Edition. With these books I learned something about the C language but not very much about structuring a program for an embedded system.  
 In the Internet I stumbled over terms like finite state machine and conceptions from Moore and Mealy. That was the addition to C that I was looking for. And right on the Arduino homepage I found the framework plus the modeling tool of Miro Samek http://playground.arduino.cc/Code/QP .
 First of all I left the robot aside and started the project of controlling a LED stripe with a handy.  
-Like I said I'm doing this for my hobby and so I can't put that much time in it. So it took me over 2 years to understand Miro's framework and model to end up this project. Puh!  
+Like I said I'm doing this for my hobby and so I can't put that much time in it. So it took me a longer time to understand Miro's framework and model to end up this project. Puh!  
 So please don't mind if I'm sometimes a little bit euphoric.
 ### 2  Control of a LED stripe
 First I had to learn how to program the WS2812B 5050 RGB stripe with the WS2811 Controller.  
