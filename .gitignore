@@ -13,3 +13,4 @@ doc/LEDviaApp_Platine.fzz
 doc/Beschreibung.odt
 .gitignore
 .gitattriburtes
+*.db
