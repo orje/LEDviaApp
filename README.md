@@ -40,10 +40,10 @@ With the state mashine implementation it is easy and clear to splitt the two fun
 One important trick with state mashines, respectively event driven transitions from state to state is to use a time tick if needed to repeat something or to move on. I use the same time tick for the periodically check of an app request, the handshake communication and the progress in the LED programs. If there are needed more (like in my first attempt) they can simply be created in the ino file within the model. More information about the implementation are within the documentation of the model.  
 ![state machine](doc/SMofLEDviaApp.png)
 ### 7  Concluding remarks
-So finally I realized my project with the following cornerstones.  
-A) I let my data transfer only be 4 char long:  
+So finally I realized my project with the following cornerstones:  
+A) To reduce the communication time I let my data transfer only be 4 char long:  
 1 char for the selected value together with 1 char of the selected colour or the selected LED program. Ahead of these 2 chars comes 1 char as a start sign. And afterwards comes 1 char as a stop sign.  
-B) A handshake is implemented this way (see picture below):  
+B) I don't use the Serial interrupt itself, because it could fire any time and so causes problems with the LED control (explained above). Instead I look activly from time to time into the Serail buffer. So the handshake is implemented this way (see picture below):  
 If a colour or a LED program is changed in the app (4) and there isn't already a communication going on, it first sends only 1 char 'R' as a request to the Arduino and waits for the answer (5).  
 The char lands in the receive buffer of the UART. The sketch looks time triggered (6) into the receive buffer and when it sees the request (7), it sends a transmit char 'T' to the app (8).  
 If the app sees the transmit char (10), also time triggered (9) by a Clock Timer, it sends the 4 char data (11) and waits for the acknowledge of the Arduino. Because the sketch knows at this time that it awaits data it looks time triggered (12) for the start sign (13).
