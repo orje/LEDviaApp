@@ -5,13 +5,13 @@ Demo video: https://www.youtube.com/watch?v=NQhEtg-nRmY
 For the beginning, a short introduction of myself.  
 Professionally I work as an industrial electronics since many years. I put production machines into operation, optimize and repair them and do the troubleshooting. To do this, one task is to look into the programmings of the controls. And from time to time I do some changes in the programs. Most of the PLC controls are from the Siemens Simatic line or simular PLC.  
 With Arduino and the C language as a hobby I started in my free time about 3 years ago.  
-I bought the Arduino starter Kit and tried a few things. As an advanced project I wanted to program a Zumo Robot form Pololu. But this turned out to be to much for me yet.  
+I bought the Arduino starter Kit and tried a few things.   
 It was a little bit overwhelming, because compared to the PLC controls, programming an embedded system in C is pretty less structured. You have the setup, the loop, many libraries, examples in the internet and than: Good luck!  
 First I tried to find some German lessons and books in the Internet. Finally I landed with Kernighan & Ritchie - C Programming Language 2 and Steven Prata - C Primer Plus Sixth Edition. With these books I learned something about the C language but not very much about structuring a program for an embedded system.  
 In the Internet I stumbled over terms like finite state machine and conceptions from Moore and Mealy. That was the addition piece to C that I was looking for. And right on the Arduino homepage I found the framework plus the modeling tool of Miro Samek http://playground.arduino.cc/Code/QP that integrates different concepts.  
-First of all I left the robot aside and started the project of controlling a LED stripe with a handy.  
-Like I said I'm doing this for my hobby and so I can't put that much time in it. So it took me a longer time to understand Miro's framework and model to end up this project. Puh!  
-So please don't mind if I'm sometimes a little bit euphoric.
+As an advanced project I decided to start with the controlling of a LED stripe with a handy.  
+As a newbie and a hobbiest it took me a longer time to understand Miro's framework and model to end up this project. Puh!  
+So please don't mind if I'm sometimes a little bit euphoric about my success. And don't mind if maybe you as a professionell C and/or embedded programmer would come to other solutions. I would really like to learn from critics.
 ### 2  Control of a LED stripe
 But first I had to learn how to program the WS2812B 5050 RGB stripe with the WS2811 Controller.  
 I found the libraries from Adafruit https://github.com/adafruit/Adafruit_NeoPixel and the alternative FastLED https://github.com/FastLED/FastLED which is mentioned in the Internet to be faster. Both libraries come with very nice examples.  
