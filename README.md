@@ -48,7 +48,7 @@ B) To reduce the communication load I only transfer the changed values and so it
 1 char for the selected value together with 1 char of the selected colour or the selected LED program. Ahead of these 2 chars comes 1 char as a start sign. And afterwards comes 1 char as a stop sign.  
 C) I don't use the USART Serial interrupt itself, because it could fire at any time and so causes problems with the LED control (explained above). Instead I look activly from time to time into the USART Serial receive buffer.  
 D) A once started communication has to be ended before a new one is allowed to keep control over the two basic states.  
-E) The handshake is implemented this way (see picture below):  
+E) An expected trouble free handshake is implemented this way (see picture below):  
 If a colour or a LED program is changed in the app (4) and there isn't already a communication going on, it first sends only 1 char 'R' as a request to the Arduino and waits for the answer (5).  
 The char lands in the receive buffer. The sketch looks time triggered (6) into the receive buffer and when it sees the request (7), it sends a transmit char 'T' to the app (8).  
 If the app sees the transmit char (10), also time triggered (9) by a Clock Timer, it sends the 4 char data (11) and waits for the acknowledge of the Arduino. Because the sketch knows at this time that it awaits data it looks time triggered (12) for the start sign (13).
