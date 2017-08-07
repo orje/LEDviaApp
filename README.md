@@ -11,7 +11,8 @@ First I tried to find some German lessons and books in the Internet. Finally I l
 In the Internet I stumbled over terms like finite state machine and conceptions from Moore and Mealy. That was the addition piece to C that I was looking for. And right on the Arduino homepage I found the framework plus the modeling tool of Miro Samek http://playground.arduino.cc/Code/QP that integrates different concepts.  
 As an advanced project I decided to start with the controlling of a LED stripe with a handy.  
 As a newbie and a hobbiest it took me a longer time to understand Miro's framework and model to end up this project. Puh!  
-So please don't mind if I'm sometimes a little bit euphoric about my success. And don't mind if maybe you as a professionell C and/or embedded programmer would come to other solutions. I would really like to learn from critics.
+So please don't mind if I'm sometimes a little bit euphoric about my success. And don't mind if maybe you as a professionell C and/or embedded programmer would come to other solutions. I would really like to learn from critics.  
+Within the Issues I list tasks that should or could still be done.  
 ### 2  Control of a LED stripe
 But first I had to learn how to program the WS2812B 5050 RGB stripe with the WS2811 Controller.  
 I found the libraries from Adafruit https://github.com/adafruit/Adafruit_NeoPixel and the alternative FastLED https://github.com/FastLED/FastLED which is mentioned in the Internet to be faster. Both libraries come with very nice examples.  
