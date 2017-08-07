@@ -28,7 +28,8 @@ With all these information I was able to realize a first sketch and an app – a
 Through this thread of Robin2 http://forum.arduino.cc/index.php?topic=288234.0 and that from Nick Gammon http://www.gammon.com.au/serial I learned something about the function of the serial communication and that there are interrupts involved. But during the control of the LED stripe Interrupts are not alowed. So the need of the interrupt for the serial communication and the strictly interdict of using interrupts while controlling the LED stripe doesn't go together. If the interrupts are off, the communication can lose data and if the interrupts are on, the control of the stripe gets corrupted, because of the strict timing that is necessary.  
 Furthermore I learned that the communication is asynchronous and I'm supposed to use a kind of a handshake and a frame around my data like a start and a stop sign for a tougher communication. For the app I came out with this solution:  
 
-![blocks](doc/blocks.png)
+![blocks](doc/blocks.png)  
+Note that I don't react of changes of the slider right away but only when the sliders are let gone.
 ### 6  Structured programming  
 Even tough I tried to structure my sketch as general supposed like using small functions, using a switch/case structure and avoid blocking functions like delay(), I was not very happy with the overview. I needed a few status variables and was jumping from function to function. And with every change I had to go almost through the whole code.  
 This is the same experience I make in my job. As better a program is structured and if the structure is shown in a graphical manner, the better it is to care for.  
