@@ -47,7 +47,7 @@ If the app sees the transmit char (10), also time triggered (9) by a Clock Timer
 With the start sign '<' the sketch processes the data until the stop sign '>' shows up (14). Then it sends the acknowledge sign 'A' (14) and turns to the LED program (15).  
 When the app receives the acknowledge sign it becomes ready for a next transmission (14).  
 The sketch looks periodically time triggered (1, 16) into the receive buffer and turns back right away to the LED program if there is no new request (2, 17).  
-C) I use the same time tick for the communication and the pause between the LED programs.
+C) I use the same time tick for the periodically check of a app request, the handshake communication and the progress in the LED programs.
 ![handshake](doc/handshake.png)
 ### 8  Technical specifications
 Used hardware:  
