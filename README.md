@@ -32,7 +32,7 @@ Furthermore I learned that the Serial communication is asynchronous and I'm supp
 
 ![blocks](doc/blocks.png)  
 Note that I don't react to every changes of the sliders right away but only when the sliders are let gone. That way only the final changes of the values will be communicated. This relieves the communication and shortened it to what is really necessary and so frees time for the LED conrol.  
-Second the Bluetooth adress of my HC-06 module is integrated for faster connection and has to be changed when using a different one.
+Second the Bluetooth adress of my HC-06 module is integrated for faster establishment of the connection and has to be changed when using a different one.
 ### 6  Structured programming  
 Even tough I tried to structure my sketch as general supposed like using small functions, using a switch/case structure and avoid blocking functions like delay(), I was not very happy with the overview. I needed a few status variables and was jumping from function to function. And with every change I had to go almost through the whole code.  
 This is the same experience I make in my job. As better a program is structured and if the structure is shown in a graphical manner, the better it is to care for.  
