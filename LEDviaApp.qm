@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <model version="4.0.1" links="0">
  <documentation>Prototyp of controlling a LED stripe with an Arduino from a handy with Bluetooth communication.
-Because of the reason that the Bluetooth communication needs interrupts but the controlling of the LED stripe forbids it the communication and the controlling has to be split into two bransches.
+Because of the reason that the Bluetooth communication needs interrupts but the controlling of the LED stripe forbids it the communication and the controlling has to be split into two branches.
 
 To set the 120 pixel LED stripe there are around 369 µs of time needed (according to Nick Gammon). The communication check time tick has to be longer than this to not disturb the setting.
 For now the communication tick is 20 ms long.
@@ -10,7 +10,8 @@ The stopping of the communication tick with &quot;QActive_disarmX((QActive *)me,
  <framework name="qpn"/>
  <package name="AOs" stereotype="0x02">
   <class name="LEDviaApp" superclass="qpn::QActive">
-   <documentation>digitalWrite(DEBUG_LED, HIGH);
+   <documentation>use for debuging:
+digitalWrite(DEBUG_LED, HIGH);
 digitalWrite(DEBUG_LED, LOW);</documentation>
    <attribute name="value" type="uint8_t" visibility="0x02" properties="0x00"/>
    <attribute name="red" type="uint8_t" visibility="0x02" properties="0x00"/>
@@ -31,9 +32,9 @@ digitalWrite(DEBUG_LED, LOW);</documentation>
      </initial_glyph>
     </initial>
     <state name="branch">
-     <documentation>First is checked whether there is a request from the handy in the receive buffer of the USART. If so a transmit order is send to the handy and it is changed into the communication state. If not it is changed into  the active program substate.
+     <documentation>First it is checked whether there is a request from the handy in the receive buffer of the USART. If so a transmit order is send to the handy and it is changed into the communication state. If not it is changed into  the active program substate.
 
-Periodically comes a time tick to recheck the receive buffer. This timer is also used to progress the LED programs with animations.</documentation>
+Periodically a time tick is generated to recheck the receive buffer. This timer is also used to progress the LED programs with animations.</documentation>
      <entry brief="communication check, program choice, start communication tick">if (Serial.read() == 'R') {
     Serial.print(F(&quot;T&quot;));
     QACTIVE_POST((QActive *)me, COMMUNICATION_SIG, 0U);
@@ -81,7 +82,7 @@ QActive_armX((QActive *)me, 0U, COMMUNICATION_TICK, 0U);</entry>
       </state_glyph>
      </state>
      <state name="running_light">
-      <documentation>Because of the strict timing from the SPI bus while sending the colour values to the whole LED stripe the interrupts has to be shot off. At the end of the sending a short dealy is necessary as a rest for the stripe to show the clours (s. Nick Gammon).
+      <documentation>Because of the strict timing of the SPI bus while sending the colour values to the whole LED stripe the interrupts has to be shut off. At the end of the sending a short blocking dealy is necessary as a reset for the stripe to show the colours (s. Nick Gammon).
 
 At exit the LED index is incremented.</documentation>
       <entry brief="init LED index, LED running light">if (me-&gt;led_index == PIXELS) {
@@ -107,7 +108,7 @@ show();</entry>
       </state_glyph>
      </state>
      <state name="dimming">
-      <documentation>The clours are multiplicated with an incrementing brightness value until overflow.
+      <documentation>The colours are multiplicated with an incrementing brightness value until overflow.
 
 At exit the brightness is incremented.</documentation>
       <entry brief="dimming LED">showColor(PIXELS,
@@ -127,7 +128,7 @@ At exit the brightness is incremented.</documentation>
     </state>
     <state name="communication">
      <documentation>Because of the asynchronous communication a timer is startet. If it shoots the receive buffer is checked for the start sign.
-If the start sign is detect the processing of the data starts.</documentation>
+If the start sign is detected the processing of the data starts.</documentation>
      <entry brief="start communication tick">QActive_armX((QActive *)me, 0U, COMMUNICATION_TICK, 0U);</entry>
      <exit brief="stop communication tick">QActive_disarmX((QActive *)me, 0U);</exit>
      <tran trig="Q_TIMEOUT">
@@ -145,7 +146,7 @@ If the start sign is detect the processing of the data starts.</documentation>
      <state name="process_data">
       <documentation>For processing the message char by char the value has to be transmitted first, because it is assigned with the incoming of the colour or program order.
 
-Data format of the communication = &lt;XY&gt; (all char type)
+Data format of the communication = &lt;XY&gt; (all type of char)
 &lt; = start sign
 X = value
 Y = colour, program
@@ -153,7 +154,7 @@ Y = colour, program
 
 With the detecting of the stop sign it is changed back to the branch state with its LED control programs.
 
-At exit an acknowledge is send to the handy.</documentation>
+On exit an acknowledge is send to the handy.</documentation>
       <entry brief="value, colour, program, stop sign">while (Serial.available()) {
     uint8_t data = Serial.read();
     switch (data) {
@@ -229,12 +230,12 @@ enum {
 // number of system clock ticks in one second
     BSP_TICKS_PER_SEC       = 100,
 
-    COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 5U,
+    COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 5U, // 20 ms
 
 //    PIXELS = 120,                      // number of LEDs in the stripe
-    PIXELS = 8,                      // number of LED in the stick
+    PIXELS = 8,                        // number of LED in the stick
 
-    BLUETOOTH_POWER = 4,               // Pin of the transitor control
+    BLUETOOTH_POWER = 4,               // Pin of the transitor base
 
     STOP_SIG,                          // end of data
 
@@ -243,7 +244,7 @@ enum {
     RUNNING_LIGHT_SIG,
     DIMMING_SIG,
 
-    DEBUG_LED = 7                      // optional debugging LED
+    DEBUG_LED = 7                      // optional debuging LED
 };
 
 //............................................................................
@@ -255,16 +256,17 @@ void setup() {
     QActive_ctor(&amp;AO_LEDviaApp.super, Q_STATE_CAST(&amp;LEDviaApp_initial));
 
     // initialize the hardware used in this sketch...
-    pinMode(DEBUG_LED, OUTPUT); // set the DEBUG_LED pin to output
+    pinMode(DEBUG_LED, OUTPUT);        // set the DEBUG_LED pin to output
 
     pinMode(BLUETOOTH_POWER, OUTPUT);  // Pin mode of the transitor control
     delay(3000);                       // switch on delay for program upload
     digitalWrite(BLUETOOTH_POWER, HIGH); // switch on the Bluetooth module
 
-    Serial.begin(115200); // set the highest standard baud rate of 115200 bps
+    // set the highest standard baud rate of 115200 bps
+    Serial.begin(115200);
 
     ledsetup();                        // setup SPI
-    showColor(PIXELS, 0, 0, 0);        // all Led off
+    showColor(PIXELS, 0, 0, 0);        // all LED off
 }
 
 //............................................................................
@@ -311,8 +313,7 @@ void Q_onAssert(char const Q_ROM * const file, int line) {
 //============================================================================
 // define all AO classes (state machine)...
 $define(AOs::LEDviaApp)
-//...
-</text>
+//...</text>
   </file>
  </directory>
 </model>
