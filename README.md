@@ -46,13 +46,13 @@ So finally I realized my project with the following cornerstones:
 A) I use two self exclusioning states: LED control and Serial communication.  
 B) To reduce the communication load I only transfer the changed values and so it is only 4 char long:  
 1 char for the selected value together with 1 char of the selected colour or the selected LED program. Ahead of these 2 chars comes 1 char as a start sign. And afterwards comes 1 char as a stop sign.  
-C) I don't use the USART Serial interrupt itself, because it could fire at any time and so causes problems with the LED control (explained above). Instead I look activly from time to time into the USART Serial receive buffer.  
+C) I don't use the USART Serial interrupt itself, because it could fire at any time and so causes problems with the LED control (explained above). Instead I look activly from time to time into the USART Serial receive buffer for a new communication request from the app.  
 D) An once started communication has to be ended before a new one is allowed to keep control over the two basic states.  
 E) An expected trouble free handshake is implemented this way (see picture below):  
 If a colour or a LED program is changed in the app (4) and there isn't already a communication going on, it first sends only 1 char 'R' as a request to the Arduino and waits for the answer (5).  
-The char lands in the receive buffer. The sketch looks time triggered (6) into the receive buffer and when it sees the request (7), it sends a transmit char 'T' to the app (8).  
+The char lands in the USART Serial receive buffer. The sketch looks time triggered (6) into the receive buffer and when it sees the request (7), it sends a transmit char 'T' to the app (8).  
 If the app sees the transmit char (10), also time triggered (9) by a Clock Timer, it sends the 4 char data (11) and waits for the acknowledge of the Arduino. Because the sketch knows at this time that it awaits data it looks time triggered (12) for the start sign (13).
-With the start sign '<' the sketch processes the data until the stop sign '>' shows up (14). Then it sends the acknowledge sign 'A' (14) and turns to the LED program (15).  
+With the start sign '<' the transfered data are processed until the stop sign '>' shows up (14). Then the acknowledge sign 'A' is send (14) and turns to the LED program (15).  
 When the app receives the acknowledge sign it becomes ready for a next transmission (14).  
 The sketch looks periodically time triggered (1, 16) into the receive buffer and turns back right away to the LED program if there is no new request (2, 17).  
 ![handshake](doc/handshake.png)
