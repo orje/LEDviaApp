@@ -21,7 +21,7 @@ But I ended up with the small library of Nick Gammon https://github.com/nickgamm
 The next step was to get the communication between my handy and the Arduino with the Bluetooth module HC-06 to run. For that purpose I found very helpful information from Martyn Currey http://www.martyncurrey.com/arduino-and-hc-06-zs-040/ .
 ### 4  Programming of the handy app
 The third challenge was to find something to program a handy app.  
-Fortunately I didn't had to learn Java as I suspected, because according to my information from the internet this is the most common language for apps. Presumably this would have cost me some additional time.  
+Fortunately I didn't had to learn Java as I suspected, because according to my information from the internet this is the most common language for apps. Presumably this would have cost me a lot of additional time.  
 So I was glad to find the MIT App Inventor 2 http://appinventor.mit.edu/explore/get-started.html . Martyn Currey did already work with it to connect a bluetooth module and the Arduino http://www.martyncurrey.com/arduinobtcontrol/ .  
 Additional useful help in the Internet about the use of the App Inventor can be found from Abraham Getzler https://groups.google.com/forum/#!category-topic/mitappinventortest/2cd6Uz__xA0  and Taifun  https://puravidaapps.com/snippets.php#2enableBT .  
 The App Inventor is completely graphical. And it is also event driven like Miro Samek's framework and that was the second challenge. I had to get used to it, because in the beginning this was irritating. But with all the good informations in the internet about using the App Inventor I succeded quiete soon.
