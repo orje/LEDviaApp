@@ -1,4 +1,4 @@
-sketch_directory.PNG = nessessary libaries in the sketch directory for the Modeling Tool  
+sketch_directory.PNG = nessessary libraries in the sketch directory for the Modeling Tool  
 
 SMofLEDviaApp.png = picture of the state machine  
 
