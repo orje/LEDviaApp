@@ -76,7 +76,7 @@ https://github.com/nickgammon/NeoPixels_SPI
 the Arduino SPI library from the installation path  
 %Arduino installation path%\Arduino\hardware\arduino\avr\libraries\SPI\src  
 
-To generate the sketch with the  QM Graphical Modeling Tool the library from Nick Gammon and the SPI library from Arduino has to be in the sketch path.  
+To generate the sketch with the QM Graphical Modeling Tool the library from Nick Gammon and the SPI library from Arduino has to be in the sketch path. So the directory should look at least this way:  
 ![directory](doc/sketch_directory.PNG)  
 B) Again for information because I'm very thankful to them:  
 for sketch programming:  
