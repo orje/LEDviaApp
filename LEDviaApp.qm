@@ -3,8 +3,15 @@
  <documentation>Prototyp of controlling a LED stripe with an Arduino from a handy with Bluetooth communication.
 Because of the reason that the Bluetooth communication needs interrupts but the controlling of the LED stripe forbids it the communication and the controlling has to be split into two branches.
 
-To set the 120 pixel LED stripe there are around 369 µs of time needed (according to Nick Gammon). The communication check time tick has to be longer than this to not disturb the setting.
-For now the communication tick is 20 ms long.
+To set the 120 pixel LED stripe there are around 369 µs of time needed (according to Nick Gammon).
+The communication check time tick has to be longer than this to not disturb the setting. For now the communication tick is 20 ms long.
+
+Calculations:
+1 SPI bit = two processor clock cycles = 16 MHz / 2 = 8 MHz = 8000000 * 1 / s = 1 / 8000000 s = 0,000000125 s = 0,000125 µs = 0,125 ms = 125 ns
+1 byte = 8 * SPI bit = 8 * 125 ns = 1000 ns
+1 rgb-pixel = 3 * byte = 3 * 1000 ns = 3000 ns
+120 rgb-pixel = 120 * rgb-pixel = 120 * 3000 ns = 360000 ns = 360 µs = 0,36 ms
+LED stripe setzen = 120 prgb-ixel + 9 µs reset = 360 µs + 9 µs = 369 µs = 0,369 ms
 
 The stopping of the communication tick with &quot;QActive_disarmX((QActive *)me, 0U);&quot; is optinal because the timer is an one shot event. But the author of the framework supposes it because of a clean programming.</documentation>
  <framework name="qpn"/>
