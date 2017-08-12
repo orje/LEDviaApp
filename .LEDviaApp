@@ -5,6 +5,7 @@
   <item name="item">~</item>
   <item name="item">${AOs}</item>
   <item name="item">${.}</item>
+  <item name="item">${.::LEDviaApp.ino}</item>
  </group>
  <group name="settings">
   <item name="tabs">1</item>
