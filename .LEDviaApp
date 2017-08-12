@@ -11,54 +11,63 @@
   <item name="backups">0</item>
  </group>
  <group name="windows">
-  <item id="AOs::LEDviaApp::SM">0,0,935,1278,*</item>
-  <item id=".::LEDviaApp.ino">0,0,830,300</item>
+  <item id="AOs::LEDviaApp::SM">0,0,1103,915,*</item>
+  <item id=".::LEDviaApp.ino">0,0,1103,539</item>
  </group>
  <group name="search">
-  <item name="options">2032128</item>
-  <item name="replace">0</item>
+  <item name="options">4129280</item>
+  <item name="replace">1</item>
  </group>
- <group name="vars"/>
+ <group name="vars">
+  <item id="PROJECT">LEDviaApp</item>
+  <item id="ARDUINO_HOME">C:\assemble\Arduino</item>
+  <item id="ARDUINO_SKETCHBOOK">C:\Users\orje\Documents\Arduino</item>
+  <item id="BOARD_MCU">atmega328p</item>
+  <item id="BOARD_VARIANT">standard</item>
+  <item id="BOARD_F_MHZ">16</item>
+  <item id="BOARD_COM">COM4</item>
+  <item id="BOARD_BAUD">115200</item>
+ </group>
  <group name="tools">
   <group name="tool">
-   <item name="icon">0</item>
-   <item name="title"></item>
-   <item name="command"></item>
-   <item name="args"></item>
-   <item name="dir"></item>
-   <item name="options">0</item>
+   <item name="icon">3</item>
+   <item name="title">build</item>
+   <item name="command">&quot;%ARDUINO_SKETCHBOOK%\tools\utils\tclsh.exe&quot;</item>
+   <item name="args">&quot;%ARDUINO_SKETCHBOOK%\tools\scripts\build_avr.tcl&quot; %PROJECT% &quot;qpn_avr&quot;</item>
+   <item name="dir">.</item>
+   <item name="options">3</item>
   </group>
   <group name="tool">
-   <item name="icon">0</item>
-   <item name="title"></item>
-   <item name="command"></item>
-   <item name="args"></item>
-   <item name="dir"></item>
-   <item name="options">0</item>
+   <item name="icon">5</item>
+   <item name="title">clean</item>
+   <item name="command">&quot;%ARDUINO_SKETCHBOOK%\tools\utils\rm.exe&quot;</item>
+   <item name="args">bin\*</item>
+   <item name="dir">.</item>
+   <item name="options">2</item>
   </group>
   <group name="tool">
-   <item name="icon">0</item>
-   <item name="title"></item>
-   <item name="command"></item>
-   <item name="args"></item>
-   <item name="dir"></item>
-   <item name="options">0</item>
+   <item name="icon">6</item>
+   <item name="title">upload</item>
+   <item name="command">&quot;%ARDUINO_SKETCHBOOK%\tools\scripts\upload_avr.bat&quot;</item>
+   <item name="args">%PROJECT%</item>
+   <item name="dir">.</item>
+   <item name="options">2</item>
   </group>
   <group name="tool">
-   <item name="icon">0</item>
-   <item name="title"></item>
-   <item name="command"></item>
-   <item name="args"></item>
+   <item name="icon">8</item>
+   <item name="title">serialterm</item>
+   <item name="command">&quot;%ARDUINO_SKETCHBOOK%\tools\utils\serialterm.exe&quot;</item>
+   <item name="args">%BOARD_COM% %BOARD_BAUD%</item>
    <item name="dir"></item>
-   <item name="options">0</item>
+   <item name="options">4</item>
   </group>
   <group name="tool">
-   <item name="icon">0</item>
-   <item name="title"></item>
-   <item name="command"></item>
-   <item name="args"></item>
+   <item name="icon">5</item>
+   <item name="title">clean all</item>
+   <item name="command">&quot;%ARDUINO_SKETCHBOOK%\tools\utils\rm.exe&quot;</item>
+   <item name="args">bin\* lib\*</item>
    <item name="dir"></item>
-   <item name="options">0</item>
+   <item name="options">2</item>
   </group>
  </group>
 </session>
