@@ -4,7 +4,7 @@
 Because of the reason that the Bluetooth communication needs interrupts but the controlling of the LED stripe forbids it the communication and the controlling has to be split into two branches.
 
 To set the 120 pixel LED stripe there are around 369 µs of time needed (according to Nick Gammon).
-The communication check time tick has to be longer than this to not disturb the setting. For now the communication tick is 20 ms long.
+The communication check time tick has to be longer than this to not disturb the setting. For now the communication tick is 10 ms long.
 
 Calculations:
 1 SPI bit = two processor clock cycles = 16 MHz / 2 = 8 MHz = 8000000 * 1 / s = 1 / 8000000 s = 0,000000125 s = 0,000125 µs = 0,125 ms = 125 ns
@@ -122,7 +122,7 @@ At exit the brightness is incremented.</documentation>
     me-&gt;red / 255.0 * me-&gt;brightness,
     me-&gt;green / 255.0 * me-&gt;brightness,
     me-&gt;blue / 255.0 * me-&gt;brightness);</entry>
-      <exit brief="inc brightness">me-&gt;brightness = me-&gt;brightness + 8U;</exit>
+      <exit brief="inc brightness">me-&gt;brightness = me-&gt;brightness + 4U;</exit>
       <state_glyph node="18,40,14,10">
        <entry box="1,2,13,4"/>
        <exit box="1,6,13,2"/>
@@ -237,7 +237,7 @@ enum {
 // number of system clock ticks in one second
     BSP_TICKS_PER_SEC       = 100,
 
-    COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 5U, // 20 ms
+    COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 10U, // 10 ms
 
 //    PIXELS = 120,                      // number of LEDs in the stripe
     PIXELS = 8,                        // number of LED in the stick

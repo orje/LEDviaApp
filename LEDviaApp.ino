@@ -73,12 +73,12 @@ enum {
 // number of system clock ticks in one second
     BSP_TICKS_PER_SEC       = 100,
 
-    COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 5U,
+    COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 10U, // 10 ms
 
 //    PIXELS = 120,                      // number of LEDs in the stripe
-    PIXELS = 8,                      // number of LED in the stick
+    PIXELS = 8,                        // number of LED in the stick
 
-    BLUETOOTH_POWER = 4,               // Pin of the transitor control
+    BLUETOOTH_POWER = 4,               // Pin of the transitor base
 
     STOP_SIG,                          // end of data
 
@@ -87,7 +87,7 @@ enum {
     RUNNING_LIGHT_SIG,
     DIMMING_SIG,
 
-    DEBUG_LED = 7                      // optional debugging LED
+    DEBUG_LED = 7                      // optional debuging LED
 };
 
 //............................................................................
@@ -99,16 +99,17 @@ void setup() {
     QActive_ctor(&AO_LEDviaApp.super, Q_STATE_CAST(&LEDviaApp_initial));
 
     // initialize the hardware used in this sketch...
-    pinMode(DEBUG_LED, OUTPUT); // set the DEBUG_LED pin to output
+    pinMode(DEBUG_LED, OUTPUT);        // set the DEBUG_LED pin to output
 
     pinMode(BLUETOOTH_POWER, OUTPUT);  // Pin mode of the transitor control
     delay(3000);                       // switch on delay for program upload
     digitalWrite(BLUETOOTH_POWER, HIGH); // switch on the Bluetooth module
 
-    Serial.begin(115200); // set the highest standard baud rate of 115200 bps
+    // set the highest standard baud rate of 115200 bps
+    Serial.begin(115200);
 
     ledsetup();                        // setup SPI
-    showColor(PIXELS, 0, 0, 0);        // all Led off
+    showColor(PIXELS, 0, 0, 0);        // all LED off
 }
 
 //............................................................................
@@ -291,7 +292,7 @@ static QState LEDviaApp_dimming(LEDviaApp * const me) {
         }
         /* ${AOs::LEDviaApp::SM::branch::dimming} */
         case Q_EXIT_SIG: {
-            me->brightness = me->brightness + 8U;
+            me->brightness = me->brightness + 4U;
             status_ = Q_HANDLED();
             break;
         }
@@ -390,4 +391,3 @@ static QState LEDviaApp_process_data(LEDviaApp * const me) {
 }
 
 //...
-
