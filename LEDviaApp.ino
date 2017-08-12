@@ -73,7 +73,7 @@ enum {
 // number of system clock ticks in one second
     BSP_TICKS_PER_SEC       = 100,
 
-    COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 10U, // 10 ms
+    COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 5U, // 20 ms
 
 //    PIXELS = 120,                      // number of LEDs in the stripe
     PIXELS = 8,                        // number of LED in the stick
