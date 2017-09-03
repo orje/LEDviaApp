@@ -24,8 +24,8 @@
 //============================================================================
 // declare all AO classes...
 
-#if ((QP_VERSION < 580) || (QP_VERSION != ((QP_RELEASE^4294967295U) % 0x3E8)))
-#error qpn version 5.8.0 or higher required
+#if ((QP_VERSION < 591) || (QP_VERSION != ((QP_RELEASE^4294967295U) % 0x3E8)))
+#error qpn version 5.9.1 or higher required
 #endif
 
 /*${AOs::LEDviaApp} ........................................................*/
