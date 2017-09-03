@@ -51,9 +51,9 @@ D) An once started communication has to be ended before a new one is allowed to 
 E) An expected trouble free handshake is implemented this way (see picture below):  
 If a colour or a LED program is changed in the app (4) and there isn't already a communication going on, it first sends only 1 char 'R' as a request to the Arduino and waits for the answer (5).  
 The char lands in the USART Serial receive buffer. The sketch looks time triggered (6) into the receive buffer and when it sees the request (7), it sends a transmit char 'T' to the app (8).  
-If the app sees the transmit char (10), also time triggered (9) by a Clock Timer, it sends the 4 char data (11) and waits for the acknowledge of the Arduino. Because the sketch knows at this time that it awaits data it looks time triggered (12) for the start sign (13).
-With the start sign '<' the transfered data are processed until the stop sign '>' shows up (14). Then the acknowledge sign 'A' is send (14) and turns to the LED program (17).  
-When the app receives time triggered (15) the acknowledge sign it becomes ready for a next transmission (16).  
+When the app sees the transmit char (10), also time triggered (9) by a Clock Timer, it sends the 4 char data (11) and waits for the acknowledge of the Arduino. Because the sketch knows at this time that it awaits data it looks time triggered (12) for the start sign (13).
+With the start sign '<' the transfered data are processed until the stop sign '>' shows up (14). Then the acknowledge sign 'A' is send (14) and turns to the LED program (15).  
+When the app receives time triggered (16) the acknowledge sign it becomes ready for a next transmission (17).  
 The sketch looks periodically time triggered (1, 18) into the receive buffer and turns back right away to the LED program if there is no new request (2, 20).  
 ![handshake](doc/handshake.png)
 ### 8  Technical specifications
