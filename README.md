@@ -45,7 +45,7 @@ More information about the implementation are within the documentation of the mo
 ### 7  Concluding remarks
 So finally I realized my project with the following cornerstones:  
 A) I use two self exclusioning states: LED control and Serial communication.  
-B) To reduce the communication load I only transfer the changed values and so it is only 4 char long:  
+B) To reduce the communication load I only transfer the changed values and so the frame is only 4 char long:  
 1 char for the selected value together with 1 char of the selected colour or the selected LED program. Ahead of these 2 chars comes 1 char as a start sign. And afterwards comes 1 char as a stop sign.  
 C) I don't use the USART Serial interrupt itself, because it could fire at any time and so causes problems with the LED control (explained above). Instead I look activly from time to time into the USART Serial receive buffer for a new communication request from the app. The app only sends one char as a request, because this will arrive in the USART receive buffer just by hardware, independent of what the software is doing.  
 D) An once started communication has to be ended before a new one is allowed to keep control over the two basic states.  
