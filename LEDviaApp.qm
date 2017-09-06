@@ -137,7 +137,7 @@ for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
 QF_INT_ENABLE();
 
 show();</entry>
-      <exit brief="inc processed LED, check running direction">me-&gt;led_x++;
+      <exit brief="inc processed LED, check direction">me-&gt;led_x++;
 
 if (me-&gt;led_x == PIXELS - 1U) {
     me-&gt;run_fwd = 1U;
@@ -164,7 +164,7 @@ for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
 QF_INT_ENABLE();
 
 show();</entry>
-      <exit brief="inc processed LED, check running direction">me-&gt;led_x--;
+      <exit brief="dec processed LED, check direction">me-&gt;led_x--;
 
 if (me-&gt;led_x == 0U) {
     me-&gt;run_fwd = 0U;
