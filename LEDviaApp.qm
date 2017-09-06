@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<model version="4.0.1" links="0">
+<model version="4.0.3" links="0">
  <documentation>Prototyp of controlling a LED stripe with an Arduino from a handy with Bluetooth communication.
 Because of the reason that the Bluetooth communication needs interrupts but the controlling of the LED stripe forbids it the communication and the controlling has to be split into two branches.
 
@@ -32,6 +32,10 @@ digitalWrite(DEBUG_LED, LOW);</documentation>
     <documentation>processed LED</documentation>
    </attribute>
    <attribute name="brightness" type="uint8_t" visibility="0x02" properties="0x00"/>
+   <attribute name="dim_up" type="uint8_t" visibility="0x02" properties="0x00">
+    <documentation>flag for dimming direction
+0U = up, else down</documentation>
+   </attribute>
    <statechart>
     <initial target="../1">
      <initial_glyph conn="2,2,4,3,2,2">
@@ -58,7 +62,7 @@ else {
 QActive_armX((QActive *)me, 0U, COMMUNICATION_TICK, 0U);</entry>
      <exit brief="stop communication tick">QActive_disarmX((QActive *)me, 0U);</exit>
      <tran trig="COMMUNICATION" target="../../2">
-      <tran_glyph conn="4,16,3,3,35">
+      <tran_glyph conn="4,16,3,3,42">
        <action box="0,-2,14,2"/>
       </tran_glyph>
      </tran>
@@ -72,13 +76,25 @@ QActive_armX((QActive *)me, 0U, COMMUNICATION_TICK, 0U);</entry>
        <action box="0,-2,14,2"/>
       </tran_glyph>
      </tran>
-     <tran trig="DIMMING" target="../7">
-      <tran_glyph conn="4,42,3,3,14">
+     <tran trig="DIMMING">
+      <choice target="../../7">
+       <guard brief="dim_up">!me-&gt;dim_up</guard>
+       <choice_glyph conn="14,42,4,3,0,12">
+        <action box="1,-2,8,2"/>
+       </choice_glyph>
+      </choice>
+      <choice target="../../8">
+       <guard brief="dim_down">else</guard>
+       <choice_glyph conn="14,42,4,3,16,12">
+        <action box="0,14,10,2"/>
+       </choice_glyph>
+      </choice>
+      <tran_glyph conn="4,42,3,-1,10">
        <action box="0,-2,8,2"/>
       </tran_glyph>
      </tran>
      <tran trig="Q_TIMEOUT" target="..">
-      <tran_glyph conn="35,54,1,3,-31">
+      <tran_glyph conn="42,74,1,3,-38">
        <action box="-10,-2,10,2"/>
       </tran_glyph>
      </tran>
@@ -114,21 +130,43 @@ show();</entry>
        <exit box="1,8,13,2"/>
       </state_glyph>
      </state>
-     <state name="dimming">
-      <documentation>The colours are multiplicated with an incrementing brightness value until overflow.
+     <state name="dimming_up">
+      <documentation>The colours are multiplicated with an incrementing brightness value.
 
-At exit the brightness is incremented.</documentation>
+At exit the brightness is incremented.
+If the brightness reaches an upper limit, the direction flag is set true to change the direction.</documentation>
       <entry brief="dimming LED">showColor(PIXELS,
     me-&gt;red / 255.0 * me-&gt;brightness,
     me-&gt;green / 255.0 * me-&gt;brightness,
     me-&gt;blue / 255.0 * me-&gt;brightness);</entry>
-      <exit brief="inc brightness">me-&gt;brightness = me-&gt;brightness + 4U;</exit>
-      <state_glyph node="18,40,14,10">
+      <exit brief="inc brightness, check dimming direction">me-&gt;brightness = me-&gt;brightness + 4U;
+
+if (me-&gt;brightness &gt; 250U)
+    me-&gt;dim_up = 1U;</exit>
+      <state_glyph node="26,40,14,14">
        <entry box="1,2,13,4"/>
-       <exit box="1,6,13,2"/>
+       <exit box="1,6,13,6"/>
       </state_glyph>
      </state>
-     <state_glyph node="4,2,31,54">
+     <state name="dimming_down">
+      <documentation>The colours are multiplicated with an decrementing brightness value.
+
+At exit the brightness is decremented.
+If the brightness reaches a lower limit, the direction flag is set false to change the direction.</documentation>
+      <entry brief="dimming LED">showColor(PIXELS,
+    me-&gt;red / 255.0 * me-&gt;brightness,
+    me-&gt;green / 255.0 * me-&gt;brightness,
+    me-&gt;blue / 255.0 * me-&gt;brightness);</entry>
+      <exit brief="dec brightness, check dimming direction">me-&gt;brightness = me-&gt;brightness - 4U;
+
+if (me-&gt;brightness &lt; 10U)
+    me-&gt;dim_up = 0U;</exit>
+      <state_glyph node="26,56,14,14">
+       <entry box="1,2,13,4"/>
+       <exit box="1,6,13,6"/>
+      </state_glyph>
+     </state>
+     <state_glyph node="4,2,38,74">
       <entry box="1,2,26,6"/>
       <exit box="1,8,21,2"/>
      </state_glyph>
@@ -142,11 +180,11 @@ If the start sign is detected the processing of the data starts.</documentation>
       <choice target="../../1">
        <guard brief="detect_start_sign">Serial.read() == '&lt;'</guard>
        <action brief="init value">me-&gt;value = 0U;</action>
-       <choice_glyph conn="50,26,4,3,6,2">
+       <choice_glyph conn="57,26,4,3,6,2">
         <action box="0,1,20,2"/>
        </choice_glyph>
       </choice>
-      <tran_glyph conn="39,26,3,-1,11">
+      <tran_glyph conn="46,26,3,-1,11">
        <action box="0,-2,11,2"/>
       </tran_glyph>
      </tran>
@@ -188,21 +226,21 @@ On exit an acknowledge is send to the handy.</documentation>
 }</entry>
       <exit brief="acknowledge communication">Serial.print(F(&quot;A&quot;));</exit>
       <tran trig="STOP" target="../../../1">
-       <tran_glyph conn="70,46,1,3,-33,12,-35,-52,2">
+       <tran_glyph conn="77,46,1,3,-33,32,-42,-72,2">
         <action box="-5,-2,6,2"/>
        </tran_glyph>
       </tran>
-      <state_glyph node="52,30,18,18">
+      <state_glyph node="59,30,18,18">
        <entry box="1,2,15,6"/>
        <exit box="1,8,12,4"/>
       </state_glyph>
      </state>
-     <state_glyph node="39,14,33,36">
+     <state_glyph node="46,14,33,36">
       <entry box="1,2,20,4"/>
       <exit box="1,6,21,2"/>
      </state_glyph>
     </state>
-    <state_diagram size="74,60"/>
+    <state_diagram size="81,80"/>
    </statechart>
   </class>
  </package>
@@ -246,11 +284,10 @@ enum {
 
     STOP_SIG,                          // end of data
 
-    COMMUNICATION_SIG,
-    DISPLAY_SIG,
-    RUNNING_LIGHT_SIG,
-    DIMMING_SIG,
-
+    COMMUNICATION_SIG,                 // communication request
+    DISPLAY_SIG,                       // display colour
+    RUNNING_LIGHT_SIG,                 // running light animation
+    DIMMING_SIG,                       // dimming animation
     DEBUG_LED = 7                      // optional debuging LED
 };
 

@@ -42,6 +42,7 @@ typedef struct LEDviaApp {
     uint8_t led_index;
     uint8_t led_x;
     uint8_t brightness;
+    uint8_t dim_up;
 } LEDviaApp;
 
 /* protected: */
@@ -49,7 +50,8 @@ static QState LEDviaApp_initial(LEDviaApp * const me);
 static QState LEDviaApp_branch(LEDviaApp * const me);
 static QState LEDviaApp_display(LEDviaApp * const me);
 static QState LEDviaApp_running_light(LEDviaApp * const me);
-static QState LEDviaApp_dimming(LEDviaApp * const me);
+static QState LEDviaApp_dimming_up(LEDviaApp * const me);
+static QState LEDviaApp_dimming_down(LEDviaApp * const me);
 static QState LEDviaApp_communication(LEDviaApp * const me);
 static QState LEDviaApp_process_data(LEDviaApp * const me);
 
@@ -82,11 +84,10 @@ enum {
 
     STOP_SIG,                          // end of data
 
-    COMMUNICATION_SIG,
-    DISPLAY_SIG,
-    RUNNING_LIGHT_SIG,
-    DIMMING_SIG,
-
+    COMMUNICATION_SIG,                 // communication request
+    DISPLAY_SIG,                       // display colour
+    RUNNING_LIGHT_SIG,                 // running light animation
+    DIMMING_SIG,                       // dimming animation
     DEBUG_LED = 7                      // optional debuging LED
 };
 
@@ -207,7 +208,14 @@ static QState LEDviaApp_branch(LEDviaApp * const me) {
         }
         /* ${AOs::LEDviaApp::SM::branch::DIMMING} */
         case DIMMING_SIG: {
-            status_ = Q_TRAN(&LEDviaApp_dimming);
+            /* ${AOs::LEDviaApp::SM::branch::DIMMING::[dim_up]} */
+            if (!me->dim_up) {
+                status_ = Q_TRAN(&LEDviaApp_dimming_up);
+            }
+            /* ${AOs::LEDviaApp::SM::branch::DIMMING::[dim_down]} */
+            else {
+                status_ = Q_TRAN(&LEDviaApp_dimming_down);
+            }
             break;
         }
         /* ${AOs::LEDviaApp::SM::branch::Q_TIMEOUT} */
@@ -277,11 +285,11 @@ static QState LEDviaApp_running_light(LEDviaApp * const me) {
     }
     return status_;
 }
-/*${AOs::LEDviaApp::SM::branch::dimming} ...................................*/
-static QState LEDviaApp_dimming(LEDviaApp * const me) {
+/*${AOs::LEDviaApp::SM::branch::dimming_up} ................................*/
+static QState LEDviaApp_dimming_up(LEDviaApp * const me) {
     QState status_;
     switch (Q_SIG(me)) {
-        /* ${AOs::LEDviaApp::SM::branch::dimming} */
+        /* ${AOs::LEDviaApp::SM::branch::dimming_up} */
         case Q_ENTRY_SIG: {
             showColor(PIXELS,
                 me->red / 255.0 * me->brightness,
@@ -290,9 +298,41 @@ static QState LEDviaApp_dimming(LEDviaApp * const me) {
             status_ = Q_HANDLED();
             break;
         }
-        /* ${AOs::LEDviaApp::SM::branch::dimming} */
+        /* ${AOs::LEDviaApp::SM::branch::dimming_up} */
         case Q_EXIT_SIG: {
             me->brightness = me->brightness + 4U;
+
+            if (me->brightness > 250U)
+                me->dim_up = 1U;
+            status_ = Q_HANDLED();
+            break;
+        }
+        default: {
+            status_ = Q_SUPER(&LEDviaApp_branch);
+            break;
+        }
+    }
+    return status_;
+}
+/*${AOs::LEDviaApp::SM::branch::dimming_down} ..............................*/
+static QState LEDviaApp_dimming_down(LEDviaApp * const me) {
+    QState status_;
+    switch (Q_SIG(me)) {
+        /* ${AOs::LEDviaApp::SM::branch::dimming_down} */
+        case Q_ENTRY_SIG: {
+            showColor(PIXELS,
+                me->red / 255.0 * me->brightness,
+                me->green / 255.0 * me->brightness,
+                me->blue / 255.0 * me->brightness);
+            status_ = Q_HANDLED();
+            break;
+        }
+        /* ${AOs::LEDviaApp::SM::branch::dimming_down} */
+        case Q_EXIT_SIG: {
+            me->brightness = me->brightness - 4U;
+
+            if (me->brightness < 10U)
+                me->dim_up = 0U;
             status_ = Q_HANDLED();
             break;
         }
