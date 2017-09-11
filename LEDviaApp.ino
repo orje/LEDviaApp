@@ -77,7 +77,7 @@ enum {
 // number of system clock ticks in one second
     BSP_TICKS_PER_SEC       = 100,
 
-    COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 5U, // 20 ms
+    COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 8U, // 12,5 ms
 
 //    PIXELS = 120,                      // number of LEDs in the stripe
     PIXELS = 8,                        // number of LED in the stick
@@ -347,9 +347,9 @@ static QState LEDviaApp_dimming_up(LEDviaApp * const me) {
         }
         /* ${AOs::LEDviaApp::SM::branch::dimming_up} */
         case Q_EXIT_SIG: {
-            me->brightness = me->brightness + 4U;
+            me->brightness = me->brightness + 6U;
 
-            if (me->brightness > 250U) {
+            if (me->brightness > 249U) {
                 me->dim_up = 1U;
                 }
             status_ = Q_HANDLED();
@@ -377,7 +377,7 @@ static QState LEDviaApp_dimming_down(LEDviaApp * const me) {
         }
         /* ${AOs::LEDviaApp::SM::branch::dimming_down} */
         case Q_EXIT_SIG: {
-            me->brightness = me->brightness - 4U;
+            me->brightness = me->brightness - 6U;
 
             if (me->brightness < 10U) {
                 me->dim_up = 0U;
