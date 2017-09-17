@@ -1,4 +1,3 @@
-
 *.d
 *.eep
 *.elf
@@ -11,11 +10,4 @@
 *.txt
 doc/LEDviaApp_Platine.fzz
 doc/Beschreibung.odt
-doc/stuff/rainbow.c
-*.gitignore
-<<<<<<< HEAD
-*.gitattriburtes
 *.db
-=======
-*.gitattributes
->>>>>>> 64b67b5d618b8034c5c9826b3dcc751b74eb52ff
