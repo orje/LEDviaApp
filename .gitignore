@@ -11,6 +11,7 @@
 *.txt
 doc/LEDviaApp_Platine.fzz
 doc/Beschreibung.odt
+doc/stuff/rainbow.c
 *.gitignore
 <<<<<<< HEAD
 *.gitattriburtes
