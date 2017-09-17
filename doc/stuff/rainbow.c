@@ -1,7 +1,4 @@
 /*
-rainbow() kommt in den RTC state,
-
-/*
 
    NeoPixels demo - rainbow colours
 
