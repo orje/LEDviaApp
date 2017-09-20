@@ -6,8 +6,6 @@
 *.map
 *.o
 *.a
-*.cpp
-*.h
 *.txt
 doc/LEDviaApp_Platine.fzz
 doc/Beschreibung.odt
