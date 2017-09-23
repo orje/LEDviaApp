@@ -280,10 +280,10 @@ static QState LEDviaApp_running_fwd(LEDviaApp * const me) {
             for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
                 if (me->led_index == me->led_x) {
                     sendPixel(me->red, me->green, me->blue);
-                    }
+                }
                 else {
                     sendPixel(0U, 0U, 0U);
-                    }
+                }
             }
             QF_INT_ENABLE();
 
@@ -297,7 +297,7 @@ static QState LEDviaApp_running_fwd(LEDviaApp * const me) {
 
             if (me->led_x == PIXELS - 1U) {
                 me->run_fwd = 1U;
-                }
+            }
             status_ = Q_HANDLED();
             break;
         }
@@ -318,10 +318,10 @@ static QState LEDviaApp_running_bwd(LEDviaApp * const me) {
             for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
                 if (me->led_index == me->led_x) {
                     sendPixel(me->red, me->green, me->blue);
-                    }
+                }
                 else {
                     sendPixel(0U, 0U, 0U);
-                    }
+                }
             }
             QF_INT_ENABLE();
 
@@ -335,7 +335,7 @@ static QState LEDviaApp_running_bwd(LEDviaApp * const me) {
 
             if (me->led_x == 0U) {
                 me->run_fwd = 0U;
-                }
+            }
             status_ = Q_HANDLED();
             break;
         }
@@ -363,8 +363,9 @@ static QState LEDviaApp_dimming_up(LEDviaApp * const me) {
         case Q_EXIT_SIG: {
             me->brightness = me->brightness + 4U;
 
-            if (me->brightness > 250U)
+            if (me->brightness > 250U) {
                 me->dim_up = 1U;
+            }
             status_ = Q_HANDLED();
             break;
         }
@@ -392,8 +393,9 @@ static QState LEDviaApp_dimming_down(LEDviaApp * const me) {
         case Q_EXIT_SIG: {
             me->brightness = me->brightness - 4U;
 
-            if (me->brightness < 10U)
+            if (me->brightness < 10U) {
                 me->dim_up = 0U;
+            }
             status_ = Q_HANDLED();
             break;
         }
@@ -413,10 +415,10 @@ static QState LEDviaApp_rainbow(LEDviaApp * const me) {
             // cycle the starting point
             if (me->rain_x>=256) {
                 me->rain_x=0;
-                }
+            }
             else {
                 me->rain_x++;
-                }
+            }
 
             // build into in-memory array, as these calculations take too long to do on the fly
             for (me->led_index = 0; me->led_index < PIXELS; me->led_index++) {
@@ -425,13 +427,13 @@ static QState LEDviaApp_rainbow(LEDviaApp * const me) {
                 pixelArray [me->led_index].r = r;
                 pixelArray [me->led_index].g = g;
                 pixelArray [me->led_index].b = b;
-                }
+            }
 
             // now show results
             QF_INT_DISABLE();
             for (me->led_index = 0; me->led_index < PIXELS; me->led_index++) {
                 sendPixel (pixelArray [me->led_index].r, pixelArray [me->led_index].g, pixelArray [me->led_index].b);
-                }
+            }
             QF_INT_ENABLE();
 
             show();

@@ -137,10 +137,10 @@ If the LED index reaches the end of the stripe, the direction flag is set true t
 for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
     if (me-&gt;led_index == me-&gt;led_x) {
         sendPixel(me-&gt;red, me-&gt;green, me-&gt;blue);
-        }
+    }
     else {
         sendPixel(0U, 0U, 0U);
-        }
+    }
 }
 QF_INT_ENABLE();
 
@@ -149,7 +149,7 @@ show();</entry>
 
 if (me-&gt;led_x == PIXELS - 1U) {
     me-&gt;run_fwd = 1U;
-    }</exit>
+}</exit>
       <state_glyph node="26,26,14,14">
        <entry box="1,2,11,4"/>
        <exit box="1,6,12,6"/>
@@ -164,10 +164,10 @@ If the LED index reaches the beginning of the stripe, the direction flag is set 
 for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
     if (me-&gt;led_index == me-&gt;led_x) {
         sendPixel(me-&gt;red, me-&gt;green, me-&gt;blue);
-        }
+    }
     else {
         sendPixel(0U, 0U, 0U);
-        }
+    }
 }
 QF_INT_ENABLE();
 
@@ -176,7 +176,7 @@ show();</entry>
 
 if (me-&gt;led_x == 0U) {
     me-&gt;run_fwd = 0U;
-    }</exit>
+}</exit>
       <state_glyph node="26,42,14,14">
        <entry box="1,2,11,4"/>
        <exit box="1,6,13,6"/>
@@ -193,8 +193,9 @@ If the brightness reaches an upper limit, the direction flag is set true to chan
     me-&gt;blue / 255.0 * me-&gt;brightness);</entry>
       <exit brief="inc brightness, check dimming direction">me-&gt;brightness = me-&gt;brightness + 4U;
 
-if (me-&gt;brightness &gt; 250U)
-    me-&gt;dim_up = 1U;</exit>
+if (me-&gt;brightness &gt; 250U) {
+    me-&gt;dim_up = 1U;
+}</exit>
       <state_glyph node="26,58,14,14">
        <entry box="1,2,13,4"/>
        <exit box="1,6,13,6"/>
@@ -211,8 +212,9 @@ If the brightness reaches a lower limit, the direction flag is set false to chan
     me-&gt;blue / 255.0 * me-&gt;brightness);</entry>
       <exit brief="dec brightness, check dimming direction">me-&gt;brightness = me-&gt;brightness - 4U;
 
-if (me-&gt;brightness &lt; 10U)
-    me-&gt;dim_up = 0U;</exit>
+if (me-&gt;brightness &lt; 10U) {
+    me-&gt;dim_up = 0U;
+}</exit>
       <state_glyph node="26,74,14,14">
        <entry box="1,2,13,4"/>
        <exit box="1,6,13,6"/>
@@ -223,10 +225,10 @@ if (me-&gt;brightness &lt; 10U)
       <entry brief="rainbow">// cycle the starting point
 if (me-&gt;rain_x&gt;=256) {
     me-&gt;rain_x=0;
-    }
+}
 else {
     me-&gt;rain_x++;
-    }
+}
 
 // build into in-memory array, as these calculations take too long to do on the fly
 for (me-&gt;led_index = 0; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
@@ -235,13 +237,13 @@ for (me-&gt;led_index = 0; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
     pixelArray [me-&gt;led_index].r = r;
     pixelArray [me-&gt;led_index].g = g;
     pixelArray [me-&gt;led_index].b = b;
-    }
+}
 
 // now show results
 QF_INT_DISABLE();
 for (me-&gt;led_index = 0; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
     sendPixel (pixelArray [me-&gt;led_index].r, pixelArray [me-&gt;led_index].g, pixelArray [me-&gt;led_index].b);
-    }
+}
 QF_INT_ENABLE();
 
 show();
