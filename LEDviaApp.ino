@@ -361,9 +361,9 @@ static QState LEDviaApp_dimming_up(LEDviaApp * const me) {
         }
         /* ${AOs::LEDviaApp::SM::branch::dimming_up} */
         case Q_EXIT_SIG: {
-            me->brightness = me->brightness + 4U;
+            me->brightness = me->brightness + 8U;
 
-            if (me->brightness > 250U) {
+            if (me->brightness > 246U) {
                 me->dim_up = 1U;
             }
             status_ = Q_HANDLED();
@@ -391,7 +391,7 @@ static QState LEDviaApp_dimming_down(LEDviaApp * const me) {
         }
         /* ${AOs::LEDviaApp::SM::branch::dimming_down} */
         case Q_EXIT_SIG: {
-            me->brightness = me->brightness - 4U;
+            me->brightness = me->brightness - 8U;
 
             if (me->brightness < 10U) {
                 me->dim_up = 0U;

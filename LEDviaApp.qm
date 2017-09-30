@@ -191,9 +191,9 @@ If the brightness reaches an upper limit, the direction flag is set true to chan
     me-&gt;red / 255.0 * me-&gt;brightness,
     me-&gt;green / 255.0 * me-&gt;brightness,
     me-&gt;blue / 255.0 * me-&gt;brightness);</entry>
-      <exit brief="inc brightness, check dimming direction">me-&gt;brightness = me-&gt;brightness + 4U;
+      <exit brief="inc brightness, check dimming direction">me-&gt;brightness = me-&gt;brightness + 8U;
 
-if (me-&gt;brightness &gt; 250U) {
+if (me-&gt;brightness &gt; 246U) {
     me-&gt;dim_up = 1U;
 }</exit>
       <state_glyph node="26,58,14,14">
@@ -210,7 +210,7 @@ If the brightness reaches a lower limit, the direction flag is set false to chan
     me-&gt;red / 255.0 * me-&gt;brightness,
     me-&gt;green / 255.0 * me-&gt;brightness,
     me-&gt;blue / 255.0 * me-&gt;brightness);</entry>
-      <exit brief="dec brightness, check dimming direction">me-&gt;brightness = me-&gt;brightness - 4U;
+      <exit brief="dec brightness, check dimming direction">me-&gt;brightness = me-&gt;brightness - 8U;
 
 if (me-&gt;brightness &lt; 10U) {
     me-&gt;dim_up = 0U;
