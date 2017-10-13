@@ -5,6 +5,7 @@
 *.map
 *.o
 *.a
-*.txt
 doc/LEDviaApp_Platine.fzz
 *.db
+doc/data transfer.txt
+doc/handshake.txt
