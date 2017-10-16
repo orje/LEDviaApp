@@ -85,15 +85,18 @@ enum {
     PIXELS = 8,                        // number of LED in the stick
 
     BLUETOOTH_POWER = 4,               // Pin of the transitor base
+    DEBUG_LED = 7                      // optional debuging LED
+};
 
-    STOP_SIG,                          // end of data
+// various signals for the application...
+enum {
+    STOP_SIG        = Q_USER_SIG,      // end of data
 
     COMMUNICATION_SIG,                 // communication request
     DISPLAY_SIG,                       // display colour
     RUNNING_SIG,                       // running light animation
     DIMMING_SIG,                       // dimming animation
-    RAINBOW_SIG,                       // rainbow animation
-    DEBUG_LED = 7                      // optional debuging LED
+    RAINBOW_SIG                        // rainbow animation
 };
 
 // store the rainbox in memory
