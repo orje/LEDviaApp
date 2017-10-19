@@ -3,6 +3,8 @@
  <documentation>Prototyp of controlling a LED stripe with an Arduino from a handy with Bluetooth communication.
 Because of the reason that the Bluetooth communication needs interrupts but the controlling of the LED stripe forbids it the communication and the controlling has to be split into two branches.
 
+The app sends only one char byte as a request, because that reaches the Serial receive Buffer by hardware design (max. two bytes are possible).
+
 To set the 120 pixel LED stripe there are around 369 µs of time needed (according to Nick Gammon).
 The communication check time tick has to be longer than this to not disturb the setting. For now the communication tick is 20 ms long.
 
