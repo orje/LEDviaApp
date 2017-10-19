@@ -85,7 +85,7 @@ enum {
     PIXELS = 8,                        // number of LED in the stick
 
     BLUETOOTH_POWER = 4,               // Pin of the transitor base
-    DEBUG_LED = 7                      // optional debuging LED
+    LED_L = 13                         // the pin number of the on-board LED (L)
 };
 
 // various signals for the application...
@@ -112,11 +112,7 @@ void setup() {
     QActive_ctor(&AO_LEDviaApp.super, Q_STATE_CAST(&LEDviaApp_initial));
 
     // initialize the hardware used in this sketch...
-    pinMode(DEBUG_LED, OUTPUT);        // set the DEBUG_LED pin to output
-
-    pinMode(BLUETOOTH_POWER, OUTPUT);  // Pin mode of the transitor control
-    delay(3000);                       // switch on delay for program upload
-    digitalWrite(BLUETOOTH_POWER, HIGH); // switch on the Bluetooth module
+    pinMode(LED_L, OUTPUT); // set the LED-L pin to output
 
     // set the highest standard baud rate of 115200 bps
     Serial.begin(115200);
