@@ -1,7 +1,0 @@
-LEDviaApp.ino: In function 'QState LEDviaApp_branch(LEDviaApp*)':
-LEDviaApp.ino:244:9: error: duplicate case value
-         case Q_TIMEOUT_SIG: {
-         ^
-LEDviaApp.ino:205:9: error: previously used here
-         case COMMUNICATION_SIG: {
-         ^
