@@ -1,9 +1,9 @@
 ![Demo video](https://github.com/orje/LEDviaApp_UNO/blob/master/doc/stuff/LEDviaApp.jpg)  
 [Demo video](https://www.youtube.com/watch?v=NQhEtg-nRmY)
 #### See the Wiki for further informations!
-###### This file is at minimum needed. The ino file is generated throughout QM.
+###### This file is needed at least. The ino file is generated throughout QM.
 * LEDviaApp.qm = QM model file
-###### The parameters has to be adjusted to path and COM.
+###### The parameters has to be adjusted according to Arduino IDE installation path and COM.
 * .LEDviaApp = QM External Tools parameter file
 ###### These files are orginally [from](https://github.com/nickgammon/NeoPixels_SPI) here.
 * NeoPixels_SPI.cpp = library from Nick Gammon  
@@ -12,4 +12,4 @@
 * SPI.cpp = Arduino library  
 * SPI.h = Arduino library  
 ###### The doc directory includes the app and further information pictures.
-###### The Micro diretory includes the adjusted files for the Arduino Micro.
+###### The Micro directory includes the adjusted files for the Arduino Micro.
