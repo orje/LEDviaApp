@@ -1,0 +1,14 @@
+*.d
+*.eep
+*.elf
+*.hex
+*.map
+*.o
+*.a
+*.db
+doc/blocks.png
+doc/data transfer.txt
+doc/handshake.png
+doc/handshake.txt
+doc/sketch_directory.PNG
+doc/SMofLEDviaApp.png
