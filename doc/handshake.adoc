@@ -1,0 +1,72 @@
+[uml,handshake.png]
+----
+
+hide footbox
+
+title handshake between handy and Arduino
+
+actor user #orange
+control app #steelblue
+entity handy #steelblue
+entity Arduino #green
+control sketch #green
+entity LED #red
+
+autonumber "<b>  #"
+
+activate LED
+
+Arduino -[#green]> sketch: Q_TIMEOUT
+
+sketch -[#green]> Arduino: no request
+
+sketch -[#green]> LED: LED program
+
+user -[#orange]> app: input
+
+app -[#steelblue]> Arduino: no communication ongoing \n send request 'R'
+
+note right #lightgrey
+byte goes straight
+into receive buffer
+end note
+
+Arduino -[#green]> sketch: Q_TIMEOUT
+
+sketch -[#green]> Arduino: see request 'R'
+
+deactivate LED
+
+== start handshake ==
+
+sketch -[#green]> handy: send transmit 'T'
+
+handy -[#steelblue]> app: Clock Timer
+
+app -[#steelblue]> handy: see permission 'T'
+
+app -[#steelblue]> Arduino: send message '<XY>'
+
+Arduino -[#green]> sketch: Q_TIMEOUT
+
+sketch -[#green]> Arduino: get message '<XY>'
+
+sketch -[#green]> handy: on stop sign '>' \n send acknowledge 'A'
+
+== end handshake ==
+
+sketch -[#green]> LED: LED program
+
+activate LED
+
+handy -[#steelblue]> app: Clock Timer
+
+app -[#steelblue]> handy: see acknowledge 'A' \n end communication
+
+Arduino -[#green]> sketch: Q_TIMEOUT
+
+sketch -[#green]> Arduino: no request
+
+sketch -[#green]> LED: LED program
+
+----
