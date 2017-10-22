@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <model version="4.0.3" links="0">
  <documentation>Prototyp of controlling a LED stripe with an Arduino from a handy with Bluetooth communication.
-Because of the reason that the Bluetooth communication needs interrupts but the controlling of the LED stripe forbids it the communication and the controlling has to be split into two branches.
+Because of the reason that the Bluetooth communication needs interrupts but the controlling of the LED stripe forbids it, the communication and the controlling has to be splitted into two branches.
 
 The app sends only one char byte as a request, because that reaches the Serial receive Buffer by hardware design (max. two bytes are possible).
 
@@ -15,13 +15,12 @@ Calculations:
 120 rgb-pixel = 120 * rgb-pixel = 120 * 3000 ns = 360000 ns = 360 µs = 0,36 ms
 LED stripe setzen = 120 prgb-ixel + 9 µs reset = 360 µs + 9 µs = 369 µs = 0,369 ms
 
-The stopping of the communication tick with &quot;QActive_disarmX((QActive *)me, 0U);&quot; is optinal because the timer is an one shot event. But the author of the framework supposes it because of a clean programming.</documentation>
+The stopping of the communication tick with &quot;QActive_disarmX((QActive *)me, 0U);&quot; is optinal because the timer is an one shot event. But the author of the framework supposes it because of a clean programming.
+
+For uploading, the COM port of the &quot;Genuino Micro bootloader&quot; has to be written in the environment variable of the external upload tool. The port is shown in the Windows Device Manager after reseting the Micro.</documentation>
  <framework name="qpn"/>
  <package name="AOs" stereotype="0x02">
   <class name="LEDviaApp" superclass="qpn::QActive">
-   <documentation>use for debuging:
-digitalWrite(LED_L, HIGH);
-digitalWrite(LED_L, LOW);</documentation>
    <attribute name="value" type="uint8_t" visibility="0x02" properties="0x00"/>
    <attribute name="red" type="uint8_t" visibility="0x02" properties="0x00"/>
    <attribute name="green" type="uint8_t" visibility="0x02" properties="0x00"/>
@@ -53,9 +52,9 @@ digitalWrite(LED_L, LOW);</documentation>
      <documentation>First it is checked whether there is a request from the handy in the receive buffer of the USART. If so a transmit order is send to the handy and it is changed into the communication state. If not it is changed into  the active program substate.
 
 Periodically a time tick is generated to recheck the receive buffer. This timer is also used to progress the LED programs with animations.</documentation>
-     <entry brief="communication check, program choice, start communication tick">if (Serial.read() == 'R') {
-    Serial.print(F(&quot;T&quot;));
-    QACTIVE_POST((QActive *)me, COMMUNICATION_SIG, 0U);
+     <entry brief="communication check, program choice, start communication tick">if (Serial1.read() == 'R') {
+    Serial1.print(F(&quot;T&quot;));
+    QACTIVE_POST((QActive *)me, REQUEST_SIG, 0U);
 }
 else {
     if (me-&gt;program == 1)
@@ -68,11 +67,11 @@ else {
         QACTIVE_POST((QActive *)me, RAINBOW_SIG, 0U);
 }
 
-QActive_armX((QActive *)me, 0U, COMMUNICATION_TICK, 0U);</entry>
+QActive_armX((QActive *)me, 0U, TICK, 0U);</entry>
      <exit brief="stop communication tick">QActive_disarmX((QActive *)me, 0U);</exit>
-     <tran trig="COMMUNICATION" target="../../2">
+     <tran trig="REQUEST" target="../../2">
       <tran_glyph conn="4,16,3,3,42">
-       <action box="0,-2,14,2"/>
+       <action box="0,-2,10,2"/>
       </tran_glyph>
      </tran>
      <tran trig="DISPLAY" target="../6">
@@ -262,11 +261,11 @@ show();
     <state name="communication">
      <documentation>Because of the asynchronous communication a timer is startet. If it shoots the receive buffer is checked for the start sign.
 If the start sign is detected the processing of the data starts.</documentation>
-     <entry brief="start communication tick">QActive_armX((QActive *)me, 0U, COMMUNICATION_TICK, 0U);</entry>
+     <entry brief="start communication tick">QActive_armX((QActive *)me, 0U, TICK, 0U);</entry>
      <exit brief="stop communication tick">QActive_disarmX((QActive *)me, 0U);</exit>
      <tran trig="Q_TIMEOUT">
       <choice target="../../1">
-       <guard brief="detect_start_sign">Serial.read() == '&lt;'</guard>
+       <guard brief="detect_start_sign">Serial1.read() == '&lt;'</guard>
        <action brief="init value">me-&gt;value = 0U;</action>
        <choice_glyph conn="57,26,4,3,6,2">
         <action box="0,1,20,2"/>
@@ -288,8 +287,8 @@ Y = colour, program
 With the detecting of the stop sign it is changed back to the branch state with its LED control programs.
 
 On exit an acknowledge is send to the handy.</documentation>
-      <entry brief="value, colour, program, stop sign">while (Serial.available()) {
-    uint8_t data = Serial.read();
+      <entry brief="value, colour, program, stop sign">while (Serial1.available()) {
+    uint8_t data = Serial1.read();
     switch (data) {
         case '0' ... '9':
             me-&gt;value *= 10;
@@ -312,7 +311,7 @@ On exit an acknowledge is send to the handy.</documentation>
             break;
     }
 }</entry>
-      <exit brief="acknowledge communication">Serial.print(F(&quot;A&quot;));</exit>
+      <exit brief="acknowledge communication">Serial1.print(F(&quot;A&quot;));</exit>
       <tran trig="STOP" target="../../../1">
        <tran_glyph conn="77,46,1,3,-33,58,-42,-98,2">
         <action box="-5,-2,6,2"/>
@@ -338,7 +337,7 @@ On exit an acknowledge is send to the handy.</documentation>
 #include &quot;Arduino.h&quot;                   // Arduino API
 
 #include &lt;NeoPixels_SPI.h&gt;             // from Nick Gammon
-#include &lt;SPI.h&gt;                       // Pin 11 = MOSI
+#include &lt;SPI.h&gt;                       // MOSI
 
 //============================================================================
 // declare all AO classes...
@@ -359,24 +358,18 @@ QActiveCB const Q_ROM QF_active[] = {
 
 //============================================================================
 // various constants for the application...
-enum {
+enum { // constants
 // number of system clock ticks in one second
-    BSP_TICKS_PER_SEC      = 100,
-
-    COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 5U, // handshake timing 20 ms
-
+    BSP_TICKS_PER_SEC = 100,
+    TICK = (BSP_TICKS_PER_SEC / 5U),   // handshake timing 20 ms
 //    PIXELS = 120,                      // number of LEDs in the stripe
-    PIXELS = 8,                        // number of LED in the stick
-
-    BLUETOOTH_POWER = 4,               // Pin of the transitor base
-    LED_L = 13 // the pin number of the on-board LED (L)
+    PIXELS            = 8,             // number of LED in the stick
 };
 
 // various signals for the application...
-enum {
-    STOP_SIG        = Q_USER_SIG,      // end of data
-
-    COMMUNICATION_SIG,                 // communication request
+enum { // signals
+    STOP_SIG = Q_USER_SIG,             // end of data
+    REQUEST_SIG,                       // communication request
     DISPLAY_SIG,                       // display colour
     RUNNING_SIG,                       // running light animation
     DIMMING_SIG,                       // dimming animation
@@ -395,15 +388,8 @@ void setup() {
     // initialize all AOs...
     QActive_ctor(&amp;AO_LEDviaApp.super, Q_STATE_CAST(&amp;LEDviaApp_initial));
 
-    // initialize the hardware used in this sketch...
-    pinMode(LED_L, OUTPUT); // set the LED-L pin to output
-
-    pinMode(BLUETOOTH_POWER, OUTPUT);  // Pin mode of the transitor control
-    delay(3000);                       // switch on delay for program upload
-    digitalWrite(BLUETOOTH_POWER, HIGH); // switch on the Bluetooth module
-
     // set the highest standard baud rate of 115200 bps
-    Serial.begin(115200);
+    Serial1.begin(115200);
 
     ledsetup();                        // setup SPI
     showColor(PIXELS, 0, 0, 0);        // all LED off
@@ -416,22 +402,21 @@ void loop() {
 
 //============================================================================
 // interrupts...
-ISR(TIMER2_COMPA_vect) {
+ISR(TIMER0_COMPA_vect) {
     QF_tickXISR(0U); // process time events for tick rate 0
 }
 
 //============================================================================
 // QF callbacks...
 void QF_onStartup(void) {
-    // set Timer2 in CTC mode, 1/1024 prescaler, start the timer ticking...
-    TCCR2A = (1U &lt;&lt; WGM21) | (0U &lt;&lt; WGM20);
-    TCCR2B = (1U &lt;&lt; CS22 ) | (1U &lt;&lt; CS21) | (1U &lt;&lt; CS20); // 1/2^10
-    ASSR  &amp;= ~(1U &lt;&lt; AS2);
-    TIMSK2 = (1U &lt;&lt; OCIE2A); // enable TIMER2 compare Interrupt
-    TCNT2  = 0U;
+    // set Timer0 in CTC mode, 1/1024 prescaler...
+    TCCR0A = (1U &lt;&lt; WGM01) | (0U &lt;&lt; WGM00);
+    TCCR0B = (1U &lt;&lt; CS02 ) | (0U &lt;&lt; CS01) | (1U &lt;&lt; CS00); // 1/2^10
+    TIMSK0 = (1U &lt;&lt; OCIE0A); // enable TIMER0 compare Interrupt
+    TCNT0  = 0U;
 
     // set the output-compare register based on the desired tick frequency
-    OCR2A  = (F_CPU / BSP_TICKS_PER_SEC / 1024U) - 1U;
+    OCR0A  = (F_CPU / BSP_TICKS_PER_SEC / 1024U) - 1U;
 }
 
 //............................................................................

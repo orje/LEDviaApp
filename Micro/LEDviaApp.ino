@@ -19,7 +19,7 @@
 #include "Arduino.h"                   // Arduino API
 
 #include <NeoPixels_SPI.h>             // from Nick Gammon
-#include <SPI.h>                       // Pin 11 = MOSI
+#include <SPI.h>                       // MOSI
 
 //============================================================================
 // declare all AO classes...
@@ -75,24 +75,18 @@ QActiveCB const Q_ROM QF_active[] = {
 
 //============================================================================
 // various constants for the application...
-enum {
+enum { // constants
 // number of system clock ticks in one second
-    BSP_TICKS_PER_SEC      = 100,
-
-    COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 5U, // handshake timing 20 ms
-
+    BSP_TICKS_PER_SEC = 100,
+    TICK = (BSP_TICKS_PER_SEC / 5U),   // handshake timing 20 ms
 //    PIXELS = 120,                      // number of LEDs in the stripe
-    PIXELS = 8,                        // number of LED in the stick
-
-    BLUETOOTH_POWER = 4,               // Pin of the transitor base
-    LED_L = 13 // the pin number of the on-board LED (L)
+    PIXELS            = 8,             // number of LED in the stick
 };
 
 // various signals for the application...
-enum {
-    STOP_SIG        = Q_USER_SIG,      // end of data
-
-    COMMUNICATION_SIG,                 // communication request
+enum { // signals
+    STOP_SIG = Q_USER_SIG,             // end of data
+    REQUEST_SIG,                       // communication request
     DISPLAY_SIG,                       // display colour
     RUNNING_SIG,                       // running light animation
     DIMMING_SIG,                       // dimming animation
@@ -111,15 +105,8 @@ void setup() {
     // initialize all AOs...
     QActive_ctor(&AO_LEDviaApp.super, Q_STATE_CAST(&LEDviaApp_initial));
 
-    // initialize the hardware used in this sketch...
-    pinMode(LED_L, OUTPUT); // set the LED-L pin to output
-
-    pinMode(BLUETOOTH_POWER, OUTPUT);  // Pin mode of the transitor control
-    delay(3000);                       // switch on delay for program upload
-    digitalWrite(BLUETOOTH_POWER, HIGH); // switch on the Bluetooth module
-
     // set the highest standard baud rate of 115200 bps
-    Serial.begin(115200);
+    Serial1.begin(115200);
 
     ledsetup();                        // setup SPI
     showColor(PIXELS, 0, 0, 0);        // all LED off
@@ -132,22 +119,21 @@ void loop() {
 
 //============================================================================
 // interrupts...
-ISR(TIMER2_COMPA_vect) {
+ISR(TIMER0_COMPA_vect) {
     QF_tickXISR(0U); // process time events for tick rate 0
 }
 
 //============================================================================
 // QF callbacks...
 void QF_onStartup(void) {
-    // set Timer2 in CTC mode, 1/1024 prescaler, start the timer ticking...
-    TCCR2A = (1U << WGM21) | (0U << WGM20);
-    TCCR2B = (1U << CS22 ) | (1U << CS21) | (1U << CS20); // 1/2^10
-    ASSR  &= ~(1U << AS2);
-    TIMSK2 = (1U << OCIE2A); // enable TIMER2 compare Interrupt
-    TCNT2  = 0U;
+    // set Timer0 in CTC mode, 1/1024 prescaler...
+    TCCR0A = (1U << WGM01) | (0U << WGM00);
+    TCCR0B = (1U << CS02 ) | (0U << CS01) | (1U << CS00); // 1/2^10
+    TIMSK0 = (1U << OCIE0A); // enable TIMER0 compare Interrupt
+    TCNT0  = 0U;
 
     // set the output-compare register based on the desired tick frequency
-    OCR2A  = (F_CPU / BSP_TICKS_PER_SEC / 1024U) - 1U;
+    OCR0A  = (F_CPU / BSP_TICKS_PER_SEC / 1024U) - 1U;
 }
 
 //............................................................................
@@ -180,9 +166,9 @@ static QState LEDviaApp_branch(LEDviaApp * const me) {
     switch (Q_SIG(me)) {
         /* ${AOs::LEDviaApp::SM::branch} */
         case Q_ENTRY_SIG: {
-            if (Serial.read() == 'R') {
-                Serial.print(F("T"));
-                QACTIVE_POST((QActive *)me, COMMUNICATION_SIG, 0U);
+            if (Serial1.read() == 'R') {
+                Serial1.print(F("T"));
+                QACTIVE_POST((QActive *)me, REQUEST_SIG, 0U);
             }
             else {
                 if (me->program == 1)
@@ -195,7 +181,7 @@ static QState LEDviaApp_branch(LEDviaApp * const me) {
                     QACTIVE_POST((QActive *)me, RAINBOW_SIG, 0U);
             }
 
-            QActive_armX((QActive *)me, 0U, COMMUNICATION_TICK, 0U);
+            QActive_armX((QActive *)me, 0U, TICK, 0U);
             status_ = Q_HANDLED();
             break;
         }
@@ -205,8 +191,8 @@ static QState LEDviaApp_branch(LEDviaApp * const me) {
             status_ = Q_HANDLED();
             break;
         }
-        /* ${AOs::LEDviaApp::SM::branch::COMMUNICATION} */
-        case COMMUNICATION_SIG: {
+        /* ${AOs::LEDviaApp::SM::branch::REQUEST} */
+        case REQUEST_SIG: {
             status_ = Q_TRAN(&LEDviaApp_communication);
             break;
         }
@@ -457,7 +443,7 @@ static QState LEDviaApp_communication(LEDviaApp * const me) {
     switch (Q_SIG(me)) {
         /* ${AOs::LEDviaApp::SM::communication} */
         case Q_ENTRY_SIG: {
-            QActive_armX((QActive *)me, 0U, COMMUNICATION_TICK, 0U);
+            QActive_armX((QActive *)me, 0U, TICK, 0U);
             status_ = Q_HANDLED();
             break;
         }
@@ -470,7 +456,7 @@ static QState LEDviaApp_communication(LEDviaApp * const me) {
         /* ${AOs::LEDviaApp::SM::communication::Q_TIMEOUT} */
         case Q_TIMEOUT_SIG: {
             /* ${AOs::LEDviaApp::SM::communication::Q_TIMEOUT::[detect_start_sign]} */
-            if (Serial.read() == '<') {
+            if (Serial1.read() == '<') {
                 me->value = 0U;
                 status_ = Q_TRAN(&LEDviaApp_process_data);
             }
@@ -492,8 +478,8 @@ static QState LEDviaApp_process_data(LEDviaApp * const me) {
     switch (Q_SIG(me)) {
         /* ${AOs::LEDviaApp::SM::communication::process_data} */
         case Q_ENTRY_SIG: {
-            while (Serial.available()) {
-                uint8_t data = Serial.read();
+            while (Serial1.available()) {
+                uint8_t data = Serial1.read();
                 switch (data) {
                     case '0' ... '9':
                         me->value *= 10;
@@ -521,7 +507,7 @@ static QState LEDviaApp_process_data(LEDviaApp * const me) {
         }
         /* ${AOs::LEDviaApp::SM::communication::process_data} */
         case Q_EXIT_SIG: {
-            Serial.print(F("A"));
+            Serial1.print(F("A"));
             status_ = Q_HANDLED();
             break;
         }
