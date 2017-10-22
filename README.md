@@ -1,7 +1,7 @@
 ![Demo video](https://github.com/orje/LEDviaApp_UNO/blob/master/doc/stuff/LEDviaApp.jpg)  
 [Demo video](https://www.youtube.com/watch?v=NQhEtg-nRmY)
 #### See the Wiki for further informations!
-###### This file is needed at least. The ino file is generated throughout QM.
+###### This file is at least needed. The ino file is generated throughout QM.
 * LEDviaApp.qm = QM model file
 ###### The parameters has to be adjusted according to Arduino IDE installation path and COM.
 * .LEDviaApp = QM External Tools parameter file
