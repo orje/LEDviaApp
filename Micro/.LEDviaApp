@@ -22,8 +22,8 @@
   <item id="PROJECT">LEDviaApp</item>
   <item id="ARDUINO_HOME">C:\assemble\Arduino</item>
   <item id="ARDUINO_SKETCHBOOK">C:\Users\orje\Documents\Arduino</item>
-  <item id="BOARD_MCU">atmega328p</item>
-  <item id="BOARD_VARIANT">standard</item>
+  <item id="BOARD_MCU">atmega32u4</item>
+  <item id="BOARD_VARIANT">micro</item>
   <item id="BOARD_F_MHZ">16</item>
   <item id="BOARD_COM">COM4</item>
   <item id="BOARD_BAUD">115200</item>
@@ -33,7 +33,7 @@
    <item name="icon">3</item>
    <item name="title">build</item>
    <item name="command">&quot;%ARDUINO_SKETCHBOOK%\tools\utils\tclsh.exe&quot;</item>
-   <item name="args">&quot;%ARDUINO_SKETCHBOOK%\tools\scripts\build_avr.tcl&quot; %PROJECT% &quot;qpn_avr&quot;</item>
+   <item name="args">&quot;%ARDUINO_SKETCHBOOK%\tools\scripts\build_avr.tcl&quot; %PROJECT% &quot;qpn_avr&quot; &quot;USB_VID=0x2341 USB_PID=0x8037&quot;</item>
    <item name="dir">.</item>
    <item name="options">3</item>
   </group>
@@ -48,7 +48,7 @@
   <group name="tool">
    <item name="icon">6</item>
    <item name="title">upload</item>
-   <item name="command">&quot;%ARDUINO_SKETCHBOOK%\tools\scripts\upload_avr.bat&quot;</item>
+   <item name="command">&quot;%ARDUINO_SKETCHBOOK%\tools\scripts\upload_avr_Micro.bat&quot;</item>
    <item name="args">%PROJECT%</item>
    <item name="dir">.</item>
    <item name="options">2</item>
