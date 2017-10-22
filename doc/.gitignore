@@ -6,9 +6,9 @@
 *.o
 *.a
 *.db
-doc/blocks.png
-doc/data transfer.txt
-doc/handshake.png
-doc/handshake.txt
-doc/sketch_directory.PNG
-doc/SMofLEDviaApp.png
+blocks.png
+data transfer.txt
+handshake.png
+handshake.txt
+sketch_directory.PNG
+SMofLEDviaApp.png
