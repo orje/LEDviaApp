@@ -1,0 +1,35 @@
+Datenübertragung:
+	Handshake zwischen App und UNO:
+	'R'		= App:	Übertragungsanfrage
+	'T'		= UNO:	Sendeaufforderung
+	'<'		= App:	(übertragungs-, bzw. Daten-) Startmarker
+	'XY'	= App:	Datenstring
+	'>'		= App:	(Daten-) Endmarker
+	'A'		= UNO:	Datenempfang fertig
+
+	Datenformat der Farbe und des Programms:
+	XY
+	X	= Wert
+	Y	= Farbe, Programm
+
+	Farbe:
+	r	= Rot
+	g	= Gruen
+	b	= Blau
+
+	Programm:
+	Programm = p
+	1		 = Anzeige
+	2		 = Lauflicht
+	3		 = Dimmen
+	
+
+Timings:
+benötigte Zeit zur Ansteuerung des LED stripe lt. Nick Gammon:
+	1 SPI-bit = 125 ns
+	1 LED Pixel = 125 ns * 24 = 3000 ns = 3 µs
+	Mein LED stripe = 1 LED Pixel * 120 = 3 µs * 120 = 360 µs
+	LED stripe mit reset = 360 µs + 9 µs = 369 µs
+
+mein Kommunikationstakt:
+	20 ms
