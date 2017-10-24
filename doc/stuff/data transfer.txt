@@ -22,6 +22,7 @@ Datenübertragung:
 	1		 = Anzeige
 	2		 = Lauflicht
 	3		 = Dimmen
+	4		 = Rainbow
 	
 
 Timings:
