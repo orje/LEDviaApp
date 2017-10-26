@@ -12,4 +12,3 @@
 * SPI.cpp = Arduino library  
 * SPI.h = Arduino library  
 ###### The doc directory includes the app and further information pictures.
-###### The Micro directory includes the adjusted files for the Arduino Micro.
