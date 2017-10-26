@@ -1,11 +1,11 @@
 Datenübertragung:
 	Handshake zwischen App und UNO:
-	'R'		= App:	Übertragungsanfrage
-	'T'		= UNO:	Sendeaufforderung
-	'<'		= App:	(übertragungs-, bzw. Daten-) Startmarker
-	'XY'		= App:	Datenstring
-	'>'		= App:	(Daten-) Endmarker
-	'A'		= UNO:	Datenempfang fertig
+	'R'	= App:	Übertragungsanfrage
+	'T'	= UNO:	Sendeaufforderung
+	'<'	= App:	(übertragungs-, bzw. Daten-) Startmarker
+	'XY'	= App:	Datenstring
+	'>'	= App:	(Daten-) Endmarker
+	'A'	= UNO:	Datenempfang fertig
 
 	Datenformat der Farbe und des Programms:
 	XY
@@ -19,10 +19,10 @@ Datenübertragung:
 
 	Programm:
 	Programm = p
-	1		 = Anzeige
-	2		 = Lauflicht
-	3		 = Dimmen
-	4		 = Rainbow
+	1	 = Anzeige
+	2	 = Lauflicht
+	3	 = Dimmen
+	4	 = Rainbow
 	
 
 Timings:
