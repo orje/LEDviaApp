@@ -18,7 +18,7 @@ activate LED
 
 Arduino -[#green]> sketch: Q_TIMEOUT
 
-sketch -[#green]> Arduino: no request
+sketch <-[#green] Arduino: no request
 
 sketch -[#green]> LED: LED program
 
@@ -33,7 +33,7 @@ end note
 
 Arduino -[#green]> sketch: Q_TIMEOUT
 
-sketch -[#green]> Arduino: see request 'R'
+sketch <-[#green] Arduino: see request 'R'
 
 deactivate LED
 
@@ -43,13 +43,13 @@ sketch -[#green]> handy: send transmit 'T'
 
 handy -[#steelblue]> app: Clock Timer
 
-app -[#steelblue]> handy: see permission 'T'
+app <-[#steelblue] handy: see permission 'T'
 
 app -[#steelblue]> Arduino: send message '<XY>'
 
 Arduino -[#green]> sketch: Q_TIMEOUT
 
-sketch -[#green]> Arduino: get message '<XY>'
+sketch <-[#green] Arduino: get message '<XY>'
 
 sketch -[#green]> handy: on stop sign '>' \n send acknowledge 'A'
 
@@ -61,11 +61,11 @@ activate LED
 
 handy -[#steelblue]> app: Clock Timer
 
-app -[#steelblue]> handy: see acknowledge 'A' \n end communication
+app <-[#steelblue] handy: see acknowledge 'A' \n end communication
 
 Arduino -[#green]> sketch: Q_TIMEOUT
 
-sketch -[#green]> Arduino: no request
+sketch <-[#green] Arduino: no request
 
 sketch -[#green]> LED: LED program
 
