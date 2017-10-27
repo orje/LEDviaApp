@@ -14,8 +14,6 @@ entity LED #red
 
 autonumber "<b>  #"
 
-== state branch ==
-
 activate LED
 
 Arduino -[#green]> sketch: Q_TIMEOUT
@@ -25,6 +23,8 @@ sketch <-[#green] Arduino: no request
 sketch -[#green]> LED: control LED
 
 user -[#orange]> app: input
+
+== app starts handshake ==
 
 app -[#steelblue]> Arduino: no communication ongoing \n send request 'R'
 
@@ -39,7 +39,7 @@ sketch <-[#green] Arduino: see request 'R'
 
 deactivate LED
 
-== state communication ==
+== sketch continues handshake==
 
 sketch -[#green]> handy: send transmit 'T'
 
@@ -55,7 +55,7 @@ sketch <-[#green] Arduino: get message '<XY>'
 
 sketch -[#green]> handy: on stop sign '>' \n send acknowledge 'A'
 
-== state branch ==
+== sketch ends handshake ==
 
 sketch -[#green]> LED: control LED
 
@@ -64,6 +64,8 @@ activate LED
 handy -[#steelblue]> app: Clock Timer
 
 app <-[#steelblue] handy: see acknowledge 'A' \n end communication
+
+== app ends handshake ==
 
 Arduino -[#green]> sketch: Q_TIMEOUT
 
