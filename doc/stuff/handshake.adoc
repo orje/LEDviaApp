@@ -20,7 +20,7 @@ Arduino -[#green]> sketch: Q_TIMEOUT
 
 sketch <-[#green] Arduino: no request
 
-sketch -[#green]> LED: LED program
+sketch -[#green]> LED: control LED
 
 user -[#orange]> app: input
 
@@ -55,7 +55,7 @@ sketch -[#green]> handy: on stop sign '>' \n send acknowledge 'A'
 
 == end handshake ==
 
-sketch -[#green]> LED: LED program
+sketch -[#green]> LED: control LED
 
 activate LED
 
@@ -67,6 +67,6 @@ Arduino -[#green]> sketch: Q_TIMEOUT
 
 sketch <-[#green] Arduino: no request
 
-sketch -[#green]> LED: LED program
+sketch -[#green]> LED: control LED
 
 ----
