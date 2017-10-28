@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model version="4.0.3" links="0">
+ <framework name="qpn"/>
+ <package name="AOs" stereotype="0x02">
+  <class name="EinAus" superclass="qpn::QActive">
+   <attribute name="wert" type="uint8_t" visibility="0x02" properties="0x00"/>
+   <attribute name="rot" type="uint8_t" visibility="0x02" properties="0x00"/>
+   <attribute name="gruen" type="uint8_t" visibility="0x02" properties="0x00"/>
+   <attribute name="blau" type="uint8_t" visibility="0x02" properties="0x00"/>
+   <attribute name="programm" type="uint8_t" visibility="0x02" properties="0x00"/>
+   <attribute name="led_index" type="uint8_t" visibility="0x02" properties="0x00"/>
+   <attribute name="led" type="uint8_t" visibility="0x02" properties="0x00"/>
+   <attribute name="helligkeit" type="uint8_t" visibility="0x02" properties="0x00"/>
+   <statechart>
+    <initial target="../1">
+     <initial_glyph conn="2,4,5,3,4">
+      <action box="1,-2,4,2"/>
+     </initial_glyph>
+    </initial>
+    <state name="Verzweigung">
+     <documentation>digitalWrite(DEBUG_LED, LOW);
+digitalWrite(DEBUG_LED, HIGH);</documentation>
+     <entry brief="Kommunikationscheck, Programmwahl">if (Serial.read() == 'R') {
+    Serial.print(F(&quot;T&quot;));
+    QACTIVE_POST((QActive *)me, KOMMUNIKATION_SIG, 0);
+}
+else {
+    if (me-&gt;programm == 1)
+        QACTIVE_POST((QActive *)me, ANZEIGE_SIG, 0);
+    else if (me-&gt;programm == 2)
+        QACTIVE_POST((QActive *)me, LAUFLICHT_SIG, 0);
+    else if (me-&gt;programm == 3)
+        QACTIVE_POST((QActive *)me, DIMMEN_SIG, 0);
+    else
+        QACTIVE_POST((QActive *)me, ANZEIGE_SIG, 0);
+}</entry>
+     <tran trig="KOMMUNIKATION" target="../../2">
+      <tran_glyph conn="6,14,3,3,49">
+       <action box="0,-2,14,2"/>
+      </tran_glyph>
+     </tran>
+     <tran trig="ANZEIGE" target="../../3">
+      <tran_glyph conn="6,18,3,3,21">
+       <action box="0,-2,10,2"/>
+      </tran_glyph>
+     </tran>
+     <tran trig="LAUFLICHT" target="../../4">
+      <tran_glyph conn="6,32,3,3,21">
+       <action box="0,-2,10,2"/>
+      </tran_glyph>
+     </tran>
+     <tran trig="DIMMEN" target="../../5">
+      <tran_glyph conn="6,46,3,3,21">
+       <action box="0,-2,10,2"/>
+      </tran_glyph>
+     </tran>
+     <state_glyph node="6,2,19,56">
+      <entry box="1,2,17,6"/>
+     </state_glyph>
+    </state>
+    <state name="Kommunikation">
+     <entry brief="Kommunikations-Takt starten">QActive_armX((QActive *)me, 0U, KOMMUNIKATIONSTAKT, 0U);</entry>
+     <tran trig="Q_TIMEOUT">
+      <choice target="../../1">
+       <guard brief="Startzeichen-Erkennung">Serial.read() == '&lt;'</guard>
+       <action brief="Initialisierung">me-&gt;wert = 0;</action>
+       <choice_glyph conn="66,23,5,3,3">
+        <action box="1,-6,19,4"/>
+       </choice_glyph>
+      </choice>
+      <choice target="../..">
+       <guard>else</guard>
+       <choice_glyph conn="66,23,4,3,4,-11">
+        <action box="-5,2,6,2"/>
+       </choice_glyph>
+      </choice>
+      <tran_glyph conn="55,23,3,-1,11">
+       <action box="0,-2,11,2"/>
+      </tran_glyph>
+     </tran>
+     <state name="Datenverarbeitung">
+      <entry brief="Wert, Farbe, Programm, STOPP">while (Serial.available()) {
+    uint8_t daten = Serial.read();
+    switch (daten) {
+        case '0' ... '9':
+            me-&gt;wert *= 10;
+            me-&gt;wert += daten - '0';
+            break;
+        case 'r':
+            me-&gt;rot = me-&gt;wert;
+            break;
+        case 'g':
+            me-&gt;gruen = me-&gt;wert;
+            break;
+        case 'b':
+            me-&gt;blau = me-&gt;wert;
+            break;
+        case 'p':
+            me-&gt;programm = me-&gt;wert;
+            break;
+        case '&gt;':
+            QACTIVE_POST((QActive *)me, STOPP_SIG, 0);
+            break;
+    }
+}</entry>
+      <tran trig="STOPP" target="../../../1">
+       <action brief="Kommunikations-Ende">Serial.print(F(&quot;A&quot;));</action>
+       <tran_glyph conn="87,33,1,3,-33,27,-50,-56,2">
+        <action box="-17,-4,18,4"/>
+       </tran_glyph>
+      </tran>
+      <state_glyph node="69,21,18,14">
+       <entry box="1,2,15,6"/>
+      </state_glyph>
+     </state>
+     <state_glyph node="55,12,34,25">
+      <entry box="1,2,25,2"/>
+     </state_glyph>
+    </state>
+    <state name="Anzeige">
+     <entry brief="Kommunikations-Takt starten, LED anzeigen">QActive_armX((QActive *)me, 0U, KOMMUNIKATIONSTAKT, 0U);
+
+showColor(PIXELS, me-&gt;rot, me-&gt;gruen, me-&gt;blau);</entry>
+     <tran trig="Q_TIMEOUT" target="../../1">
+      <tran_glyph conn="52,26,1,1,-27">
+       <action box="-9,-2,10,2"/>
+      </tran_glyph>
+     </tran>
+     <state_glyph node="27,16,25,12">
+      <entry box="1,2,23,4"/>
+     </state_glyph>
+    </state>
+    <state name="Lauflicht">
+     <entry brief="Lauflicht-Takt starten, LED Lauflicht">QActive_armX(&amp;me-&gt;super, 0U, LAUFLICHTTAKT, 0U);
+
+for (me-&gt;led = 0; me-&gt;led &lt; PIXELS; me-&gt;led++) {
+    if (me-&gt;led == me-&gt;led_index) {
+        QF_INT_DISABLE();
+        sendPixel(me-&gt;rot, me-&gt;gruen, me-&gt;blau);
+        QF_INT_ENABLE();
+        }
+    else {
+        QF_INT_DISABLE();
+        sendPixel(0, 0, 0);
+        QF_INT_ENABLE();
+        }
+}
+
+show();</entry>
+     <tran trig="Q_TIMEOUT" target="../../1">
+      <action brief="LED takten">if (me-&gt;led_index &lt; PIXELS - 1U) {
+    me-&gt;led_index++;
+    }
+else {
+    me-&gt;led_index = 0;
+    }</action>
+      <tran_glyph conn="53,40,1,1,-28">
+       <action box="-18,-2,19,2"/>
+      </tran_glyph>
+     </tran>
+     <state_glyph node="27,30,26,12">
+      <entry box="1,2,17,4"/>
+     </state_glyph>
+    </state>
+    <state name="Dimmen">
+     <entry brief="Dimmen-Takt starten, LED dimmen">QActive_armX(&amp;me-&gt;super, 0U, DIMMENTAKT, 0U);
+
+showColor(PIXELS, 
+    me-&gt;rot / 255.0 * me-&gt;helligkeit, 
+    me-&gt;gruen / 255.0 * me-&gt;helligkeit, 
+    me-&gt;blau / 255.0 * me-&gt;helligkeit);</entry>
+     <tran trig="Q_TIMEOUT" target="../../1">
+      <action brief="Helligkeit inkrementieren">me-&gt;helligkeit++;</action>
+      <tran_glyph conn="48,56,1,1,-23">
+       <action box="-17,-4,20,4"/>
+      </tran_glyph>
+     </tran>
+     <state_glyph node="27,44,21,14">
+      <entry box="1,2,17,4"/>
+     </state_glyph>
+    </state>
+    <state_diagram size="91,62"/>
+   </statechart>
+  </class>
+ </package>
+ <directory name=".">
+  <file name="EinAus.ino">
+   <text>#include &quot;qpn.h&quot;     // QP-nano framework
+#include &quot;Arduino.h&quot; // Arduino API
+
+#include &lt;SPI.h&gt; // Pin 11 = MOSI
+#include &lt;NeoPixels_SPI.h&gt; // from Nick Gammon
+
+//============================================================================
+// declare all AO classes...
+$declare(AOs::EinAus)
+//...
+
+// AO instances and event queue buffers for them...
+EinAus AO_EinAus;
+static QEvt l_einausQSto[10]; // Event queue storage for EinAus
+//...
+
+//============================================================================
+// QF_active[] array defines all active object control blocks ----------------
+QActiveCB const Q_ROM QF_active[] = {
+    { (QActive *)0,          (QEvt *)0,    0U                  },
+    { (QActive *)&amp;AO_EinAus, l_einausQSto, Q_DIM(l_einausQSto) }
+};
+
+//============================================================================
+// various constants for the application...
+enum {
+    BSP_TICKS_PER_SEC       = 100, // number of system clock ticks in one second
+    KOMMUNIKATIONSTAKT      = BSP_TICKS_PER_SEC / 24U,
+    LAUFLICHTTAKT           = BSP_TICKS_PER_SEC / 2U,
+    DIMMENTAKT              = BSP_TICKS_PER_SEC / 32U,
+
+    PIXELS = 8,              // NeoPixel-Stick
+    BLUETOOTH_POWER = 4,
+
+    DEBUG_LED = 7            // LED zur Fehlersuche
+};
+
+// various signals for the application...
+enum {
+    WERT_SIG,                // Farb-, bzw. Programmwert
+    R_SIG,                   // Rotwert einstellen
+    G_SIG,                   // Grünwert einstellen
+    B_SIG,                   // Blauwert einstellen
+    P_SIG,                   // Programmwert einstellen
+    STOPP_SIG,               // Datenende
+
+    KOMMUNIKATION_SIG,
+    ANZEIGE_SIG,
+    LAUFLICHT_SIG,
+    DIMMEN_SIG
+};
+
+//............................................................................
+void setup() {
+    // initialize the QF-nano framework
+    QF_init(Q_DIM(QF_active));
+
+    // initialize all AOs...
+    QActive_ctor(&amp;AO_EinAus.super, Q_STATE_CAST(&amp;EinAus_initial));
+
+    // initialize the hardware used in this sketch...
+    pinMode(DEBUG_LED, OUTPUT); // set the DEBUG_LED pin to output
+
+    pinMode(BLUETOOTH_POWER, OUTPUT); // Bluetooth ein/aus
+    delay(4000); // verzögert einschalten um uploads durchführen zu können
+    digitalWrite(BLUETOOTH_POWER, HIGH); // Bluetooth einschalten
+
+    Serial.begin(115200); // set the highest standard baud rate of 115200 bps
+
+    ledsetup(); // Setup SPI
+    showColor(PIXELS, 0, 0, 0);  // alle Led aus
+}
+
+//............................................................................
+void loop() {
+    QF_run(); // run the QF-nano framework
+}
+
+//============================================================================
+// interrupts...
+ISR(TIMER2_COMPA_vect) {
+    QF_tickXISR(0U); // process time events for tick rate 0
+}
+
+//============================================================================
+// QF callbacks...
+void QF_onStartup(void) {
+    // set Timer2 in CTC mode, 1/1024 prescaler, start the timer ticking...
+    TCCR2A = (1U &lt;&lt; WGM21) | (0U &lt;&lt; WGM20);
+    TCCR2B = (1U &lt;&lt; CS22 ) | (1U &lt;&lt; CS21) | (1U &lt;&lt; CS20); // 1/2^10
+    ASSR  &amp;= ~(1U &lt;&lt; AS2);
+    TIMSK2 = (1U &lt;&lt; OCIE2A); // enable TIMER2 compare Interrupt
+    TCNT2  = 0U;
+
+    // set the output-compare register based on the desired tick frequency
+    OCR2A  = (F_CPU / BSP_TICKS_PER_SEC / 1024U) - 1U;
+}
+
+//............................................................................
+void QV_onIdle(void) {   // called with interrupts DISABLED
+    // Put the CPU and peripherals to the low-power mode. You might
+    // need to customize the clock management for your application,
+    // see the datasheet for your particular AVR MCU.
+    SMCR = (0 &lt;&lt; SM0) | (1 &lt;&lt; SE); // idle mode, adjust to your project
+    QV_CPU_SLEEP();  // atomically go to sleep and enable interrupts
+}
+
+//............................................................................
+void Q_onAssert(char const Q_ROM * const file, int line) {
+    // implement the error-handling policy for your application!!!
+    QF_INT_DISABLE(); // disable all interrupts
+    QF_RESET();  // reset the CPU
+}
+
+//============================================================================
+// define all AO classes (state machine)...
+$define(AOs::EinAus)
+//...
+</text>
+  </file>
+ </directory>
+</model>
