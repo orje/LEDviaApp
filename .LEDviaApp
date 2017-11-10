@@ -3,8 +3,6 @@
  <item name="license">GPL</item>
  <group name="locked">
   <item name="item">~</item>
-  <item name="item">${.}</item>
-  <item name="item">${.::LEDviaApp.ino}</item>
  </group>
  <group name="settings">
   <item name="tabs">1</item>
@@ -13,8 +11,8 @@
   <item name="backups">0</item>
  </group>
  <group name="windows">
-  <item id="AOs::LEDviaApp::SM">34,2,691,845</item>
-  <item id=".::LEDviaApp.ino">774,0,611,1034,*</item>
+  <item id="AOs::LEDviaApp::SM">-531,0,691,845</item>
+  <item id=".::LEDviaApp.ino">0,0,611,1034,*</item>
  </group>
  <group name="search">
   <item name="options">4129280</item>
