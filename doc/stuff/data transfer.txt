@@ -28,7 +28,7 @@ Datenübertragung:
 Timings:
 benötigte Zeit zur Ansteuerung des LED stripe lt. Nick Gammon:
 	1 SPI-bit = 125 ns
-	1 LED Pixel = 125 ns * 24 = 3000 ns = 3 µs
+	1 LED Pixel = 125 ns * 3 * 8 = 3000 ns = 3 µs
 	Mein LED stripe = 1 LED Pixel * 120 = 3 µs * 120 = 360 µs
 	LED stripe mit reset = 360 µs + 9 µs = 369 µs
 
