@@ -91,7 +91,6 @@ enum {
 // various signals for the application...
 enum {
     STOP_SIG        = Q_USER_SIG,      // end of data
-
     COMMUNICATION_SIG,                 // communication request
     DISPLAY_SIG,                       // display colour
     RUNNING_SIG,                       // running light animation
