@@ -42,6 +42,8 @@ typedef struct LEDviaApp {
     uint8_t led_index;
     uint8_t led_x;
     uint8_t run_fwd;
+    uint8_t run_nr;
+    uint8_t run_nr_index;
     uint8_t brightness;
     uint8_t dim_up;
     uint8_t rain_x;
@@ -97,6 +99,8 @@ enum {
     DIMMING_SIG,                       // dimming animation
     RAINBOW_SIG                        // rainbow animation
 };
+
+// uint8_t run_nr = 1;                    // wahrscheinlich falsch
 
 // store the rainbox in memory
 // WARNING! 3 bytes per pixel - take care you don't exceed available RAM
@@ -188,9 +192,23 @@ static QState LEDviaApp_branch(LEDviaApp * const me) {
                     QACTIVE_POST((QActive *)me, DISPLAY_SIG, 0U);
                 else if (me->program == 2)
                     QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
-                else if (me->program == 3)
+                else if (me->program == 3) {
+                    if (me->run_nr < PIXELS - 2) {
+                        me->run_nr++;
+                        }
+                    me->program = 2U;
+                    QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
+                    }
+                else if (me->program == 4) {
+                    if (me->run_nr > 1U) {
+                        me->run_nr--;
+                        }
+                    me->program = 2U;
+                    QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
+                    }
+                else if (me->program == 5)
                     QACTIVE_POST((QActive *)me, DIMMING_SIG, 0U);
-                else if (me->program == 4)
+                else if (me->program == 6)
                     QACTIVE_POST((QActive *)me, RAINBOW_SIG, 0U);
             }
 
@@ -281,7 +299,9 @@ static QState LEDviaApp_running_fwd(LEDviaApp * const me) {
             QF_INT_DISABLE();
             for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
                 if (me->led_index == me->led_x) {
-                    sendPixel(me->red, me->green, me->blue);
+                    for (me->run_nr_index = 0U; me->run_nr_index < me->run_nr; me->run_nr_index++, me->led_index++) {
+                        sendPixel(me->red, me->green, me->blue);
+                    }
                 }
                 else {
                     sendPixel(0U, 0U, 0U);
@@ -297,7 +317,7 @@ static QState LEDviaApp_running_fwd(LEDviaApp * const me) {
         case Q_EXIT_SIG: {
             me->led_x++;
 
-            if (me->led_x == PIXELS - 1U) {
+            if (me->led_x == PIXELS - me->run_nr) {
                 me->run_fwd = 1U;
             }
             status_ = Q_HANDLED();
@@ -317,9 +337,11 @@ static QState LEDviaApp_running_bwd(LEDviaApp * const me) {
         /* ${AOs::LEDviaApp::SM::branch::running_bwd} */
         case Q_ENTRY_SIG: {
             QF_INT_DISABLE();
-            for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
+            for (me->led_index = 0U; me->led_index < PIXELS + 1; me->led_index++) {
                 if (me->led_index == me->led_x) {
-                    sendPixel(me->red, me->green, me->blue);
+                    for (me->run_nr_index = 0U; me->run_nr_index < me->run_nr; me->run_nr_index++, me->led_index++) {
+                        sendPixel(me->red, me->green, me->blue);
+                    }
                 }
                 else {
                     sendPixel(0U, 0U, 0U);
@@ -415,8 +437,8 @@ static QState LEDviaApp_rainbow(LEDviaApp * const me) {
         /* ${AOs::LEDviaApp::SM::branch::rainbow} */
         case Q_ENTRY_SIG: {
             // cycle the starting point
-            if (me->rain_x>=256) {
-                me->rain_x=0;
+            if (me->rain_x >= 256) {
+                me->rain_x = 0;
             }
             else {
                 me->rain_x++;

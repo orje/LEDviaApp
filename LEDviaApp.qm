@@ -22,27 +22,47 @@ The stopping of the communication tick with &quot;QActive_disarmX((QActive *)me,
    <documentation>use for debuging:
 digitalWrite(LED_L, HIGH);
 digitalWrite(LED_L, LOW);</documentation>
-   <attribute name="value" type="uint8_t" visibility="0x02" properties="0x00"/>
-   <attribute name="red" type="uint8_t" visibility="0x02" properties="0x00"/>
-   <attribute name="green" type="uint8_t" visibility="0x02" properties="0x00"/>
-   <attribute name="blue" type="uint8_t" visibility="0x02" properties="0x00"/>
-   <attribute name="program" type="uint8_t" visibility="0x02" properties="0x00"/>
+   <attribute name="value" type="uint8_t" visibility="0x02" properties="0x00">
+    <documentation>for all transmited values</documentation>
+   </attribute>
+   <attribute name="red" type="uint8_t" visibility="0x02" properties="0x00">
+    <documentation>for the transmited red value</documentation>
+   </attribute>
+   <attribute name="green" type="uint8_t" visibility="0x02" properties="0x00">
+    <documentation>for the transmited green value</documentation>
+   </attribute>
+   <attribute name="blue" type="uint8_t" visibility="0x02" properties="0x00">
+    <documentation>for the transmited blue value</documentation>
+   </attribute>
+   <attribute name="program" type="uint8_t" visibility="0x02" properties="0x00">
+    <documentation>for the transmited program</documentation>
+   </attribute>
    <attribute name="led_index" type="uint8_t" visibility="0x02" properties="0x00">
     <documentation>index of the LED in the stripe</documentation>
    </attribute>
    <attribute name="led_x" type="uint8_t" visibility="0x02" properties="0x00">
-    <documentation>processed LED</documentation>
+    <documentation>processed LED of the stripe</documentation>
    </attribute>
    <attribute name="run_fwd" type="uint8_t" visibility="0x02" properties="0x00">
     <documentation>flag for running light direction
 0U = forward, else backward</documentation>
    </attribute>
-   <attribute name="brightness" type="uint8_t" visibility="0x02" properties="0x00"/>
+   <attribute name="run_nr" type="uint8_t" visibility="0x02" properties="0x00">
+    <documentation>number of LED that run</documentation>
+   </attribute>
+   <attribute name="run_nr_index" type="uint8_t" visibility="0x02" properties="0x00">
+    <documentation>index of the LED of the running group</documentation>
+   </attribute>
+   <attribute name="brightness" type="uint8_t" visibility="0x02" properties="0x00">
+    <documentation>for the brightness value</documentation>
+   </attribute>
    <attribute name="dim_up" type="uint8_t" visibility="0x02" properties="0x00">
     <documentation>flag for dimming direction
 0U = up, else down</documentation>
    </attribute>
-   <attribute name="rain_x" type="uint8_t" visibility="0x02" properties="0x00"/>
+   <attribute name="rain_x" type="uint8_t" visibility="0x02" properties="0x00">
+    <documentation>variable of Nick Gammon's rainbow</documentation>
+   </attribute>
    <statechart>
     <initial target="../1">
      <initial_glyph conn="2,2,4,3,2,2">
@@ -62,9 +82,23 @@ else {
         QACTIVE_POST((QActive *)me, DISPLAY_SIG, 0U);
     else if (me-&gt;program == 2)
         QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
-    else if (me-&gt;program == 3)
+    else if (me-&gt;program == 3) {
+        if (me-&gt;run_nr &lt; PIXELS - 2) {
+            me-&gt;run_nr++;
+            }
+        me-&gt;program = 2U;
+        QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
+        }
+    else if (me-&gt;program == 4) {
+        if (me-&gt;run_nr &gt; 1U) {
+            me-&gt;run_nr--;
+            }
+        me-&gt;program = 2U;
+        QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
+        }
+    else if (me-&gt;program == 5)
         QACTIVE_POST((QActive *)me, DIMMING_SIG, 0U);
-    else if (me-&gt;program == 4)
+    else if (me-&gt;program == 6)
         QACTIVE_POST((QActive *)me, RAINBOW_SIG, 0U);
 }
 
@@ -138,7 +172,9 @@ If the LED index reaches the end of the stripe, the direction flag is set true t
       <entry brief="running LED">QF_INT_DISABLE();
 for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
     if (me-&gt;led_index == me-&gt;led_x) {
-        sendPixel(me-&gt;red, me-&gt;green, me-&gt;blue);
+        for (me-&gt;run_nr_index = 0U; me-&gt;run_nr_index &lt; me-&gt;run_nr; me-&gt;run_nr_index++, me-&gt;led_index++) {
+            sendPixel(me-&gt;red, me-&gt;green, me-&gt;blue);
+        }
     }
     else {
         sendPixel(0U, 0U, 0U);
@@ -149,7 +185,7 @@ QF_INT_ENABLE();
 show();</entry>
       <exit brief="inc processed LED, check direction">me-&gt;led_x++;
 
-if (me-&gt;led_x == PIXELS - 1U) {
+if (me-&gt;led_x == PIXELS - me-&gt;run_nr) {
     me-&gt;run_fwd = 1U;
 }</exit>
       <state_glyph node="26,26,14,14">
@@ -163,9 +199,11 @@ if (me-&gt;led_x == PIXELS - 1U) {
 At exit the processed LED is decremented.
 If the LED index reaches the beginning of the stripe, the direction flag is set false to change the direction.</documentation>
       <entry brief="running LED">QF_INT_DISABLE();
-for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
+for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS + 1; me-&gt;led_index++) {
     if (me-&gt;led_index == me-&gt;led_x) {
-        sendPixel(me-&gt;red, me-&gt;green, me-&gt;blue);
+        for (me-&gt;run_nr_index = 0U; me-&gt;run_nr_index &lt; me-&gt;run_nr; me-&gt;run_nr_index++, me-&gt;led_index++) {
+            sendPixel(me-&gt;red, me-&gt;green, me-&gt;blue);
+        }
     }
     else {
         sendPixel(0U, 0U, 0U);
@@ -225,8 +263,8 @@ if (me-&gt;brightness &lt; 10U) {
      <state name="rainbow">
       <documentation>adapted from Nick Gammon</documentation>
       <entry brief="rainbow">// cycle the starting point
-if (me-&gt;rain_x&gt;=256) {
-    me-&gt;rain_x=0;
+if (me-&gt;rain_x &gt;= 256) {
+    me-&gt;rain_x = 0;
 }
 else {
     me-&gt;rain_x++;
@@ -381,6 +419,8 @@ enum {
     DIMMING_SIG,                       // dimming animation
     RAINBOW_SIG                        // rainbow animation
 };
+
+// uint8_t run_nr = 1;                    // wahrscheinlich falsch
 
 // store the rainbox in memory
 // WARNING! 3 bytes per pixel - take care you don't exceed available RAM
