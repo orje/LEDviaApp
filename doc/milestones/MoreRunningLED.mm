@@ -44,7 +44,7 @@
 </html></richcontent>
 <node CREATED="1513191125962" ID="ID_317245904" MODIFIED="1514051489038" TEXT="Algorithmus &#xfc;berlegen">
 <icon BUILTIN="button_ok"/>
-<node CREATED="1514051427742" ID="ID_719678443" MODIFIED="1514199118968" TEXT="Algorithmus im Model integrieren, ohne Kommunikation">
+<node CREATED="1514051427742" ID="ID_719678443" MODIFIED="1514584396083" TEXT="Algorithmus im Model integrieren, ohne Kommunikation">
 <richcontent TYPE="NOTE"><html>
   <head>
     
@@ -64,6 +64,7 @@
   </body>
 </html>
 </richcontent>
+<icon BUILTIN="button_ok"/>
 </node>
 </node>
 </node>

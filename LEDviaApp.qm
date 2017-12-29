@@ -83,16 +83,12 @@ else {
     else if (me-&gt;program == 2)
         QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
     else if (me-&gt;program == 3) {
-        if (me-&gt;run_nr &lt; PIXELS - 2) {
-            me-&gt;run_nr++;
-            }
+        me-&gt;run_nr++;
         me-&gt;program = 2U;
         QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
         }
     else if (me-&gt;program == 4) {
-        if (me-&gt;run_nr &gt; 1U) {
-            me-&gt;run_nr--;
-            }
+        me-&gt;run_nr--;
         me-&gt;program = 2U;
         QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
         }
@@ -172,9 +168,12 @@ If the LED index reaches the end of the stripe, the direction flag is set true t
       <entry brief="running LED">QF_INT_DISABLE();
 for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
     if (me-&gt;led_index == me-&gt;led_x) {
-        for (me-&gt;run_nr_index = 0U; me-&gt;run_nr_index &lt; me-&gt;run_nr; me-&gt;run_nr_index++, me-&gt;led_index++) {
-            sendPixel(me-&gt;red, me-&gt;green, me-&gt;blue);
-        }
+        for (me-&gt;run_nr_index = 0U;
+            (me-&gt;run_nr_index &lt; me-&gt;run_nr) &amp; (me-&gt;led_index &lt; PIXELS);
+            me-&gt;run_nr_index++, me-&gt;led_index++) {
+                sendPixel(me-&gt;red, me-&gt;green, me-&gt;blue);
+            }
+        me-&gt;led_index--; // otherwise led_index would be two times counted
     }
     else {
         sendPixel(0U, 0U, 0U);
@@ -185,7 +184,7 @@ QF_INT_ENABLE();
 show();</entry>
       <exit brief="inc processed LED, check direction">me-&gt;led_x++;
 
-if (me-&gt;led_x == PIXELS - me-&gt;run_nr) {
+if (me-&gt;led_x &lt;= PIXELS - me-&gt;run_nr) {
     me-&gt;run_fwd = 1U;
 }</exit>
       <state_glyph node="26,26,14,14">
@@ -199,11 +198,14 @@ if (me-&gt;led_x == PIXELS - me-&gt;run_nr) {
 At exit the processed LED is decremented.
 If the LED index reaches the beginning of the stripe, the direction flag is set false to change the direction.</documentation>
       <entry brief="running LED">QF_INT_DISABLE();
-for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS + 1; me-&gt;led_index++) {
-    if (me-&gt;led_index == me-&gt;led_x) {
-        for (me-&gt;run_nr_index = 0U; me-&gt;run_nr_index &lt; me-&gt;run_nr; me-&gt;run_nr_index++, me-&gt;led_index++) {
-            sendPixel(me-&gt;red, me-&gt;green, me-&gt;blue);
-        }
+for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
+    if (me-&gt;led_index == me-&gt;led_x - me-&gt;run_nr) {
+        for (me-&gt;run_nr_index = 0U;
+            me-&gt;run_nr_index &lt; me-&gt;run_nr;
+            me-&gt;run_nr_index++, me-&gt;led_index++) {
+                sendPixel(me-&gt;red, me-&gt;green, me-&gt;blue);
+            }
+        me-&gt;led_index--; // otherwise led_index would be two times counted
     }
     else {
         sendPixel(0U, 0U, 0U);
@@ -214,7 +216,7 @@ QF_INT_ENABLE();
 show();</entry>
       <exit brief="dec processed LED, check direction">me-&gt;led_x--;
 
-if (me-&gt;led_x == 0U) {
+if (me-&gt;led_x &gt;= me-&gt;run_nr) {
     me-&gt;run_fwd = 0U;
 }</exit>
       <state_glyph node="26,42,14,14">
@@ -419,8 +421,6 @@ enum {
     DIMMING_SIG,                       // dimming animation
     RAINBOW_SIG                        // rainbow animation
 };
-
-// uint8_t run_nr = 1;                    // wahrscheinlich falsch
 
 // store the rainbox in memory
 // WARNING! 3 bytes per pixel - take care you don't exceed available RAM

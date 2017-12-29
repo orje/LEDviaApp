@@ -10,7 +10,7 @@
  </group>
  <group name="windows">
   <item id="AOs::LEDviaApp::SM">2,0,669,915,*</item>
-  <item id=".::LEDviaApp.ino">211,0,590,915</item>
+  <item id=".::LEDviaApp.ino">250,0,590,915</item>
  </group>
  <group name="search">
   <item name="options">4129280</item>
