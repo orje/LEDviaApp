@@ -18,7 +18,9 @@
 <node CREATED="1513188589208" ID="ID_768610870" MODIFIED="1514051496359" TEXT="Buttons">
 <icon BUILTIN="button_ok"/>
 </node>
-<node CREATED="1513190919608" ID="ID_438396013" MODIFIED="1513190927384" TEXT="Variablen"/>
+<node CREATED="1513190919608" ID="ID_438396013" MODIFIED="1514667990839" TEXT="Variablen">
+<icon BUILTIN="button_ok"/>
+</node>
 </node>
 <node CREATED="1513188222950" ID="ID_1963567979" MODIFIED="1514051398127" POSITION="right" TEXT="Model erg&#xe4;nzen">
 <richcontent TYPE="NOTE"><html>
@@ -42,9 +44,8 @@
     </p>
   </body>
 </html></richcontent>
-<node CREATED="1513191125962" ID="ID_317245904" MODIFIED="1514051489038" TEXT="Algorithmus &#xfc;berlegen">
-<icon BUILTIN="button_ok"/>
-<node CREATED="1514051427742" ID="ID_719678443" MODIFIED="1514584396083" TEXT="Algorithmus im Model integrieren, ohne Kommunikation">
+<node CREATED="1513191125962" ID="ID_317245904" MODIFIED="1514667970994" TEXT="Algorithmus &#xfc;berlegen">
+<node CREATED="1514051427742" ID="ID_719678443" MODIFIED="1514667981719" TEXT="Algorithmus im Model integrieren, ohne Kommunikation">
 <richcontent TYPE="NOTE"><html>
   <head>
     
@@ -64,9 +65,21 @@
   </body>
 </html>
 </richcontent>
-<icon BUILTIN="button_ok"/>
 </node>
 </node>
+</node>
+<node CREATED="1514667626890" ID="ID_461477469" MODIFIED="1514667903222" POSITION="left" TEXT="Timing austesten">
+<richcontent TYPE="NOTE"><html>
+  <head>
+    
+  </head>
+  <body>
+    <p>
+      Die if-Verschachtelung in der running Funktion scheint das LED timing zu st&#246;ren. Daher ist ein Wert von mindestens 50 ms f&#252;r das COMMUNICATION_TICK, bzw. das Timeout n&#246;tig.
+    </p>
+  </body>
+</html>
+</richcontent>
 </node>
 </node>
 </map>

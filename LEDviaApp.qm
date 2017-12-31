@@ -80,8 +80,12 @@ Periodically a time tick is generated to recheck the receive buffer. This timer 
 else {
     if (me-&gt;program == 1)
         QACTIVE_POST((QActive *)me, DISPLAY_SIG, 0U);
-    else if (me-&gt;program == 2)
+    else if (me-&gt;program == 2) {
+        if (!me-&gt;run_nr) {
+            me-&gt;run_nr = 1U;
+            }
         QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
+        }
     else if (me-&gt;program == 3) {
         me-&gt;run_nr++;
         me-&gt;program = 2U;
@@ -161,30 +165,40 @@ QActive_armX((QActive *)me, 0U, COMMUNICATION_TICK, 0U);</entry>
       </state_glyph>
      </state>
      <state name="running_fwd">
-      <documentation>Because of the strict timing of the SPI bus while sending the colour values to the whole LED stripe the interrupts has to be shut off. At the end of the sending a short blocking dealy is necessary as a reset for the stripe to show the colours (s. Nick Gammon).
+      <documentation>First build into in-memory array, as these calculations take too long to do on the fly
+
+Because of the strict timing of the SPI bus while sending the colour values to the whole LED stripe the interrupts has to be shut off. At the end of the sending a short blocking dealy is necessary as a reset for the stripe to show the colours (s. Nick Gammon).
 
 At exit the processed LED is incremented.
-If the LED index reaches the end of the stripe, the direction flag is set true to change the direction.</documentation>
-      <entry brief="running LED">QF_INT_DISABLE();
-for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
+If the processed LED reaches the end of the stripe, the direction flag is set true to change the direction.</documentation>
+      <entry brief="running LED">for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
     if (me-&gt;led_index == me-&gt;led_x) {
         for (me-&gt;run_nr_index = 0U;
             (me-&gt;run_nr_index &lt; me-&gt;run_nr) &amp; (me-&gt;led_index &lt; PIXELS);
             me-&gt;run_nr_index++, me-&gt;led_index++) {
-                sendPixel(me-&gt;red, me-&gt;green, me-&gt;blue);
+                pixelArray [me-&gt;led_index].r = me-&gt;red;
+                pixelArray [me-&gt;led_index].g = me-&gt;green;
+                pixelArray [me-&gt;led_index].b = me-&gt;blue;
             }
         me-&gt;led_index--; // otherwise led_index would be two times counted
     }
     else {
-        sendPixel(0U, 0U, 0U);
+        pixelArray [me-&gt;led_index].r = 0U;
+        pixelArray [me-&gt;led_index].g = 0U;
+        pixelArray [me-&gt;led_index].b = 0U;
     }
+}
+
+QF_INT_DISABLE();
+for (me-&gt;led_index = 0; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
+    sendPixel (pixelArray [me-&gt;led_index].r, pixelArray [me-&gt;led_index].g, pixelArray [me-&gt;led_index].b);
 }
 QF_INT_ENABLE();
 
 show();</entry>
       <exit brief="inc processed LED, check direction">me-&gt;led_x++;
 
-if (me-&gt;led_x &lt;= PIXELS - me-&gt;run_nr) {
+if (me-&gt;led_x &gt; PIXELS - me-&gt;run_nr) {
     me-&gt;run_fwd = 1U;
 }</exit>
       <state_glyph node="26,26,14,14">
@@ -193,30 +207,41 @@ if (me-&gt;led_x &lt;= PIXELS - me-&gt;run_nr) {
       </state_glyph>
      </state>
      <state name="running_bwd">
-      <documentation>Because of the strict timing of the SPI bus while sending the colour values to the whole LED stripe the interrupts has to be shut off. At the end of the sending a short blocking dealy is necessary as a reset for the stripe to show the colours (s. Nick Gammon).
+      <documentation>First build into in-memory array, as these calculations take too long to do on the fly
+
+Because of the strict timing of the SPI bus while sending the colour values to the whole LED stripe the interrupts has to be shut off. At the end of the sending a short blocking dealy is necessary as a reset for the stripe to show the colours (s. Nick Gammon).
 
 At exit the processed LED is decremented.
-If the LED index reaches the beginning of the stripe, the direction flag is set false to change the direction.</documentation>
-      <entry brief="running LED">QF_INT_DISABLE();
-for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
+If the processed LED reaches the beginning of the stripe, the direction flag is set false to change the direction.</documentation>
+      <entry brief="running LED">for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
     if (me-&gt;led_index == me-&gt;led_x - me-&gt;run_nr) {
         for (me-&gt;run_nr_index = 0U;
             me-&gt;run_nr_index &lt; me-&gt;run_nr;
             me-&gt;run_nr_index++, me-&gt;led_index++) {
-                sendPixel(me-&gt;red, me-&gt;green, me-&gt;blue);
+                pixelArray [me-&gt;led_index].r = me-&gt;red;
+                pixelArray [me-&gt;led_index].g = me-&gt;green;
+                pixelArray [me-&gt;led_index].b = me-&gt;blue;
             }
         me-&gt;led_index--; // otherwise led_index would be two times counted
     }
     else {
-        sendPixel(0U, 0U, 0U);
+        pixelArray [me-&gt;led_index].r = 0U;
+        pixelArray [me-&gt;led_index].g = 0U;
+        pixelArray [me-&gt;led_index].b = 0U;
     }
+}
+
+QF_INT_DISABLE();
+for (me-&gt;led_index = 0; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
+    sendPixel (pixelArray [me-&gt;led_index].r, pixelArray [me-&gt;led_index].g, pixelArray [me-&gt;led_index].b);
 }
 QF_INT_ENABLE();
 
 show();</entry>
       <exit brief="dec processed LED, check direction">me-&gt;led_x--;
 
-if (me-&gt;led_x &gt;= me-&gt;run_nr) {
+// if (me-&gt;led_x &lt; me-&gt;run_nr) {
+if (me-&gt;led_x == 0U) {
     me-&gt;run_fwd = 0U;
 }</exit>
       <state_glyph node="26,42,14,14">
@@ -409,7 +434,7 @@ enum {
     PIXELS = 8,                        // number of LED in the stick
 
     BLUETOOTH_POWER = 4,               // Pin of the transitor base
-    LED_L = 13 // the pin number of the on-board LED (L)
+    LED_L = 13                         // pin number of on-board LED (L)
 };
 
 // various signals for the application...
@@ -435,7 +460,7 @@ void setup() {
     QActive_ctor(&amp;AO_LEDviaApp.super, Q_STATE_CAST(&amp;LEDviaApp_initial));
 
     // initialize the hardware used in this sketch...
-    pinMode(LED_L, OUTPUT); // set the LED-L pin to output
+    pinMode(LED_L, OUTPUT);            // set the LED-L pin to output
 
     pinMode(BLUETOOTH_POWER, OUTPUT);  // Pin mode of the transitor control
     delay(3000);                       // switch on delay for program upload

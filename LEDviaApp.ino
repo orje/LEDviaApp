@@ -87,7 +87,7 @@ enum {
     PIXELS = 8,                        // number of LED in the stick
 
     BLUETOOTH_POWER = 4,               // Pin of the transitor base
-    LED_L = 13 // the pin number of the on-board LED (L)
+    LED_L = 13                         // pin number of on-board LED (L)
 };
 
 // various signals for the application...
@@ -113,7 +113,7 @@ void setup() {
     QActive_ctor(&AO_LEDviaApp.super, Q_STATE_CAST(&LEDviaApp_initial));
 
     // initialize the hardware used in this sketch...
-    pinMode(LED_L, OUTPUT); // set the LED-L pin to output
+    pinMode(LED_L, OUTPUT);            // set the LED-L pin to output
 
     pinMode(BLUETOOTH_POWER, OUTPUT);  // Pin mode of the transitor control
     delay(3000);                       // switch on delay for program upload
@@ -188,8 +188,12 @@ static QState LEDviaApp_branch(LEDviaApp * const me) {
             else {
                 if (me->program == 1)
                     QACTIVE_POST((QActive *)me, DISPLAY_SIG, 0U);
-                else if (me->program == 2)
+                else if (me->program == 2) {
+                    if (!me->run_nr) {
+                        me->run_nr = 1U;
+                        }
                     QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
+                    }
                 else if (me->program == 3) {
                     me->run_nr++;
                     me->program = 2U;
@@ -290,19 +294,27 @@ static QState LEDviaApp_running_fwd(LEDviaApp * const me) {
     switch (Q_SIG(me)) {
         /* ${AOs::LEDviaApp::SM::branch::running_fwd} */
         case Q_ENTRY_SIG: {
-            QF_INT_DISABLE();
             for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
                 if (me->led_index == me->led_x) {
                     for (me->run_nr_index = 0U;
                         (me->run_nr_index < me->run_nr) & (me->led_index < PIXELS);
                         me->run_nr_index++, me->led_index++) {
-                            sendPixel(me->red, me->green, me->blue);
+                            pixelArray [me->led_index].r = me->red;
+                            pixelArray [me->led_index].g = me->green;
+                            pixelArray [me->led_index].b = me->blue;
                         }
                     me->led_index--; // otherwise led_index would be two times counted
                 }
                 else {
-                    sendPixel(0U, 0U, 0U);
+                    pixelArray [me->led_index].r = 0U;
+                    pixelArray [me->led_index].g = 0U;
+                    pixelArray [me->led_index].b = 0U;
                 }
+            }
+
+            QF_INT_DISABLE();
+            for (me->led_index = 0; me->led_index < PIXELS; me->led_index++) {
+                sendPixel (pixelArray [me->led_index].r, pixelArray [me->led_index].g, pixelArray [me->led_index].b);
             }
             QF_INT_ENABLE();
 
@@ -314,7 +326,7 @@ static QState LEDviaApp_running_fwd(LEDviaApp * const me) {
         case Q_EXIT_SIG: {
             me->led_x++;
 
-            if (me->led_x <= PIXELS - me->run_nr) {
+            if (me->led_x > PIXELS - me->run_nr) {
                 me->run_fwd = 1U;
             }
             status_ = Q_HANDLED();
@@ -333,17 +345,27 @@ static QState LEDviaApp_running_bwd(LEDviaApp * const me) {
     switch (Q_SIG(me)) {
         /* ${AOs::LEDviaApp::SM::branch::running_bwd} */
         case Q_ENTRY_SIG: {
-            QF_INT_DISABLE();
             for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
                 if (me->led_index == me->led_x - me->run_nr) {
-                    for (me->run_nr_index = 0U; me->run_nr_index < me->run_nr; me->run_nr_index++, me->led_index++) {
-                        sendPixel(me->red, me->green, me->blue);
-                    }
+                    for (me->run_nr_index = 0U;
+                        me->run_nr_index < me->run_nr;
+                        me->run_nr_index++, me->led_index++) {
+                            pixelArray [me->led_index].r = me->red;
+                            pixelArray [me->led_index].g = me->green;
+                            pixelArray [me->led_index].b = me->blue;
+                        }
                     me->led_index--; // otherwise led_index would be two times counted
                 }
                 else {
-                    sendPixel(0U, 0U, 0U);
+                    pixelArray [me->led_index].r = 0U;
+                    pixelArray [me->led_index].g = 0U;
+                    pixelArray [me->led_index].b = 0U;
                 }
+            }
+
+            QF_INT_DISABLE();
+            for (me->led_index = 0; me->led_index < PIXELS; me->led_index++) {
+                sendPixel (pixelArray [me->led_index].r, pixelArray [me->led_index].g, pixelArray [me->led_index].b);
             }
             QF_INT_ENABLE();
 
@@ -355,7 +377,8 @@ static QState LEDviaApp_running_bwd(LEDviaApp * const me) {
         case Q_EXIT_SIG: {
             me->led_x--;
 
-            if (me->led_x >= me->run_nr) {
+            // if (me->led_x < me->run_nr) {
+            if (me->led_x == 0U) {
                 me->run_fwd = 0U;
             }
             status_ = Q_HANDLED();
