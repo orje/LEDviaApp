@@ -41,7 +41,7 @@ typedef struct LEDviaApp {
     uint8_t program;
     uint8_t led_index;
     uint8_t led_x;
-    uint8_t run_fwd;
+    uint8_t run_bwd;
     uint8_t run_nr;
     uint8_t run_nr_index;
     uint8_t brightness;
@@ -173,6 +173,7 @@ void Q_onAssert(char const Q_ROM * const file, int line) {
 /*${AOs::LEDviaApp::SM} ....................................................*/
 static QState LEDviaApp_initial(LEDviaApp * const me) {
     /* ${AOs::LEDviaApp::SM::initial} */
+    me->run_nr = 1U;
     return Q_TRAN(&LEDviaApp_branch);
 }
 /*${AOs::LEDviaApp::SM::branch} ............................................*/
@@ -188,19 +189,19 @@ static QState LEDviaApp_branch(LEDviaApp * const me) {
             else {
                 if (me->program == 1)
                     QACTIVE_POST((QActive *)me, DISPLAY_SIG, 0U);
-                else if (me->program == 2) {
-                    if (!me->run_nr) {
-                        me->run_nr = 1U;
-                        }
+                else if (me->program == 2)
                     QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
-                    }
                 else if (me->program == 3) {
-                    me->run_nr++;
+                    if (me->run_nr < PIXELS - 4) { // only correct until this
+                        me->run_nr++;
+                    }
                     me->program = 2U;
                     QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
                     }
                 else if (me->program == 4) {
-                    me->run_nr--;
+                    if (me->run_nr > 1) { // never become 0
+                        me->run_nr--;
+                    }
                     me->program = 2U;
                     QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
                     }
@@ -233,7 +234,7 @@ static QState LEDviaApp_branch(LEDviaApp * const me) {
         /* ${AOs::LEDviaApp::SM::branch::RUNNING} */
         case RUNNING_SIG: {
             /* ${AOs::LEDviaApp::SM::branch::RUNNING::[fwd]} */
-            if (!me->run_fwd) {
+            if (!me->run_bwd) {
                 status_ = Q_TRAN(&LEDviaApp_running_fwd);
             }
             /* ${AOs::LEDviaApp::SM::branch::RUNNING::[bwd]} */
@@ -294,10 +295,9 @@ static QState LEDviaApp_running_fwd(LEDviaApp * const me) {
     switch (Q_SIG(me)) {
         /* ${AOs::LEDviaApp::SM::branch::running_fwd} */
         case Q_ENTRY_SIG: {
-            for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
+            for (me->led_index = 0U; me->led_index <= PIXELS - me->run_nr; me->led_index++) {
                 if (me->led_index == me->led_x) {
-                    for (me->run_nr_index = 0U;
-                        (me->run_nr_index < me->run_nr) & (me->led_index < PIXELS);
+                    for (me->run_nr_index = 0U; me->run_nr_index < me->run_nr;
                         me->run_nr_index++, me->led_index++) {
                             pixelArray [me->led_index].r = me->red;
                             pixelArray [me->led_index].g = me->green;
@@ -324,10 +324,12 @@ static QState LEDviaApp_running_fwd(LEDviaApp * const me) {
         }
         /* ${AOs::LEDviaApp::SM::branch::running_fwd} */
         case Q_EXIT_SIG: {
-            me->led_x++;
-
-            if (me->led_x > PIXELS - me->run_nr) {
-                me->run_fwd = 1U;
+            if (me->led_x < PIXELS - me->run_nr) {
+                me->led_x++;
+            }
+            else {
+                me->run_bwd = 1U;
+                me->led_x = PIXELS - 1U; // running_bwd has to start at the top
             }
             status_ = Q_HANDLED();
             break;
@@ -345,16 +347,15 @@ static QState LEDviaApp_running_bwd(LEDviaApp * const me) {
     switch (Q_SIG(me)) {
         /* ${AOs::LEDviaApp::SM::branch::running_bwd} */
         case Q_ENTRY_SIG: {
-            for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
-                if (me->led_index == me->led_x - me->run_nr) {
-                    for (me->run_nr_index = 0U;
-                        me->run_nr_index < me->run_nr;
-                        me->run_nr_index++, me->led_index++) {
+            for (me->led_index = PIXELS; me->led_index >= me->run_nr; me->led_index--) {
+                if (me->led_index == me->led_x) {
+                    for (me->run_nr_index = me->run_nr;  me->run_nr_index > 0U;
+                        me->run_nr_index--, me->led_index--) {
                             pixelArray [me->led_index].r = me->red;
                             pixelArray [me->led_index].g = me->green;
                             pixelArray [me->led_index].b = me->blue;
                         }
-                    me->led_index--; // otherwise led_index would be two times counted
+                    me->led_index++; // otherwise led_index would be two times counted
                 }
                 else {
                     pixelArray [me->led_index].r = 0U;
@@ -375,11 +376,12 @@ static QState LEDviaApp_running_bwd(LEDviaApp * const me) {
         }
         /* ${AOs::LEDviaApp::SM::branch::running_bwd} */
         case Q_EXIT_SIG: {
-            me->led_x--;
-
-            // if (me->led_x < me->run_nr) {
-            if (me->led_x == 0U) {
-                me->run_fwd = 0U;
+            if (me->led_x > me->run_nr) {
+                me->led_x--;
+            }
+            else {
+                me->run_bwd = 0U;
+                me->led_x = 0U; // running_fwd has to start at 0
             }
             status_ = Q_HANDLED();
             break;

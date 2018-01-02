@@ -43,7 +43,7 @@ digitalWrite(LED_L, LOW);</documentation>
    <attribute name="led_x" type="uint8_t" visibility="0x02" properties="0x00">
     <documentation>processed LED of the stripe</documentation>
    </attribute>
-   <attribute name="run_fwd" type="uint8_t" visibility="0x02" properties="0x00">
+   <attribute name="run_bwd" type="uint8_t" visibility="0x02" properties="0x00">
     <documentation>flag for running light direction
 0U = forward, else backward</documentation>
    </attribute>
@@ -65,8 +65,9 @@ digitalWrite(LED_L, LOW);</documentation>
    </attribute>
    <statechart>
     <initial target="../1">
-     <initial_glyph conn="2,2,4,3,2,2">
-      <action box="1,-2,4,2"/>
+     <action brief="init run_nr">me-&gt;run_nr = 1U;</action>
+     <initial_glyph conn="2,2,4,3,4,2">
+      <action box="0,-1,11,2"/>
      </initial_glyph>
     </initial>
     <state name="branch">
@@ -80,19 +81,19 @@ Periodically a time tick is generated to recheck the receive buffer. This timer 
 else {
     if (me-&gt;program == 1)
         QACTIVE_POST((QActive *)me, DISPLAY_SIG, 0U);
-    else if (me-&gt;program == 2) {
-        if (!me-&gt;run_nr) {
-            me-&gt;run_nr = 1U;
-            }
+    else if (me-&gt;program == 2)
         QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
-        }
     else if (me-&gt;program == 3) {
-        me-&gt;run_nr++;
+        if (me-&gt;run_nr &lt; PIXELS - 4) { // only correct until this
+            me-&gt;run_nr++;
+        }
         me-&gt;program = 2U;
         QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
         }
     else if (me-&gt;program == 4) {
-        me-&gt;run_nr--;
+        if (me-&gt;run_nr &gt; 1) { // never become 0
+            me-&gt;run_nr--;
+        }
         me-&gt;program = 2U;
         QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
         }
@@ -105,76 +106,75 @@ else {
 QActive_armX((QActive *)me, 0U, COMMUNICATION_TICK, 0U);</entry>
      <exit brief="stop communication tick">QActive_disarmX((QActive *)me, 0U);</exit>
      <tran trig="COMMUNICATION" target="../../2">
-      <tran_glyph conn="4,16,3,3,42">
+      <tran_glyph conn="4,18,3,3,42">
        <action box="0,-2,14,2"/>
       </tran_glyph>
      </tran>
      <tran trig="DISPLAY" target="../6">
-      <tran_glyph conn="4,20,3,3,22">
+      <tran_glyph conn="4,22,3,3,22">
        <action box="0,-2,9,2"/>
       </tran_glyph>
      </tran>
      <tran trig="RUNNING">
       <choice target="../../7">
-       <guard brief="fwd">!me-&gt;run_fwd</guard>
-       <choice_glyph conn="16,28,5,3,10">
+       <guard brief="fwd">!me-&gt;run_bwd</guard>
+       <choice_glyph conn="16,30,5,3,10">
         <action box="1,-2,6,2"/>
        </choice_glyph>
       </choice>
       <choice target="../../8">
        <guard brief="bwd">else</guard>
-       <choice_glyph conn="16,28,4,3,16,10">
+       <choice_glyph conn="16,30,4,3,16,10">
         <action box="0,14,6,2"/>
        </choice_glyph>
       </choice>
-      <tran_glyph conn="4,28,3,-1,12">
+      <tran_glyph conn="4,30,3,-1,12">
        <action box="0,-2,10,2"/>
       </tran_glyph>
      </tran>
      <tran trig="DIMMING">
       <choice target="../../9">
        <guard brief="dim_up">!me-&gt;dim_up</guard>
-       <choice_glyph conn="16,60,5,3,10">
+       <choice_glyph conn="16,62,5,3,10">
         <action box="1,-2,8,2"/>
        </choice_glyph>
       </choice>
       <choice target="../../10">
        <guard brief="dim_down">else</guard>
-       <choice_glyph conn="16,60,4,3,16,10">
+       <choice_glyph conn="16,62,4,3,16,10">
         <action box="0,14,10,2"/>
        </choice_glyph>
       </choice>
-      <tran_glyph conn="4,60,3,-1,12">
+      <tran_glyph conn="4,62,3,-1,12">
        <action box="0,-2,8,2"/>
       </tran_glyph>
      </tran>
      <tran trig="RAINBOW" target="../11">
-      <tran_glyph conn="4,92,3,3,22">
+      <tran_glyph conn="4,94,3,3,22">
        <action box="0,-2,10,2"/>
       </tran_glyph>
      </tran>
      <tran trig="Q_TIMEOUT" target="..">
-      <tran_glyph conn="42,100,1,3,-38">
+      <tran_glyph conn="42,102,1,3,-38">
        <action box="-10,-2,10,2"/>
       </tran_glyph>
      </tran>
      <state name="display">
       <entry brief="display LED">showColor(PIXELS, me-&gt;red, me-&gt;green, me-&gt;blue);</entry>
-      <state_glyph node="26,18,14,6">
+      <state_glyph node="26,20,14,6">
        <entry box="1,2,13,2"/>
       </state_glyph>
      </state>
      <state name="running_fwd">
-      <documentation>First build into in-memory array, as these calculations take too long to do on the fly
+      <documentation>First build into in-memory array, as these calculations take too long to do on the fly.
 
 Because of the strict timing of the SPI bus while sending the colour values to the whole LED stripe the interrupts has to be shut off. At the end of the sending a short blocking dealy is necessary as a reset for the stripe to show the colours (s. Nick Gammon).
 
 At exit the processed LED is incremented.
 If the processed LED reaches the end of the stripe, the direction flag is set true to change the direction.</documentation>
-      <entry brief="running LED">for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
+      <entry brief="running LED">for (me-&gt;led_index = 0U; me-&gt;led_index &lt;= PIXELS - me-&gt;run_nr; me-&gt;led_index++) {
     if (me-&gt;led_index == me-&gt;led_x) {
-        for (me-&gt;run_nr_index = 0U;
-            (me-&gt;run_nr_index &lt; me-&gt;run_nr) &amp; (me-&gt;led_index &lt; PIXELS);
+        for (me-&gt;run_nr_index = 0U; me-&gt;run_nr_index &lt; me-&gt;run_nr;
             me-&gt;run_nr_index++, me-&gt;led_index++) {
                 pixelArray [me-&gt;led_index].r = me-&gt;red;
                 pixelArray [me-&gt;led_index].g = me-&gt;green;
@@ -196,33 +196,34 @@ for (me-&gt;led_index = 0; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
 QF_INT_ENABLE();
 
 show();</entry>
-      <exit brief="inc processed LED, check direction">me-&gt;led_x++;
-
-if (me-&gt;led_x &gt; PIXELS - me-&gt;run_nr) {
-    me-&gt;run_fwd = 1U;
+      <exit brief="inc processed LED, check direction">if (me-&gt;led_x &lt; PIXELS - me-&gt;run_nr) {
+    me-&gt;led_x++;
+}
+else {
+    me-&gt;run_bwd = 1U;
+    me-&gt;led_x = PIXELS - 1U; // running_bwd has to start at the top
 }</exit>
-      <state_glyph node="26,26,14,14">
+      <state_glyph node="26,28,14,14">
        <entry box="1,2,11,4"/>
        <exit box="1,6,12,6"/>
       </state_glyph>
      </state>
      <state name="running_bwd">
-      <documentation>First build into in-memory array, as these calculations take too long to do on the fly
+      <documentation>First build into in-memory array, as these calculations take too long to do on the fly.
 
 Because of the strict timing of the SPI bus while sending the colour values to the whole LED stripe the interrupts has to be shut off. At the end of the sending a short blocking dealy is necessary as a reset for the stripe to show the colours (s. Nick Gammon).
 
 At exit the processed LED is decremented.
 If the processed LED reaches the beginning of the stripe, the direction flag is set false to change the direction.</documentation>
-      <entry brief="running LED">for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
-    if (me-&gt;led_index == me-&gt;led_x - me-&gt;run_nr) {
-        for (me-&gt;run_nr_index = 0U;
-            me-&gt;run_nr_index &lt; me-&gt;run_nr;
-            me-&gt;run_nr_index++, me-&gt;led_index++) {
+      <entry brief="running LED">for (me-&gt;led_index = PIXELS; me-&gt;led_index &gt;= me-&gt;run_nr; me-&gt;led_index--) {
+    if (me-&gt;led_index == me-&gt;led_x) {
+        for (me-&gt;run_nr_index = me-&gt;run_nr;  me-&gt;run_nr_index &gt; 0U;
+            me-&gt;run_nr_index--, me-&gt;led_index--) {
                 pixelArray [me-&gt;led_index].r = me-&gt;red;
                 pixelArray [me-&gt;led_index].g = me-&gt;green;
                 pixelArray [me-&gt;led_index].b = me-&gt;blue;
             }
-        me-&gt;led_index--; // otherwise led_index would be two times counted
+        me-&gt;led_index++; // otherwise led_index would be two times counted
     }
     else {
         pixelArray [me-&gt;led_index].r = 0U;
@@ -238,13 +239,14 @@ for (me-&gt;led_index = 0; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
 QF_INT_ENABLE();
 
 show();</entry>
-      <exit brief="dec processed LED, check direction">me-&gt;led_x--;
-
-// if (me-&gt;led_x &lt; me-&gt;run_nr) {
-if (me-&gt;led_x == 0U) {
-    me-&gt;run_fwd = 0U;
+      <exit brief="dec processed LED, check direction">if (me-&gt;led_x &gt; me-&gt;run_nr) {
+    me-&gt;led_x--;
+}
+else {
+    me-&gt;run_bwd = 0U;
+    me-&gt;led_x = 0U; // running_fwd has to start at 0
 }</exit>
-      <state_glyph node="26,42,14,14">
+      <state_glyph node="26,44,14,14">
        <entry box="1,2,11,4"/>
        <exit box="1,6,13,6"/>
       </state_glyph>
@@ -263,7 +265,7 @@ If the brightness reaches an upper limit, the direction flag is set true to chan
 if (me-&gt;brightness &gt; 246U) {
     me-&gt;dim_up = 1U;
 }</exit>
-      <state_glyph node="26,58,14,14">
+      <state_glyph node="26,60,14,14">
        <entry box="1,2,13,4"/>
        <exit box="1,6,13,6"/>
       </state_glyph>
@@ -282,7 +284,7 @@ If the brightness reaches a lower limit, the direction flag is set false to chan
 if (me-&gt;brightness &lt; 10U) {
     me-&gt;dim_up = 0U;
 }</exit>
-      <state_glyph node="26,74,14,14">
+      <state_glyph node="26,76,14,14">
        <entry box="1,2,13,4"/>
        <exit box="1,6,13,6"/>
       </state_glyph>
@@ -315,11 +317,11 @@ QF_INT_ENABLE();
 
 show();
 // end of for each cycle</entry>
-      <state_glyph node="26,90,14,6">
+      <state_glyph node="26,92,14,6">
        <entry box="1,2,10,2"/>
       </state_glyph>
      </state>
-     <state_glyph node="4,2,38,100">
+     <state_glyph node="4,4,38,100">
       <entry box="1,2,25,6"/>
       <exit box="1,8,21,2"/>
      </state_glyph>
@@ -333,11 +335,11 @@ If the start sign is detected the processing of the data starts.</documentation>
       <choice target="../../1">
        <guard brief="detect_start_sign">Serial.read() == '&lt;'</guard>
        <action brief="init value">me-&gt;value = 0U;</action>
-       <choice_glyph conn="57,26,4,3,6,2">
-        <action box="0,1,20,2"/>
+       <choice_glyph conn="57,28,4,3,6,2">
+        <action box="0,1,22,2"/>
        </choice_glyph>
       </choice>
-      <tran_glyph conn="46,26,3,-1,11">
+      <tran_glyph conn="46,28,3,-1,11">
        <action box="0,-2,11,2"/>
       </tran_glyph>
      </tran>
@@ -379,21 +381,21 @@ On exit an acknowledge is send to the handy.</documentation>
 }</entry>
       <exit brief="acknowledge communication">Serial.print(F(&quot;A&quot;));</exit>
       <tran trig="STOP" target="../../../1">
-       <tran_glyph conn="77,46,1,3,-33,58,-42,-98,2">
+       <tran_glyph conn="77,48,1,3,-33,58,-42,-98,2">
         <action box="-5,-2,6,2"/>
        </tran_glyph>
       </tran>
-      <state_glyph node="59,30,18,18">
+      <state_glyph node="59,32,18,18">
        <entry box="1,2,15,6"/>
        <exit box="1,8,12,4"/>
       </state_glyph>
      </state>
-     <state_glyph node="46,14,33,36">
+     <state_glyph node="46,16,33,36">
       <entry box="1,2,20,4"/>
       <exit box="1,6,21,2"/>
      </state_glyph>
     </state>
-    <state_diagram size="81,106"/>
+    <state_diagram size="81,108"/>
    </statechart>
   </class>
  </package>
