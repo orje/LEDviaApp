@@ -21,8 +21,10 @@ Datenübertragung:
 	Programm = p
 	1	 = Anzeige
 	2	 = Lauflicht
-	3	 = Dimmen
-	4	 = Rainbow
+	3	 = mehr Lauflicht
+	4	 = weniger Lauflicht
+	5	 = Dimmen
+	6	 = Rainbow
 	
 
 Timings:
