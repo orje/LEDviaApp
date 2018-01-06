@@ -87,11 +87,11 @@ enum {
 //    PIXELS = 120,                      // number of LEDs in the stripe
     PIXELS = 8,                        // number of LED in the stick
 
-// shift 0 to 'zero' for never calculting below 0
+// shift 0 to 'zero' for never calculating below 0
     zero = PIXELS + 1,                 // shift 0 to avoid coming below 0
-    pixels = 2 * PIXELS + 1,           // has also to be shifted PIXELS
+    pixels = 2 * PIXELS + 1,           // has also to be shifted
 
-    BLUETOOTH_POWER = 4,               // pin of the transitor base
+    BLUETOOTH_POWER = 4,               // pin of the transistor base
     LED_L = 13                         // pin number of on-board LED (L)
 };
 
@@ -100,8 +100,8 @@ enum {
     STOP_SIG        = Q_USER_SIG,      // end of data
     COMMUNICATION_SIG,                 // communication request
     DISPLAY_SIG,                       // display colour
-    RUN_SIG,                           // running light animation
-    DIM_SIG,                           // dimming animation
+    RUN_SIG,                           // run light animation
+    DIM_SIG,                           // dim animation
     RAINBOW_SIG                        // rainbow animation
 };
 
