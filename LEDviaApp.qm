@@ -211,7 +211,7 @@ show();</entry>
 }
 else {
     me-&gt;run_bwd = 1U;
-    me-&gt;led_x = pixels; // initialization for running_bwd
+    me-&gt;led_x = pixels; // initialization for run_bwd
 }</exit>
       <state_glyph node="19,28,14,14">
        <entry box="1,2,10,5"/>
@@ -259,7 +259,7 @@ show();</entry>
 }
 else {
     me-&gt;run_bwd = 0U;
-    me-&gt;led_x = zero; // initialization for running_fwd
+    me-&gt;led_x = zero; // initialization for run_fwd
 }</exit>
       <state_glyph node="19,44,14,14">
        <entry box="1,2,10,5"/>

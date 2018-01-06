@@ -339,7 +339,7 @@ static QState LEDviaApp_run_fwd(LEDviaApp * const me) {
             }
             else {
                 me->run_bwd = 1U;
-                me->led_x = pixels; // initialization for running_bwd
+                me->led_x = pixels; // initialization for run_bwd
             }
             status_ = Q_HANDLED();
             break;
@@ -395,7 +395,7 @@ static QState LEDviaApp_run_bwd(LEDviaApp * const me) {
             }
             else {
                 me->run_bwd = 0U;
-                me->led_x = zero; // initialization for running_fwd
+                me->led_x = zero; // initialization for run_fwd
             }
             status_ = Q_HANDLED();
             break;
