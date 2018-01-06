@@ -460,7 +460,7 @@ static QState LEDviaApp_rainbow(LEDviaApp * const me) {
         /* ${AOs::LEDviaApp::SM::branch::rainbow} */
         case Q_ENTRY_SIG: {
             // cycle the starting point
-            if (me->rain_x >= 256) {
+            if (me->rain_x >= 255) {
                 me->rain_x = 0;
             }
             else {

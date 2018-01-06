@@ -292,7 +292,7 @@ if (me-&gt;brightness &lt; 10U) {
      <state name="rainbow">
       <documentation>adapted from Nick Gammon</documentation>
       <entry brief="rainbow">// cycle the starting point
-if (me-&gt;rain_x &gt;= 256) {
+if (me-&gt;rain_x &gt;= 255) {
     me-&gt;rain_x = 0;
 }
 else {
