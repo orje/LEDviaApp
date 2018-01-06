@@ -53,10 +53,10 @@ typedef struct LEDviaApp {
 static QState LEDviaApp_initial(LEDviaApp * const me);
 static QState LEDviaApp_branch(LEDviaApp * const me);
 static QState LEDviaApp_display(LEDviaApp * const me);
-static QState LEDviaApp_running_fwd(LEDviaApp * const me);
-static QState LEDviaApp_running_bwd(LEDviaApp * const me);
-static QState LEDviaApp_dimming_up(LEDviaApp * const me);
-static QState LEDviaApp_dimming_down(LEDviaApp * const me);
+static QState LEDviaApp_run_fwd(LEDviaApp * const me);
+static QState LEDviaApp_run_bwd(LEDviaApp * const me);
+static QState LEDviaApp_dim_up(LEDviaApp * const me);
+static QState LEDviaApp_dim_down(LEDviaApp * const me);
 static QState LEDviaApp_rainbow(LEDviaApp * const me);
 static QState LEDviaApp_communication(LEDviaApp * const me);
 static QState LEDviaApp_process_data(LEDviaApp * const me);
@@ -100,8 +100,8 @@ enum {
     STOP_SIG        = Q_USER_SIG,      // end of data
     COMMUNICATION_SIG,                 // communication request
     DISPLAY_SIG,                       // display colour
-    RUNNING_SIG,                       // running light animation
-    DIMMING_SIG,                       // dimming animation
+    RUN_SIG,                           // running light animation
+    DIM_SIG,                           // dimming animation
     RAINBOW_SIG                        // rainbow animation
 };
 
@@ -196,23 +196,23 @@ static QState LEDviaApp_branch(LEDviaApp * const me) {
                 if (me->program == 1)
                     QACTIVE_POST((QActive *)me, DISPLAY_SIG, 0U);
                 else if (me->program == 2)
-                    QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
+                    QACTIVE_POST((QActive *)me, RUN_SIG, 0U);
                 else if (me->program == 3) {
                     if (me->run_nr < PIXELS) { // never beyond PIXELS
                         me->run_nr++;
                     }
                     me->program = 2U;
-                    QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
+                    QACTIVE_POST((QActive *)me, RUN_SIG, 0U);
                     }
                 else if (me->program == 4) {
                     if (me->run_nr > 1) { // never 0
                         me->run_nr--;
                     }
                     me->program = 2U;
-                    QACTIVE_POST((QActive *)me, RUNNING_SIG, 0U);
+                    QACTIVE_POST((QActive *)me, RUN_SIG, 0U);
                     }
                 else if (me->program == 5)
-                    QACTIVE_POST((QActive *)me, DIMMING_SIG, 0U);
+                    QACTIVE_POST((QActive *)me, DIM_SIG, 0U);
                 else if (me->program == 6)
                     QACTIVE_POST((QActive *)me, RAINBOW_SIG, 0U);
             }
@@ -237,27 +237,27 @@ static QState LEDviaApp_branch(LEDviaApp * const me) {
             status_ = Q_TRAN(&LEDviaApp_display);
             break;
         }
-        /* ${AOs::LEDviaApp::SM::branch::RUNNING} */
-        case RUNNING_SIG: {
-            /* ${AOs::LEDviaApp::SM::branch::RUNNING::[fwd]} */
+        /* ${AOs::LEDviaApp::SM::branch::RUN} */
+        case RUN_SIG: {
+            /* ${AOs::LEDviaApp::SM::branch::RUN::[fwd]} */
             if (!me->run_bwd) {
-                status_ = Q_TRAN(&LEDviaApp_running_fwd);
+                status_ = Q_TRAN(&LEDviaApp_run_fwd);
             }
-            /* ${AOs::LEDviaApp::SM::branch::RUNNING::[bwd]} */
+            /* ${AOs::LEDviaApp::SM::branch::RUN::[bwd]} */
             else {
-                status_ = Q_TRAN(&LEDviaApp_running_bwd);
+                status_ = Q_TRAN(&LEDviaApp_run_bwd);
             }
             break;
         }
-        /* ${AOs::LEDviaApp::SM::branch::DIMMING} */
-        case DIMMING_SIG: {
-            /* ${AOs::LEDviaApp::SM::branch::DIMMING::[dim_up]} */
+        /* ${AOs::LEDviaApp::SM::branch::DIM} */
+        case DIM_SIG: {
+            /* ${AOs::LEDviaApp::SM::branch::DIM::[up]} */
             if (!me->dim_up) {
-                status_ = Q_TRAN(&LEDviaApp_dimming_up);
+                status_ = Q_TRAN(&LEDviaApp_dim_up);
             }
-            /* ${AOs::LEDviaApp::SM::branch::DIMMING::[dim_down]} */
+            /* ${AOs::LEDviaApp::SM::branch::DIM::[down]} */
             else {
-                status_ = Q_TRAN(&LEDviaApp_dimming_down);
+                status_ = Q_TRAN(&LEDviaApp_dim_down);
             }
             break;
         }
@@ -295,11 +295,11 @@ static QState LEDviaApp_display(LEDviaApp * const me) {
     }
     return status_;
 }
-/*${AOs::LEDviaApp::SM::branch::running_fwd} ...............................*/
-static QState LEDviaApp_running_fwd(LEDviaApp * const me) {
+/*${AOs::LEDviaApp::SM::branch::run_fwd} ...................................*/
+static QState LEDviaApp_run_fwd(LEDviaApp * const me) {
     QState status_;
     switch (Q_SIG(me)) {
-        /* ${AOs::LEDviaApp::SM::branch::running_fwd} */
+        /* ${AOs::LEDviaApp::SM::branch::run_fwd} */
         case Q_ENTRY_SIG: {
             // calculate with shifted 0 and PIXELS
             for (me->led_index = zero; me->led_index <= pixels - me->run_nr; me->led_index++) {
@@ -332,7 +332,7 @@ static QState LEDviaApp_running_fwd(LEDviaApp * const me) {
             status_ = Q_HANDLED();
             break;
         }
-        /* ${AOs::LEDviaApp::SM::branch::running_fwd} */
+        /* ${AOs::LEDviaApp::SM::branch::run_fwd} */
         case Q_EXIT_SIG: {
             if (me->led_x < pixels - me->run_nr) {
                 me->led_x++;
@@ -351,11 +351,11 @@ static QState LEDviaApp_running_fwd(LEDviaApp * const me) {
     }
     return status_;
 }
-/*${AOs::LEDviaApp::SM::branch::running_bwd} ...............................*/
-static QState LEDviaApp_running_bwd(LEDviaApp * const me) {
+/*${AOs::LEDviaApp::SM::branch::run_bwd} ...................................*/
+static QState LEDviaApp_run_bwd(LEDviaApp * const me) {
     QState status_;
     switch (Q_SIG(me)) {
-        /* ${AOs::LEDviaApp::SM::branch::running_bwd} */
+        /* ${AOs::LEDviaApp::SM::branch::run_bwd} */
         case Q_ENTRY_SIG: {
             // calculate with shifted 0 and PIXELS
             for (me->led_index = pixels; me->led_index >= me->run_nr + zero; me->led_index--) {
@@ -388,7 +388,7 @@ static QState LEDviaApp_running_bwd(LEDviaApp * const me) {
             status_ = Q_HANDLED();
             break;
         }
-        /* ${AOs::LEDviaApp::SM::branch::running_bwd} */
+        /* ${AOs::LEDviaApp::SM::branch::run_bwd} */
         case Q_EXIT_SIG: {
             if (me->led_x > me->run_nr + zero) {
                 me->led_x--;
@@ -407,11 +407,11 @@ static QState LEDviaApp_running_bwd(LEDviaApp * const me) {
     }
     return status_;
 }
-/*${AOs::LEDviaApp::SM::branch::dimming_up} ................................*/
-static QState LEDviaApp_dimming_up(LEDviaApp * const me) {
+/*${AOs::LEDviaApp::SM::branch::dim_up} ....................................*/
+static QState LEDviaApp_dim_up(LEDviaApp * const me) {
     QState status_;
     switch (Q_SIG(me)) {
-        /* ${AOs::LEDviaApp::SM::branch::dimming_up} */
+        /* ${AOs::LEDviaApp::SM::branch::dim_up} */
         case Q_ENTRY_SIG: {
             showColor(PIXELS,
                 me->red / 255.0 * me->brightness,
@@ -420,7 +420,7 @@ static QState LEDviaApp_dimming_up(LEDviaApp * const me) {
             status_ = Q_HANDLED();
             break;
         }
-        /* ${AOs::LEDviaApp::SM::branch::dimming_up} */
+        /* ${AOs::LEDviaApp::SM::branch::dim_up} */
         case Q_EXIT_SIG: {
             me->brightness = me->brightness + 8U;
 
@@ -437,11 +437,11 @@ static QState LEDviaApp_dimming_up(LEDviaApp * const me) {
     }
     return status_;
 }
-/*${AOs::LEDviaApp::SM::branch::dimming_down} ..............................*/
-static QState LEDviaApp_dimming_down(LEDviaApp * const me) {
+/*${AOs::LEDviaApp::SM::branch::dim_down} ..................................*/
+static QState LEDviaApp_dim_down(LEDviaApp * const me) {
     QState status_;
     switch (Q_SIG(me)) {
-        /* ${AOs::LEDviaApp::SM::branch::dimming_down} */
+        /* ${AOs::LEDviaApp::SM::branch::dim_down} */
         case Q_ENTRY_SIG: {
             showColor(PIXELS,
                 me->red / 255.0 * me->brightness,
@@ -450,7 +450,7 @@ static QState LEDviaApp_dimming_down(LEDviaApp * const me) {
             status_ = Q_HANDLED();
             break;
         }
-        /* ${AOs::LEDviaApp::SM::branch::dimming_down} */
+        /* ${AOs::LEDviaApp::SM::branch::dim_down} */
         case Q_EXIT_SIG: {
             me->brightness = me->brightness - 8U;
 
