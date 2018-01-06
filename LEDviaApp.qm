@@ -183,7 +183,7 @@ for (me-&gt;led_index = zero; me-&gt;led_index &lt;= pixels - me-&gt;run_nr; me-
     if (me-&gt;led_index == me-&gt;led_x) {
         for (me-&gt;run_nr_index = 0U; me-&gt;run_nr_index &lt; me-&gt;run_nr;
             me-&gt;run_nr_index++, me-&gt;led_index++) {
-                // adress the absolute, not shifted LED
+                // address the absolute, not shifted LED
                 pixelArray [me-&gt;led_index - PIXELS - 1].r = me-&gt;red;
                 pixelArray [me-&gt;led_index - PIXELS - 1].g = me-&gt;green;
                 pixelArray [me-&gt;led_index - PIXELS - 1].b = me-&gt;blue;
@@ -191,7 +191,7 @@ for (me-&gt;led_index = zero; me-&gt;led_index &lt;= pixels - me-&gt;run_nr; me-
         me-&gt;led_index--; // otherwise led_index would be two times counted
     }
     else {
-        // adress the absolute, not shifted LED
+        // address the absolute, not shifted LED
         pixelArray [me-&gt;led_index - PIXELS - 1].r = 0U;
         pixelArray [me-&gt;led_index - PIXELS - 1].g = 0U;
         pixelArray [me-&gt;led_index - PIXELS - 1].b = 0U;
@@ -199,7 +199,7 @@ for (me-&gt;led_index = zero; me-&gt;led_index &lt;= pixels - me-&gt;run_nr; me-
 }
 
 QF_INT_DISABLE();
-// adress the absolute, not shifted LED
+// address the absolute, not shifted LED
 for (me-&gt;led_index = 0; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
     sendPixel (pixelArray [me-&gt;led_index].r, pixelArray [me-&gt;led_index].g, pixelArray [me-&gt;led_index].b);
 }
@@ -231,7 +231,7 @@ for (me-&gt;led_index = pixels; me-&gt;led_index &gt;= me-&gt;run_nr + zero; me-
     if (me-&gt;led_index == me-&gt;led_x) {
         for (me-&gt;run_nr_index = me-&gt;run_nr;  me-&gt;run_nr_index &gt; 0U;
             me-&gt;run_nr_index--, me-&gt;led_index--) {
-                // adress the absolute, not shifted LED
+                // address the absolute, not shifted LED
                 pixelArray [me-&gt;led_index - PIXELS - 2].r = me-&gt;red;
                 pixelArray [me-&gt;led_index - PIXELS - 2].g = me-&gt;green;
                 pixelArray [me-&gt;led_index - PIXELS - 2].b = me-&gt;blue;
@@ -239,7 +239,7 @@ for (me-&gt;led_index = pixels; me-&gt;led_index &gt;= me-&gt;run_nr + zero; me-
         me-&gt;led_index++; // otherwise led_index would be two times counted
     }
     else {
-        // adress the absolute, not shifted LED
+        // address the absolute, not shifted LED
         pixelArray [me-&gt;led_index - PIXELS - 2].r = 0U;
         pixelArray [me-&gt;led_index - PIXELS - 2].g = 0U;
         pixelArray [me-&gt;led_index - PIXELS - 2].b = 0U;
@@ -247,7 +247,7 @@ for (me-&gt;led_index = pixels; me-&gt;led_index &gt;= me-&gt;run_nr + zero; me-
 }
 
 QF_INT_DISABLE();
-// adress the absolute, not shifted LED
+// address the absolute, not shifted LED
 for (me-&gt;led_index = 0; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
     sendPixel (pixelArray [me-&gt;led_index].r, pixelArray [me-&gt;led_index].g, pixelArray [me-&gt;led_index].b);
 }

@@ -306,7 +306,7 @@ static QState LEDviaApp_run_fwd(LEDviaApp * const me) {
                 if (me->led_index == me->led_x) {
                     for (me->run_nr_index = 0U; me->run_nr_index < me->run_nr;
                         me->run_nr_index++, me->led_index++) {
-                            // adress the absolute, not shifted LED
+                            // address the absolute, not shifted LED
                             pixelArray [me->led_index - PIXELS - 1].r = me->red;
                             pixelArray [me->led_index - PIXELS - 1].g = me->green;
                             pixelArray [me->led_index - PIXELS - 1].b = me->blue;
@@ -314,7 +314,7 @@ static QState LEDviaApp_run_fwd(LEDviaApp * const me) {
                     me->led_index--; // otherwise led_index would be two times counted
                 }
                 else {
-                    // adress the absolute, not shifted LED
+                    // address the absolute, not shifted LED
                     pixelArray [me->led_index - PIXELS - 1].r = 0U;
                     pixelArray [me->led_index - PIXELS - 1].g = 0U;
                     pixelArray [me->led_index - PIXELS - 1].b = 0U;
@@ -322,7 +322,7 @@ static QState LEDviaApp_run_fwd(LEDviaApp * const me) {
             }
 
             QF_INT_DISABLE();
-            // adress the absolute, not shifted LED
+            // address the absolute, not shifted LED
             for (me->led_index = 0; me->led_index < PIXELS; me->led_index++) {
                 sendPixel (pixelArray [me->led_index].r, pixelArray [me->led_index].g, pixelArray [me->led_index].b);
             }
@@ -362,7 +362,7 @@ static QState LEDviaApp_run_bwd(LEDviaApp * const me) {
                 if (me->led_index == me->led_x) {
                     for (me->run_nr_index = me->run_nr;  me->run_nr_index > 0U;
                         me->run_nr_index--, me->led_index--) {
-                            // adress the absolute, not shifted LED
+                            // address the absolute, not shifted LED
                             pixelArray [me->led_index - PIXELS - 2].r = me->red;
                             pixelArray [me->led_index - PIXELS - 2].g = me->green;
                             pixelArray [me->led_index - PIXELS - 2].b = me->blue;
@@ -370,7 +370,7 @@ static QState LEDviaApp_run_bwd(LEDviaApp * const me) {
                     me->led_index++; // otherwise led_index would be two times counted
                 }
                 else {
-                    // adress the absolute, not shifted LED
+                    // address the absolute, not shifted LED
                     pixelArray [me->led_index - PIXELS - 2].r = 0U;
                     pixelArray [me->led_index - PIXELS - 2].g = 0U;
                     pixelArray [me->led_index - PIXELS - 2].b = 0U;
@@ -378,7 +378,7 @@ static QState LEDviaApp_run_bwd(LEDviaApp * const me) {
             }
 
             QF_INT_DISABLE();
-            // adress the absolute, not shifted LED
+            // address the absolute, not shifted LED
             for (me->led_index = 0; me->led_index < PIXELS; me->led_index++) {
                 sendPixel (pixelArray [me->led_index].r, pixelArray [me->led_index].g, pixelArray [me->led_index].b);
             }
