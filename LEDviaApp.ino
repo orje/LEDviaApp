@@ -120,7 +120,7 @@ void setup() {
     // initialize the hardware used in this sketch...
     pinMode(LED_L, OUTPUT);            // set the LED-L pin to output
 
-    pinMode(BLUETOOTH_POWER, OUTPUT);  // Pin mode of the transitor control
+    pinMode(BLUETOOTH_POWER, OUTPUT);  // pin mode of the transistor control
     delay(3000);                       // switch on delay for program upload
     digitalWrite(BLUETOOTH_POWER, HIGH); // switch on the Bluetooth module
 
