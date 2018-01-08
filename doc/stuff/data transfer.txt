@@ -19,7 +19,7 @@ Datenübertragung:
 
 	Programm:
 	Programm = p
-	1	 = Anzeige
+	1	 = Farbanzeige
 	2	 = Lauflicht
 	3	 = mehr Lauflicht
 	4	 = weniger Lauflicht
