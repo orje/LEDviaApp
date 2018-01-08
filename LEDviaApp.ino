@@ -52,7 +52,7 @@ typedef struct LEDviaApp {
 /* protected: */
 static QState LEDviaApp_initial(LEDviaApp * const me);
 static QState LEDviaApp_branch(LEDviaApp * const me);
-static QState LEDviaApp_display(LEDviaApp * const me);
+static QState LEDviaApp_colour(LEDviaApp * const me);
 static QState LEDviaApp_run_fwd(LEDviaApp * const me);
 static QState LEDviaApp_run_bwd(LEDviaApp * const me);
 static QState LEDviaApp_dim_up(LEDviaApp * const me);
@@ -99,7 +99,7 @@ enum {
 enum {
     STOP_SIG        = Q_USER_SIG,      // end of data
     COMMUNICATION_SIG,                 // communication request
-    DISPLAY_SIG,                       // display colour
+    COLOUR_SIG,                        // display colour
     RUN_SIG,                           // run light animation
     DIM_SIG,                           // dim animation
     RAINBOW_SIG                        // rainbow animation
@@ -194,7 +194,7 @@ static QState LEDviaApp_branch(LEDviaApp * const me) {
             }
             else {
                 if (me->program == 1)
-                    QACTIVE_POST((QActive *)me, DISPLAY_SIG, 0U);
+                    QACTIVE_POST((QActive *)me, COLOUR_SIG, 0U);
                 else if (me->program == 2)
                     QACTIVE_POST((QActive *)me, RUN_SIG, 0U);
                 else if (me->program == 3) {
@@ -232,9 +232,9 @@ static QState LEDviaApp_branch(LEDviaApp * const me) {
             status_ = Q_TRAN(&LEDviaApp_communication);
             break;
         }
-        /* ${AOs::LEDviaApp::SM::branch::DISPLAY} */
-        case DISPLAY_SIG: {
-            status_ = Q_TRAN(&LEDviaApp_display);
+        /* ${AOs::LEDviaApp::SM::branch::COLOUR} */
+        case COLOUR_SIG: {
+            status_ = Q_TRAN(&LEDviaApp_colour);
             break;
         }
         /* ${AOs::LEDviaApp::SM::branch::RUN} */
@@ -278,11 +278,11 @@ static QState LEDviaApp_branch(LEDviaApp * const me) {
     }
     return status_;
 }
-/*${AOs::LEDviaApp::SM::branch::display} ...................................*/
-static QState LEDviaApp_display(LEDviaApp * const me) {
+/*${AOs::LEDviaApp::SM::branch::colour} ....................................*/
+static QState LEDviaApp_colour(LEDviaApp * const me) {
     QState status_;
     switch (Q_SIG(me)) {
-        /* ${AOs::LEDviaApp::SM::branch::display} */
+        /* ${AOs::LEDviaApp::SM::branch::colour} */
         case Q_ENTRY_SIG: {
             showColor(PIXELS, me->red, me->green, me->blue);
             status_ = Q_HANDLED();
