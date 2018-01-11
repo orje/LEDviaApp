@@ -9,7 +9,7 @@
   <item name="backups">0</item>
  </group>
  <group name="windows">
-  <item id=".::LEDviaApp.ino">0,0,383,473,*</item>
+  <item id=".::LEDviaApp.ino">0,0,1920,915,*</item>
  </group>
  <group name="search">
   <item name="options">4129280</item>
