@@ -40,6 +40,16 @@ digitalWrite(LED_L, LOW);</documentation>
    <attribute name="led_index" type="uint16_t" visibility="0x02" properties="0x00">
     <documentation>index of the LED in the stripe</documentation>
    </attribute>
+   <attribute name="brightness" type="uint8_t" visibility="0x02" properties="0x00">
+    <documentation>for the brightness value</documentation>
+   </attribute>
+   <attribute name="dim_up" type="uint8_t" visibility="0x02" properties="0x00">
+    <documentation>flag for dimming direction
+0U = up, 1U = down</documentation>
+   </attribute>
+   <attribute name="rain_x" type="uint8_t" visibility="0x02" properties="0x00">
+    <documentation>variable for Nick Gammon's rainbow</documentation>
+   </attribute>
    <attribute name="led_x" type="uint16_t" visibility="0x02" properties="0x00">
     <documentation>processed LED of the stripe</documentation>
    </attribute>
@@ -57,21 +67,11 @@ if more than 256 PIXELS type must be raised</documentation>
 
 if more than 256 PIXELS type must be raised</documentation>
    </attribute>
-   <attribute name="brightness" type="uint8_t" visibility="0x02" properties="0x00">
-    <documentation>for the brightness value</documentation>
-   </attribute>
-   <attribute name="dim_up" type="uint8_t" visibility="0x02" properties="0x00">
-    <documentation>flag for dimming direction
-0U = up, 1U = down</documentation>
-   </attribute>
-   <attribute name="rain_x" type="uint8_t" visibility="0x02" properties="0x00">
-    <documentation>variable for Nick Gammon's rainbow</documentation>
-   </attribute>
    <statechart>
     <initial target="../1">
      <action brief="init variables">me-&gt;run_nr = 1U;
 me-&gt;led_x = zero;</action>
-     <initial_glyph conn="2,2,4,3,4,2">
+     <initial_glyph conn="2,2,4,3,3,2">
       <action box="0,-1,12,2"/>
      </initial_glyph>
     </initial>
@@ -106,69 +106,159 @@ else {
         QACTIVE_POST((QActive *)me, DIM_SIG, 0U);
     else if (me-&gt;program == 6)
         QACTIVE_POST((QActive *)me, RAINBOW_SIG, 0U);
+    else if (me-&gt;program == 7)
+        QACTIVE_POST((QActive *)me, SPLASH_SIG, 0U);
+    else if (me-&gt;program == 8)
+        QACTIVE_POST((QActive *)me, SNOW_SIG, 0U);
 }
 
 QActive_armX((QActive *)me, 0U, COMMUNICATION_TICK, 0U);</entry>
      <exit brief="stop communication tick">QActive_disarmX((QActive *)me, 0U);</exit>
      <tran trig="COMMUNICATION" target="../../2">
-      <tran_glyph conn="4,18,3,3,35">
+      <tran_glyph conn="4,16,3,3,33">
        <action box="0,-2,14,2"/>
       </tran_glyph>
      </tran>
-     <tran trig="COLOUR" target="../6">
-      <tran_glyph conn="4,22,3,3,15">
+     <tran trig="COLOUR" target="../8">
+      <tran_glyph conn="4,20,3,3,13">
        <action box="0,-2,8,2"/>
-      </tran_glyph>
-     </tran>
-     <tran trig="RUN">
-      <choice target="../../7">
-       <guard brief="fwd">!me-&gt;run_bwd</guard>
-       <choice_glyph conn="12,32,5,3,7">
-        <action box="1,-2,5,2"/>
-       </choice_glyph>
-      </choice>
-      <choice target="../../8">
-       <guard brief="bwd">else</guard>
-       <choice_glyph conn="12,32,4,3,16,7">
-        <action box="0,14,6,2"/>
-       </choice_glyph>
-      </choice>
-      <tran_glyph conn="4,32,3,-1,8">
-       <action box="0,-2,5,2"/>
       </tran_glyph>
      </tran>
      <tran trig="DIM">
       <choice target="../../9">
        <guard brief="up">!me-&gt;dim_up</guard>
-       <choice_glyph conn="12,64,5,3,7">
+       <choice_glyph conn="11,30,5,3,6">
         <action box="1,-2,4,2"/>
        </choice_glyph>
       </choice>
       <choice target="../../10">
        <guard brief="down">else</guard>
-       <choice_glyph conn="12,64,4,3,14,7">
+       <choice_glyph conn="11,30,4,3,14,6">
         <action box="0,12,6,2"/>
        </choice_glyph>
       </choice>
-      <tran_glyph conn="4,64,3,-1,8">
+      <tran_glyph conn="4,30,3,-1,7">
        <action box="0,-2,5,2"/>
       </tran_glyph>
      </tran>
      <tran trig="RAINBOW" target="../11">
-      <tran_glyph conn="4,92,3,3,15">
+      <tran_glyph conn="4,58,3,3,13">
        <action box="0,-2,9,2"/>
       </tran_glyph>
      </tran>
+     <tran trig="SPLASH" target="../12">
+      <tran_glyph conn="4,66,3,3,13">
+       <action box="0,-2,8,2"/>
+      </tran_glyph>
+     </tran>
+     <tran trig="SNOW" target="../13">
+      <tran_glyph conn="4,74,3,3,13">
+       <action box="0,-2,7,2"/>
+      </tran_glyph>
+     </tran>
+     <tran trig="RUN">
+      <choice target="../../14">
+       <guard brief="fwd">!me-&gt;run_bwd</guard>
+       <choice_glyph conn="11,82,5,3,6">
+        <action box="1,-2,5,2"/>
+       </choice_glyph>
+      </choice>
+      <choice target="../../15">
+       <guard brief="bwd">else</guard>
+       <choice_glyph conn="11,82,4,3,16,6">
+        <action box="0,14,6,2"/>
+       </choice_glyph>
+      </choice>
+      <tran_glyph conn="4,82,3,-1,7">
+       <action box="0,-2,5,2"/>
+      </tran_glyph>
+     </tran>
      <tran trig="Q_TIMEOUT" target="..">
-      <tran_glyph conn="35,100,1,3,-31">
-       <action box="-10,-2,10,2"/>
+      <tran_glyph conn="33,114,1,3,-29">
+       <action box="-10,-2,10,3"/>
       </tran_glyph>
      </tran>
      <state name="colour">
       <entry brief="show LED colour">showColor(PIXELS, me-&gt;red, me-&gt;green, me-&gt;blue);</entry>
-      <state_glyph node="19,20,14,8">
-       <entry box="1,2,10,4"/>
+      <state_glyph node="17,18,14,8">
+       <entry box="1,2,11,2"/>
       </state_glyph>
+     </state>
+     <state name="dim_up">
+      <documentation>The colours are multiplicated with an incrementing brightness value.
+
+At exit the brightness is incremented.
+If the brightness reaches an upper limit, the direction flag is set true to change the direction.</documentation>
+      <entry brief="dim LED">showColor(PIXELS,
+    me-&gt;red / 255.0 * me-&gt;brightness,
+    me-&gt;green / 255.0 * me-&gt;brightness,
+    me-&gt;blue / 255.0 * me-&gt;brightness);</entry>
+      <exit brief="inc brightness, check dim direction">me-&gt;brightness = me-&gt;brightness + 8U;
+
+if (me-&gt;brightness &gt; 246U) {
+    me-&gt;dim_up = 1U;
+}</exit>
+      <state_glyph node="17,28,14,12">
+       <entry box="1,2,9,3"/>
+       <exit box="1,5,13,6"/>
+      </state_glyph>
+     </state>
+     <state name="dim_down">
+      <documentation>The colours are multiplicated with an decrementing brightness value.
+
+At exit the brightness is decremented.
+If the brightness reaches a lower limit, the direction flag is set false to change the direction.</documentation>
+      <entry brief="dim LED">showColor(PIXELS,
+    me-&gt;red / 255.0 * me-&gt;brightness,
+    me-&gt;green / 255.0 * me-&gt;brightness,
+    me-&gt;blue / 255.0 * me-&gt;brightness);</entry>
+      <exit brief="dec brightness, check dim direction">me-&gt;brightness = me-&gt;brightness - 8U;
+
+if (me-&gt;brightness &lt; 10U) {
+    me-&gt;dim_up = 0U;
+}</exit>
+      <state_glyph node="17,42,14,12">
+       <entry box="1,2,9,3"/>
+       <exit box="1,5,13,6"/>
+      </state_glyph>
+     </state>
+     <state name="rainbow">
+      <documentation>adapted from Nick Gammon</documentation>
+      <entry brief="rainbow">// cycle the starting point
+if (me-&gt;rain_x == 255) {
+    me-&gt;rain_x = 0;
+}
+else {
+    me-&gt;rain_x++;
+}
+
+// build into in-memory array, as these calculations take too long to do on the fly
+for (me-&gt;led_index = 0; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
+    byte r, g, b;
+    Wheel ((me-&gt;led_index + me-&gt;rain_x) &amp; 255, r, g, b);
+    pixelArray [me-&gt;led_index].r = r;
+    pixelArray [me-&gt;led_index].g = g;
+    pixelArray [me-&gt;led_index].b = b;
+}
+
+// now show results
+QF_INT_DISABLE();
+for (me-&gt;led_index = 0; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
+    sendPixel (pixelArray [me-&gt;led_index].r, pixelArray [me-&gt;led_index].g, pixelArray [me-&gt;led_index].b);
+}
+QF_INT_ENABLE();
+
+show();
+// end of for each cycle</entry>
+      <state_glyph node="17,56,14,6">
+       <entry box="1,2,10,2"/>
+      </state_glyph>
+     </state>
+     <state name="splash">
+      <state_glyph node="17,64,7,6"/>
+     </state>
+     <state name="snow">
+      <state_glyph node="17,72,7,6"/>
      </state>
      <state name="run_fwd">
       <documentation>To avoid calculating into negativ numbers the numeral area is shifted.
@@ -213,8 +303,8 @@ else {
     me-&gt;run_bwd = 1U;
     me-&gt;led_x = pixels; // initialization for run_bwd
 }</exit>
-      <state_glyph node="19,30,14,14">
-       <entry box="1,2,10,5"/>
+      <state_glyph node="17,80,14,14">
+       <entry box="1,2,11,5"/>
        <exit box="1,7,12,6"/>
       </state_glyph>
      </state>
@@ -261,84 +351,14 @@ else {
     me-&gt;run_bwd = 0U;
     me-&gt;led_x = zero; // initialization for run_fwd
 }</exit>
-      <state_glyph node="19,46,14,14">
+      <state_glyph node="17,96,14,14">
        <entry box="1,2,10,5"/>
        <exit box="1,7,13,6"/>
       </state_glyph>
      </state>
-     <state name="dim_up">
-      <documentation>The colours are multiplicated with an incrementing brightness value.
-
-At exit the brightness is incremented.
-If the brightness reaches an upper limit, the direction flag is set true to change the direction.</documentation>
-      <entry brief="dim LED">showColor(PIXELS,
-    me-&gt;red / 255.0 * me-&gt;brightness,
-    me-&gt;green / 255.0 * me-&gt;brightness,
-    me-&gt;blue / 255.0 * me-&gt;brightness);</entry>
-      <exit brief="inc brightness, check dim direction">me-&gt;brightness = me-&gt;brightness + 8U;
-
-if (me-&gt;brightness &gt; 246U) {
-    me-&gt;dim_up = 1U;
-}</exit>
-      <state_glyph node="19,62,14,12">
-       <entry box="1,2,9,3"/>
-       <exit box="1,5,13,6"/>
-      </state_glyph>
-     </state>
-     <state name="dim_down">
-      <documentation>The colours are multiplicated with an decrementing brightness value.
-
-At exit the brightness is decremented.
-If the brightness reaches a lower limit, the direction flag is set false to change the direction.</documentation>
-      <entry brief="dim LED">showColor(PIXELS,
-    me-&gt;red / 255.0 * me-&gt;brightness,
-    me-&gt;green / 255.0 * me-&gt;brightness,
-    me-&gt;blue / 255.0 * me-&gt;brightness);</entry>
-      <exit brief="dec brightness, check dim direction">me-&gt;brightness = me-&gt;brightness - 8U;
-
-if (me-&gt;brightness &lt; 10U) {
-    me-&gt;dim_up = 0U;
-}</exit>
-      <state_glyph node="19,76,14,12">
-       <entry box="1,2,9,3"/>
-       <exit box="1,5,13,6"/>
-      </state_glyph>
-     </state>
-     <state name="rainbow">
-      <documentation>adapted from Nick Gammon</documentation>
-      <entry brief="rainbow">// cycle the starting point
-if (me-&gt;rain_x == 255) {
-    me-&gt;rain_x = 0;
-}
-else {
-    me-&gt;rain_x++;
-}
-
-// build into in-memory array, as these calculations take too long to do on the fly
-for (me-&gt;led_index = 0; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
-    byte r, g, b;
-    Wheel ((me-&gt;led_index + me-&gt;rain_x) &amp; 255, r, g, b);
-    pixelArray [me-&gt;led_index].r = r;
-    pixelArray [me-&gt;led_index].g = g;
-    pixelArray [me-&gt;led_index].b = b;
-}
-
-// now show results
-QF_INT_DISABLE();
-for (me-&gt;led_index = 0; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
-    sendPixel (pixelArray [me-&gt;led_index].r, pixelArray [me-&gt;led_index].g, pixelArray [me-&gt;led_index].b);
-}
-QF_INT_ENABLE();
-
-show();
-// end of for each cycle</entry>
-      <state_glyph node="19,90,14,6">
-       <entry box="1,2,10,2"/>
-      </state_glyph>
-     </state>
-     <state_glyph node="4,4,31,98">
-      <entry box="1,2,24,6"/>
-      <exit box="1,8,21,2"/>
+     <state_glyph node="4,3,29,113">
+      <entry box="1,2,24,5"/>
+      <exit box="1,7,21,2"/>
      </state_glyph>
     </state>
     <state name="communication">
@@ -350,11 +370,11 @@ If the start sign is detected, the processing of the data starts.</documentation
       <choice target="../../1">
        <guard brief="detect_start_sign">Serial.read() == '&lt;'</guard>
        <action brief="init value">me-&gt;value = 0U;</action>
-       <choice_glyph conn="50,28,4,3,6,2">
+       <choice_glyph conn="48,25,4,3,6,2">
         <action box="0,1,22,2"/>
        </choice_glyph>
       </choice>
-      <tran_glyph conn="39,28,3,-1,11">
+      <tran_glyph conn="37,25,3,-1,11">
        <action box="0,-2,11,2"/>
       </tran_glyph>
      </tran>
@@ -396,21 +416,21 @@ On exit an acknowledge is send to the handy.</documentation>
 }</entry>
       <exit brief="acknowledge communication">Serial.print(F(&quot;A&quot;));</exit>
       <tran trig="STOP" target="../../../1">
-       <tran_glyph conn="70,46,1,3,-33,58,-35,-96,2">
+       <tran_glyph conn="68,43,1,3,-33,75,-33,-111,2">
         <action box="-5,-2,6,2"/>
        </tran_glyph>
       </tran>
-      <state_glyph node="52,32,18,16">
+      <state_glyph node="50,29,18,16">
        <entry box="1,2,14,5"/>
        <exit box="1,7,12,4"/>
       </state_glyph>
      </state>
-     <state_glyph node="39,16,33,34">
+     <state_glyph node="37,14,33,33">
       <entry box="1,2,20,3"/>
       <exit box="1,5,21,2"/>
      </state_glyph>
     </state>
-    <state_diagram size="74,106"/>
+    <state_diagram size="72,120"/>
    </statechart>
   </class>
  </package>
@@ -464,9 +484,11 @@ enum {
     STOP_SIG        = Q_USER_SIG,      // end of data
     COMMUNICATION_SIG,                 // communication request
     COLOUR_SIG,                        // display colour
-    RUN_SIG,                           // run light animation
     DIM_SIG,                           // dim animation
-    RAINBOW_SIG                        // rainbow animation
+    RAINBOW_SIG,                       // rainbow animation
+    SPLASH_SIG,                        // colour splash animation
+    SNOW_SIG,                          // snow animation
+    RUN_SIG                            // run light animation
 };
 
 // store the rainbox in memory
