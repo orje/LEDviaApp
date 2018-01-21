@@ -20,12 +20,14 @@ Datenübertragung:
 	Programm:
 	Programm = p
 	1	 = Farbanzeige
-	2	 = Lauflicht
-	3	 = mehr Lauflicht
-	4	 = weniger Lauflicht
-	5	 = Dimmen
-	6	 = Rainbow
-	
+	2	 = Dimmen
+	3	 = Regenbogen
+	4	 = Zufallsfarbe
+	5	 = Zufallsled und -farbe
+	6	 = Schnee
+	7	 = Lauflicht
+	8	 = weniger Lauflicht
+	9	 = mehr Lauflicht
 
 Timings:
 benötigte Zeit zur Ansteuerung des LED stripe lt. Nick Gammon:
