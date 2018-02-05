@@ -171,26 +171,27 @@ QActive_armX((QActive *)me, 0U, COMMUNICATION_TICK, 0U);</entry>
      <tran trig="RUN">
       <choice target="../../16">
        <guard brief="fwd">!me-&gt;run_bwd</guard>
-       <choice_glyph conn="11,88,5,3,6">
+       <choice_glyph conn="11,90,5,3,6">
         <action box="1,-2,5,2"/>
        </choice_glyph>
       </choice>
       <choice target="../../17">
        <guard brief="bwd">else</guard>
-       <choice_glyph conn="11,88,4,3,14,6">
+       <choice_glyph conn="11,90,4,3,14,6">
         <action box="0,12,6,2"/>
        </choice_glyph>
       </choice>
-      <tran_glyph conn="4,88,3,-1,7">
+      <tran_glyph conn="4,90,3,-1,7">
        <action box="0,-2,5,2"/>
       </tran_glyph>
      </tran>
      <tran trig="Q_TIMEOUT" target="..">
-      <tran_glyph conn="36,115,1,3,-32">
+      <tran_glyph conn="36,118,1,3,-32">
        <action box="-10,-2,11,2"/>
       </tran_glyph>
      </tran>
      <state name="colour">
+      <documentation>just show the adjusted colours</documentation>
       <entry brief="show LED colour">showColor(PIXELS, me-&gt;red, me-&gt;green, me-&gt;blue);</entry>
       <state_glyph node="17,18,17,6">
        <entry box="1,2,16,2"/>
@@ -269,7 +270,7 @@ show();
       </state_glyph>
      </state>
      <state name="flash">
-      <documentation>show colour by random</documentation>
+      <documentation>show colour by cyclic random</documentation>
       <entry brief="flash LED">showColor(PIXELS,
     me-&gt;red = random(255U),
     me-&gt;green = random(255U),
@@ -280,9 +281,12 @@ show();
       </state_glyph>
      </state>
      <state name="splash">
-      <documentation>show colour for single LED by random</documentation>
+      <documentation>show colour for single LED by cyclic random
+
+Because of the strict timing of the SPI bus while sending the colour values to the whole LED stripe, the interrupts has to be shut off. At the end of the sending, a short blocking dealy is necessary, as a reset for the stripe to show the colours (s. Nick Gammon).</documentation>
       <entry brief="calculate LED, splash LED">me-&gt;splash_x = random(PIXELS - 1U);
 
+// build into in-memory array, as these calculations take too long to do on the fly
 for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
     if (me-&gt;led_index == me-&gt;splash_x) {
         pixelArray [me-&gt;led_index].r = random(255U);
@@ -296,6 +300,7 @@ for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
     }
 }
 
+// now show results
 QF_INT_DISABLE();
 for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
     sendPixel (pixelArray [me-&gt;led_index].r, pixelArray [me-&gt;led_index].g, pixelArray [me-&gt;led_index].b);
@@ -308,7 +313,35 @@ show();</entry>
       </state_glyph>
      </state>
      <state name="snow">
-      <state_glyph node="17,78,17,6"/>
+      <documentation>randomly snowing
+
+Because of the strict timing of the SPI bus while sending the colour values to the whole LED stripe, the interrupts has to be shut off. At the end of the sending, a short blocking dealy is necessary, as a reset for the stripe to show the colours (s. Nick Gammon).
+
+After showing the LED have to be set to 0 again.</documentation>
+      <entry brief="calculate LED, snow, erase">// build into in-memory array, as these calculations take too long to do on the fly
+for (me-&gt;led_index = random(0U, PIXELS); me-&gt;led_index &lt; PIXELS; me-&gt;led_index = me-&gt;led_index + random(2U, 4U)) {
+    pixelArray [me-&gt;led_index].r = 100U;
+    pixelArray [me-&gt;led_index].g = 100U;
+    pixelArray [me-&gt;led_index].b = random(100U, 255U);
+}
+
+// now show results
+QF_INT_DISABLE();
+for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
+    sendPixel (pixelArray [me-&gt;led_index].r, pixelArray [me-&gt;led_index].g, pixelArray [me-&gt;led_index].b);
+}
+QF_INT_ENABLE();
+
+show();
+
+for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
+    pixelArray [me-&gt;led_index].r = 0U;
+    pixelArray [me-&gt;led_index].g = 0U;
+    pixelArray [me-&gt;led_index].b = 0U;
+}</entry>
+      <state_glyph node="17,78,17,8">
+       <entry box="1,2,13,4"/>
+      </state_glyph>
      </state>
      <state name="run_fwd">
       <documentation>To avoid calculating into negativ numbers the numeral area is shifted.
@@ -318,7 +351,8 @@ Because of the strict timing of the SPI bus while sending the colour values to t
 
 At exit, the processed LED is incremented.
 If the processed LED reaches the end of the stripe, the direction flag is set true to change the direction and the running_bwd state is prepared.</documentation>
-      <entry brief="calculate LED, run LED">// calculate with shifted 0 and PIXELS
+      <entry brief="calculate LED, run LED">// build into in-memory array, as these calculations take too long to do on the fly
+// calculate with shifted 0 and PIXELS
 for (me-&gt;led_index = zero; me-&gt;led_index &lt;= pixels - me-&gt;run_nr; me-&gt;led_index++) {
     if (me-&gt;led_index == me-&gt;run_x) {
         for (me-&gt;run_nr_index = 0U; me-&gt;run_nr_index &lt; me-&gt;run_nr;
@@ -338,6 +372,7 @@ for (me-&gt;led_index = zero; me-&gt;led_index &lt;= pixels - me-&gt;run_nr; me-
     }
 }
 
+// now show results
 QF_INT_DISABLE();
 // address the absolute, not shifted LED
 for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
@@ -353,7 +388,7 @@ else {
     me-&gt;run_bwd = 1U;
     me-&gt;run_x = pixels; // initialization for run_bwd
 }</exit>
-      <state_glyph node="17,86,17,12">
+      <state_glyph node="17,88,17,12">
        <entry box="1,2,13,5"/>
        <exit box="1,7,16,4"/>
       </state_glyph>
@@ -366,7 +401,8 @@ Because of the strict timing of the SPI bus while sending the colour values to t
 
 At exit, the processed LED is decremented.
 If the processed LED reaches the begin of the stripe, the direction flag is set false to change the direction and the running_fwd state is prepared.</documentation>
-      <entry brief="calculate LED, run LED">// calculate with shifted 0 and PIXELS
+      <entry brief="calculate LED, run LED">// build into in-memory array, as these calculations take too long to do on the fly
+// calculate with shifted 0 and PIXELS
 for (me-&gt;led_index = pixels; me-&gt;led_index &gt;= me-&gt;run_nr + zero; me-&gt;led_index--) {
     if (me-&gt;led_index == me-&gt;run_x) {
         for (me-&gt;run_nr_index = me-&gt;run_nr;  me-&gt;run_nr_index &gt; 0U;
@@ -386,6 +422,7 @@ for (me-&gt;led_index = pixels; me-&gt;led_index &gt;= me-&gt;run_nr + zero; me-
     }
 }
 
+// now show results
 QF_INT_DISABLE();
 // address the absolute, not shifted LED
 for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
@@ -401,12 +438,12 @@ else {
     me-&gt;run_bwd = 0U;
     me-&gt;run_x = zero; // initialization for run_fwd
 }</exit>
-      <state_glyph node="17,100,17,12">
+      <state_glyph node="17,102,17,12">
        <entry box="1,2,13,5"/>
        <exit box="1,7,16,4"/>
       </state_glyph>
      </state>
-     <state_glyph node="4,3,32,114">
+     <state_glyph node="4,3,32,117">
       <entry box="1,2,24,5"/>
       <exit box="1,7,21,2"/>
      </state_glyph>
@@ -419,9 +456,9 @@ If the start sign is detected, the processing of the data starts.</documentation
      <tran trig="Q_TIMEOUT">
       <choice target="../../1">
        <guard brief="detect_start_sign">Serial.read() == '&lt;'</guard>
-       <action brief="init value">me-&gt;value = 0U;</action>
+       <action brief="reset value">me-&gt;value = 0U;</action>
        <choice_glyph conn="51,25,4,3,6,2">
-        <action box="0,1,22,2"/>
+        <action box="0,1,23,2"/>
        </choice_glyph>
       </choice>
       <tran_glyph conn="40,25,3,-1,11">
@@ -429,7 +466,7 @@ If the start sign is detected, the processing of the data starts.</documentation
       </tran_glyph>
      </tran>
      <state name="process_data">
-      <documentation>To process the message char by char, the value has to be transmitted first, because it is asigned with the colour or program order.
+      <documentation>To process the message char by char, the value has to be transmitted first, because it is asigned with the following colour or program order.
 
 Data format of the communication = &lt;XY&gt; (all type of char)
 &lt; = start sign
@@ -444,7 +481,7 @@ On exit an acknowledge is send to the handy.</documentation>
     uint8_t data = Serial.read();
     switch (data) {
         case '0' ... '9':
-            me-&gt;value *= 10;
+            me-&gt;value *= 10U;
             me-&gt;value += data - '0';
             break;
         case 'r':
@@ -466,7 +503,7 @@ On exit an acknowledge is send to the handy.</documentation>
 }</entry>
       <exit brief="acknowledge communication">Serial.print(F(&quot;A&quot;));</exit>
       <tran trig="STOP" target="../../../1">
-       <tran_glyph conn="71,43,1,3,-33,76,-36,-112,2">
+       <tran_glyph conn="71,43,1,3,-33,79,-36,-115,2">
         <action box="-5,-2,6,2"/>
        </tran_glyph>
       </tran>
@@ -480,7 +517,7 @@ On exit an acknowledge is send to the handy.</documentation>
       <exit box="1,5,21,2"/>
      </state_glyph>
     </state>
-    <state_diagram size="75,121"/>
+    <state_diagram size="75,124"/>
    </statechart>
   </class>
  </package>
@@ -525,9 +562,9 @@ enum {
     zero = PIXELS + 1U,                // shift 0 to avoid coming below 0
     pixels = 2U * PIXELS + 1U,         // has also to be shifted
 
-    BLUETOOTH_POWER = 4U,              // pin of the transistor base
+    BLUETOOTH_POWER = 4,               // pin of the transistor base
 
-    DEBUG_L = 9U                       // pin number of debug LED
+    DEBUG_L = 9                        // pin number of debug LED
 };
 
 // various signals for the application...
@@ -566,7 +603,7 @@ void setup() {
     Serial.begin(115200);
 
     ledsetup();                        // setup SPI
-    showColor(PIXELS, 0, 0, 0);        // all LED off
+    showColor(PIXELS, 0U, 0U, 0U);     // all LED off
 }
 
 //............................................................................

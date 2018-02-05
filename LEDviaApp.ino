@@ -95,9 +95,9 @@ enum {
     zero = PIXELS + 1U,                // shift 0 to avoid coming below 0
     pixels = 2U * PIXELS + 1U,         // has also to be shifted
 
-    BLUETOOTH_POWER = 4U,              // pin of the transistor base
+    BLUETOOTH_POWER = 4,               // pin of the transistor base
 
-    DEBUG_L = 9U                       // pin number of debug LED
+    DEBUG_L = 9                        // pin number of debug LED
 };
 
 // various signals for the application...
@@ -136,7 +136,7 @@ void setup() {
     Serial.begin(115200);
 
     ledsetup();                        // setup SPI
-    showColor(PIXELS, 0, 0, 0);        // all LED off
+    showColor(PIXELS, 0U, 0U, 0U);     // all LED off
 }
 
 //............................................................................
@@ -457,6 +457,7 @@ static QState LEDviaApp_splash(LEDviaApp * const me) {
         case Q_ENTRY_SIG: {
             me->splash_x = random(PIXELS - 1U);
 
+            // build into in-memory array, as these calculations take too long to do on the fly
             for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
                 if (me->led_index == me->splash_x) {
                     pixelArray [me->led_index].r = random(255U);
@@ -470,6 +471,7 @@ static QState LEDviaApp_splash(LEDviaApp * const me) {
                 }
             }
 
+            // now show results
             QF_INT_DISABLE();
             for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
                 sendPixel (pixelArray [me->led_index].r, pixelArray [me->led_index].g, pixelArray [me->led_index].b);
@@ -491,6 +493,32 @@ static QState LEDviaApp_splash(LEDviaApp * const me) {
 static QState LEDviaApp_snow(LEDviaApp * const me) {
     QState status_;
     switch (Q_SIG(me)) {
+        /* ${AOs::LEDviaApp::SM::branch::snow} */
+        case Q_ENTRY_SIG: {
+            // build into in-memory array, as these calculations take too long to do on the fly
+            for (me->led_index = random(0U, PIXELS); me->led_index < PIXELS; me->led_index = me->led_index + random(2U, 4U)) {
+                pixelArray [me->led_index].r = 100U;
+                pixelArray [me->led_index].g = 100U;
+                pixelArray [me->led_index].b = random(100U, 255U);
+            }
+
+            // now show results
+            QF_INT_DISABLE();
+            for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
+                sendPixel (pixelArray [me->led_index].r, pixelArray [me->led_index].g, pixelArray [me->led_index].b);
+            }
+            QF_INT_ENABLE();
+
+            show();
+
+            for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
+                pixelArray [me->led_index].r = 0U;
+                pixelArray [me->led_index].g = 0U;
+                pixelArray [me->led_index].b = 0U;
+            }
+            status_ = Q_HANDLED();
+            break;
+        }
         default: {
             status_ = Q_SUPER(&LEDviaApp_branch);
             break;
@@ -504,6 +532,7 @@ static QState LEDviaApp_run_fwd(LEDviaApp * const me) {
     switch (Q_SIG(me)) {
         /* ${AOs::LEDviaApp::SM::branch::run_fwd} */
         case Q_ENTRY_SIG: {
+            // build into in-memory array, as these calculations take too long to do on the fly
             // calculate with shifted 0 and PIXELS
             for (me->led_index = zero; me->led_index <= pixels - me->run_nr; me->led_index++) {
                 if (me->led_index == me->run_x) {
@@ -524,6 +553,7 @@ static QState LEDviaApp_run_fwd(LEDviaApp * const me) {
                 }
             }
 
+            // now show results
             QF_INT_DISABLE();
             // address the absolute, not shifted LED
             for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
@@ -560,6 +590,7 @@ static QState LEDviaApp_run_bwd(LEDviaApp * const me) {
     switch (Q_SIG(me)) {
         /* ${AOs::LEDviaApp::SM::branch::run_bwd} */
         case Q_ENTRY_SIG: {
+            // build into in-memory array, as these calculations take too long to do on the fly
             // calculate with shifted 0 and PIXELS
             for (me->led_index = pixels; me->led_index >= me->run_nr + zero; me->led_index--) {
                 if (me->led_index == me->run_x) {
@@ -580,6 +611,7 @@ static QState LEDviaApp_run_bwd(LEDviaApp * const me) {
                 }
             }
 
+            // now show results
             QF_INT_DISABLE();
             // address the absolute, not shifted LED
             for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
@@ -655,7 +687,7 @@ static QState LEDviaApp_process_data(LEDviaApp * const me) {
                 uint8_t data = Serial.read();
                 switch (data) {
                     case '0' ... '9':
-                        me->value *= 10;
+                        me->value *= 10U;
                         me->value += data - '0';
                         break;
                     case 'r':
