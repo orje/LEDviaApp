@@ -85,9 +85,10 @@ enum {
 // number of system clock ticks in one second
     BSP_TICKS_PER_SEC      = 100U,
 
-    COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 5U, // handshake timing 20 ms
+// handshake and program timing = 20 ms
+    COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 5U,
 
-// max 256 PIXELS possible, else some Class Attribute types has to adjusted
+// max 256 PIXELS possible, else some Class Attribute types has to be adjusted
 //    PIXELS = 120,                      // number of LEDs in the stripe
     PIXELS = 8U,                       // number of LED in the stick
 
@@ -113,7 +114,7 @@ enum {
     RUN_SIG                            // run light animation
 };
 
-// store the rainbox in memory
+// store the rainbox in memory (from Nick Gammon)
 // WARNING! 3 bytes per pixel - take care you don't exceed available RAM
 colour pixelArray [PIXELS];
 
