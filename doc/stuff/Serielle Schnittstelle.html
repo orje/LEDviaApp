@@ -1,0 +1,1745 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de">
+<html>
+<head>
+<meta NAME="robots" CONTENT="all">
+<meta NAME="revisit-after" CONTENT="10 days">
+<meta NAME="Reply-To" CONTENT="webmaster@netzmafia.de">
+
+<meta NAME="keywords" CONTENT="Computer Rechner Peripherie Schnittstellen Seriell Parallel USB Programmierung Aktoren Sensoren A/D-Wandler D/A-Wandler RFID Biometrie">
+<meta NAME="description" CONTENT="Praxisorientierte Einf&uuml;hrung in die Computerperipherie, beispielsweise Schnittstellen, Programmierung, Sensoren, Aktoren Analogschnittstelle usw..">
+
+<title>Serielle Schnittstelle</title>
+</head>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" ALINK="#FF0000" VLINK="#FF00FF">
+<CENTER><TABLE BORDER=0 WIDTH="90%" >
+<TR><TD ALIGN=LEFT><IMG SRC="waste.gif"></TD>
+<TD ALIGN=RIGHT><H3>Linux, PC und Hardware</H3>
+<BR><B><I>Prof. J&uuml;rgen Plate</I></B></TD></TR>
+</TABLE></CENTER>
+<HR>
+
+<h1 ALIGN="CENTER">Die serielle Schnittstelle</h1>
+
+Bei einem seriellen, asynchronen Datentransfer werden die einzelnen Bits eines
+Datenbytes nacheinander über eine Leitung übertragen (siehe Bild).
+Der Ruhezustand der Übertragungsleitung, der auch mit "Mark" bezeichnet wird,
+entspricht dem Pegel einer logischen 1. Die zur Übertragung verwendeten Spannungs-
+bzw. Strompegel können Sie der Beschreibung der einzelnen Schnittstellen entnehmen.
+Die Übertragung eines Bytes beginnt mit einem vorangestellten Startbit, das als
+logische 0 ("SPACE") gesendet wird. Anschließend werden nacheinander - je nach
+eingestelltem Format - fünf bis acht Datenbits, beginnend mit dem niederwertigen
+Bit (least significant bit, LSB), ausgegeben. Dem letzten Datenbit kann ein Paritätsbit
+folgen, das zur Erkennung von Übertragungsfehlern dient. Das Paritätsbit ergänzt das
+Datenbyte auf eine gerade (gerade Parität, even parity) oder ungerade (ungerade
+Parität, odd parity) Anzahl von 1-Bits. Das Ende des Zeichens wird durch ein oder
+zwei Stoppbits gebildet. Alle Bits werden sequenziell gesendet. 
+<P>
+<div align="center"><img src="async.gif"></div>
+<P>
+Ein Byte besteht dann aus einer Folge von acht Datenbits, die von Start- und Stoppbit 
+eingerahmt werden. Zwischen zwei aufeinanderfolgenden Bytes k&ouml;nnen sich auch beliebig 
+lange Pausen befinden, da der Beginn eines Zeichens am Startbit eindeutig erkannt wird. 
+Daher nennt man diese Form der &Uuml;bertragung "asynchron". 
+Durch die asynchrone &Uuml;bertragung wird die &Uuml;bertragungsrate gesenkt, da 
+f&uuml;r z. B. 8 Informationsbits 10 Bits &uuml;ber die Leitung gesendet werden. 
+<P>
+Die Datenrate wird
+in <i>Bit pro Sekunde (bps)</i> bzw. <i>Baud</i> (nach dem französischen
+Ingenieur und Erfinder Jean Maurice Émile Baudot) angegeben. Dabei werden alle
+Bits (auch Start- und Stoppbit) gezählt und Lücken zwischen den Bytetransfers
+ignoriert. Deshalb ist die Baudrate der reziproke Wert der Länge eines Bits.
+Als Datenraten sind folgende Werte üblich:<P>
+
+150, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600 und 115200<P>
+
+Nach dem Stoppbit kann sofort wieder eine neue Übertragung mit einem Startbit
+beginnen. Zur Vermeidung von Datenverlusten muss der Empfänger die Datenübertragung
+anhalten können, wenn keine weiteren Daten mehr verarbeitet werden können. Dieses
+sogenannte Handshake kann auf zwei Arten realisiert werden:
+
+<UL>
+<LI> Hardware-Handshake: Der Empfänger steuert über entsprechende Leitungen die Handshake-Eingänge
+des Senders (CTS, DSR) mit seinen Handshake-Ausgängen (DTR, RTS).
+<LI> Software-Handshake: Der Empfänger sendet zur Steuerung des Datenflusses spezielle
+Zeichen an den Sender (z. B.  XON, XOFF).
+</UL>
+
+Da die Pause zwischen zwei aufeinanderfolgenden Datenbytes beliebig lang sein darf,
+spricht man von einer "asynchronen" Kommunikation. Für den Datenverkehr synchronisieren
+sich Sender und Empfänger bei der asynchronen Übertragung für jedes einzelne
+Zeichen neu. Vor jedem Zeichentransfer liegt auf der Übertragungsleitung
+das Signal auf 1-Pegel. Soll nun ein Zeichen übertragen werden,
+so wird dies dem Empfänger vom Sender durch ein Startbit angezeigt,
+indem für einen Taktzyklus das Signal auf 0 gelegt wird. Anhand der 0-1-Flanke
+kann der Empfänger den Beginn eines Datenbytes exakt erkennen. Damit
+sind Sender und Empfänger für dieses Zeichen synchronisiert. Anhand der Stoppbits
+erkennt der Empfänger das Ende des Zeichens, damit dient das Stoppbit ebenfalls
+der Synchronisation. Sender und Empfänger müssen sich zuvor auf
+die Anzahl der Stoppbits, der Datenbits, der Berechnung der Paritätsbits
+und auf die Frequenz des Übertragungstaktes (Baudrate) verständigen.
+Diese Parameter werden zumeist einmal in den Schnittstellen einprogrammiert
+und bleiben für die gesamte Dauer der Kommunikation unverändert.
+<P>
+Wer glaubt, die serielle Kommunikation über Modem sei im Zeitalter von DSL tot,
+der irrt. Einerseits gibt es auch in den blühenden DSL-Landschaften des 
+Telekom-Einzugsbereichs noch genügend weiße Flecken, nämlich da, wo das Ziehen
+von Glasfaserleitungen noch richtig ins Geld geht - also ab etwa 10 km
+von der Stadtgrenze entfernt. In diesen Gegenden erfolgt die Internetanbindung
+oft noch über ISDN oder Modem.
+<P>
+Aber auch eine relativ neue Form von Modem kommuniziert seriell mit dem Computer, 
+die sogenannten GSM-Modems. GSM ist eine Abkürzung für "Global System for 
+Mobile Communications" (früher "Groupe Spécial Mobile") und ein Standard für 
+volldigitale Mobilfunknetze, der hauptsächlich für Telefonie, aber auch für 
+leitungsvermittelte und paketvermittelte Datenübertragung sowie Kurzmitteilungen 
+(Short Messages, SMS) genutzt wird. In Deutschland ist GSM die technische 
+Grundlage der D- und E-Netze. Der Standard wird heute in 670 GSM-Mobilfunknetzen 
+in weltweit rund 200 Ländern genutzt. Später wurde der Standard um Protokolle 
+wie HSCSD, GPRS und EDGE zur schnelleren Datenübertragung erweitert. GSM ist
+heute schon ein Standard für die M2M-Kommunikation (Maschine zu Maschine), 
+d.\,h. dass vielfach Überwachungs- und Telemetrieaufgaben per GSM drahtlos
+über das GSM-Netz erfolgen, wobei sich die GSM-Modems auf die gleiche Art und
+Weise ansprechen lassen, wie die uralten 2400-BPS-Modems.
+<p>
+
+<h3>Die serielle PC-Schnittstelle</h3>
+Auch wenn wir für die Programmierung auf die seriellen Treiber von Linux
+zurückgreifen können und nicht in Assembler programmieren müssen, sind
+einige Grundkenntnisse über die Schnittstellenhardware angebracht.
+Das Herzstück der seriellen Schnittstelle im PC ist der serielle
+Baustein UART 8250 (Universal Asynchronous Receiver and Transmitter)
+bzw. dazu kompatible Schaltungen (zeitweise war der Baustein 16550
+sehr beliebt, da er einen kleinen FIFO-Speicher enthielt, der bei
+den damals noch recht langsamen Prozessoren einen Datenverlust beim
+Empfang verhinderte). Dieser Baustein erlaubt die serielle Datenübertragung
+und übernimmt dabei die Datenumwandlung von parallel nach seriell
+und umgekehrt. Der 8250-Baustein verfügt über zehn interne Register für
+die Einstellung von Übertragungsparameter, Leitungssteuerung und das
+Senden und Empfangen von Daten (siehe Tabelle). Der größte Teil dieser Register wird
+bei der Initialisierung des Bausteins verwendet, während bei der Datenübertragung
+selbst meist nur ein bis zwei Register zum Einsatz kommen. Es sind
+im Grundausbau des PC maximal vier serielle Schnittstellen möglich, die
+unter Windows mit <i>COM1</i> bis <i>COM4</i> bezeichnet werden und unter
+Linux über die Gerätenamen <i>/dev/ttyS0</i> bis <i>/dev/ttyS3</i> angesprochen
+werden. Mit entsprechender Zusatzhardware (sogenannten Multiseriell-Karten) können
+auch mehr Schnittstellen bedient werden. Beim Original-PC lassen sich
+aber nur die beiden ersten per Interrupt betreiben, alle weiteren müssen über
+Polling abgefragt werden. Bei Verwendung von Seriell-Steckkarten wird auch
+oft ein Interrupt-Sharing eingesetzt.  Die Portadressen sind für <i>/dev/ttyS0</i>
+3F8-3FE, für <i>/dev/ttyS1</i> 2F8-2FE, für <i>/dev/ttyS2</i> 3E8-3EE und für
+<i>/dev/ttyS3</i> 3E0-3E6.<P>
+
+<table align="center" border="1" cellpadding="4" cellspacing="0">
+<tr><th>Port</th><th>Funktion</th><th>Bem.</th></tr>
+<tr><td> Base </td><td>   Sendedaten (TDR) Empfangsdaten (RDR) </td><td> (1)</td></tr>
+<tr><td> Base </td><td>   Baudrate (niederwertiges Bit) </td><td> (2)</td></tr>
+ <tr><td>Base+1 </td><td> Interrupt Enable Register (IER) </td><td> (1)</td></tr>
+ <tr><td>Base+1 </td><td> Baudrate (höherwertiges Bit) </td><td> (2)</td></tr>
+ <tr><td>Base+2 </td><td> Interrupt ID (IID) </td><td> </td></tr>
+ <tr><td>Base+3 </td><td> Line Control </td><td> </td></tr>
+ <tr><td>Base+4 </td><td> Modem Control </td><td> </td></tr>
+ <tr><td>Base+5 </td><td> Line Status </td><td> </td></tr>
+ <tr><td>Base+6 </td><td> Modem Status </td><td> </td></tr>
+</table>
+<p>
+(1) Bit 7 im Line Control Register = 0} <br>
+(2) Bit 7 im Line Control Register = 1}
+</p>
+
+Das folgende Bild zeigt die Belegung des Line-Control-Registers,
+wobei mit DLAB das Bit 7 des Line-Control-Registers bezeichnet wird (DLAB = Divisor
+Latch Access Bit). Die Registeradressen beziehen sich auf die jeweilige
+Basisadresse der Schnittstelle.
+<p>
+<div align="center"><img src="8250reg1.gif"></div>
+</p>
+
+Das Modem-Control-Register dient zur Steuerung der zusätzlichen
+Steuerleitungen einer seriellen Schnittstelle. Für uns interessant sind die Leitungen
+RTS und DTR, weil diese auf dem Stecker herausgeführt sind und als digitale Steuerleitungen
+auch für andere Zwecke genutzt werden können. Die Leitung OUT1 wird im PC nicht
+verwendet, und die Leitung OUT2 dient der internen Interrupt-Freigabe.
+Ist kein Modem angeschlossen, werden die Leitungen DTR und RTS meist konstant
+auf 1 gesetzt. Soll die serielle Schnittstelle im Interruptbetrieb arbeiten,
+ist Bit 3 (OUT2) auf 1 zu setzen. Der Loop-Modus ist nur für Tests interessant.
+Ist das Bit 4 gesetzt, verhält sich die Schnittstelle so, als seien Sendeausgang
+und Empfangseingang direkt miteinander verbunden.<P>
+
+Im Interruptbetrieb muss für die Schnittstelle auch eine IRQ-Leitung
+existieren, über die der Interrupt ausgelöst werden kann. Deshalb ist zusätzlich
+noch eine Programmierung des Interrupt-Controllers 8259 im PC notwendig.
+Beim Interrupt-Control-Register gilt, dass eine 0
+den entsprechenden Interrupt sperrt und eine 1 ihn freigibt. Glücklicherweise
+wird aber auch dies vom Linux-Schnittstellentreiber erledigt.
+
+<p><div align="center"><img src="8250reg2.gif"></div></p>
+
+Für Interessierte sei hier in Stichpunkten skizziert, was nötig ist, um eine
+selbst geschriebene Interrupt-Routine zu aktivieren, die Zeichen vom 8250
+holt und in einem Puffer speichert:<P>
+
+<OL>
+<LI> Empfangspuffer einrichten
+<LI> Baudrate einstellen
+<LI> Interruptvektor (z. B.  IRQ4) auf die eigene Interrupt-Routine zeigen lassen
+<LI> Dummy-Read auf das Datenregister ausführen, um ein eventuell
+  gesetztes Interrupt-Bit für "Daten-Empfangen" zu löschen.
+<LI> Am Interrupt-Controller 8259 den Interrupt (z. B.  IRQ4) freigeben.
+<LI> Interrupt am Schnittstellenbaustein 8250 freigeben: Bit 0 des
+  Interrupt-Control-Registers auf 1 setzen und den Ausgang OUT2 freischalten.
+</OL>
+
+Die Interrupt-Serviceroutine wird immer dann aufgerufen, wenn der 8250 ein Byte
+empfangen hat. Sie muss Folgendes erledigen:<P>
+
+<OL>
+<LI> Empfangenes Byte vom 8250 abholen (Datenregister) und im Pufferbereich speichern.
+<LI> "End of Interrupt" an den Interrupt-Controller melden.
+</OL>
+
+Da mehrere Ereignisse nur einen Hardware-Interrupt auslösen,
+kann die Interrupt-Routine über das Interrupt-Identification-Register
+Auskunft darüber erhalten, welches Ereignis die Unterbrechung
+ausgelöst hat. Treten mehrere Ereignisse gleichzeitig auf, müssen
+sie von der Interrupt-Routine nacheinander abgearbeitet werden.
+In diesem Fall entscheidet die Priorität des Interrupts, welches
+Ereignis als Erstes behandelt wird. Bit 0 gibt Auskunft darüber, ob ein
+Interrupt aufgetreten ist (1 = kein Interrupt, 0 = Interrupt hat
+stattgefunden). Es bleibt so lange 0, bis alle entsprechenden Ereignisse
+abgearbeitet wurden.
+Die Bits 2 und 3 spezifizieren das Ereignis (Priorität in Klammern):<P>
+
+<table border="0" cellpadding="2" cellspacing="0">
+<tr><td>00 </td><td> Wechsel im Modem-Status (Eingangsleitungen, Priorität 4)</td></tr>
+<tr><td>01 </td><td> Sende-Register leer (Sende-Interrupt, Priorität 3) </td></tr>
+<tr><td>10 </td><td> Empfang eines neuen Bytes (Priorität 2)</td></tr>
+<tr><td>11 </td><td> Overrun-, Framing- oder Parity-Error bzw. Break-Signal empfangen
+(Priorität 1).</td></tr>
+</table><P>
+
+Die Übertragungsgeschwindigkeit der seriellen Schnittstelle
+wird mittels der beiden Baudrate-Register eingestellt. Dabei
+wird der Teilerwert (1 Word) über die ganzzahlige Division
+<pre>
+Teiler = 115200/Baudrate
+</pre>
+ermittelt und der LSB-Teil des Teilerwerts ins Baud-Rate-Register
+LSB (Basisadresse, DLAB = 1) und der MSB-Teil ins
+Baud-Rate-Register MSB (Basisadresse +1 , DLAB = 1) geschrieben.
+Für die Initialisierung auf 9600 Baud ergibt beispielsweise die
+obige Formel 115200 / 9600 = 12 = 0CH. Damit wird das Baud-Rate-Register
+LSB mit 0CH und das Baud-Rate-Register MSB mit 00H initialisiert.
+<P>
+
+Den Status der Eingangsleitungen des Bausteins liefern die Statusregister
+für Modem und Leitungen:
+
+<p><div align="center"><img src="8250reg3.gif"></div></p>
+
+Der Baustein 8250 liefert TTL-Signale an seinen Ausgangspins. Für die
+"Außenwelt" werden aber meist andere Signalpegel verwendet. Deshalb
+sollen nun die gebräuchlichsten seriellen Schnittstellen mit ihren Signalpegeln
+besprochen werden. Vom seriellen Datenformat und von der Programmierung her
+gibt es dabei keine Unterschiede. Am PC finden wir standardmäßig die
+RS232-Schnittstelle. Für andere Signalpegel oder auch für die Weiterverarbeitung
+der Signale muss das angeschlossene Gerät gegebenenfalls einen Schnittstellenwandler
+enthalten.<P>
+
+<h3>Die RS232C-Schnittstelle (V.24)</h3>
+Diese häufig verwendete Schnittstelle nach der amerikanischen Norm RS232C ist in Europa
+mit fast identischen Eigenschaften unter V.24 genormt. Dieser Standard ist
+für zwei Kommunikationsgeräte konzipiert, die beide je eine Datenquelle (transmit, TX)
+und eine Datensenke (receive, RX) besitzen können. Zur bidirektionalen Datenübertragung
+werden mindestens drei Leitungen benötigt: eine Sendeleitung (TXD), eine
+Empfangsleitung (RXD) und eine Masseleitung (Ground). Die
+Signale der RS232 sind bipolar ausgelegt. Eine logische 0 wird bei den Datenleitungen durch
+eine Spannung von +3 bis +15 Volt, eine logische 1 durch -3 bis -15 Volt dargestellt.
+Bei den Steuerleitungen sind die Pegel genau umgekehrt (positive Spannung = 1, negative
+Spannung = 0).
+Das Signal-Störverhältnis ist damit wesentlich größer als bei TTL- oder CMOS-Pegeln.
+Dies ermöglicht eine störungsfreie Übertragung über größere Entfernungen.
+Die maximale Entfernung zwischen RS232-Geräten ist wie bei allen
+seriellen Übertragungsverfahren stark vom verwendeten Kabel und der
+Datenrate abhängig. Laut EIA-Norm definiert die RS232C die maximale Entfernung
+mit 15 Metern. Bei Verwendung von kapazitätsarmen Kabeln kann die maximale
+Distanz bis zu 50 Meter betragen. Je länger ein Kabel ist, umso größer
+gilt die Problematik der Potentialdifferenz zwischen beiden Endpunkten.
+Mit wachsenden Kabellängen sowie im industriellen Umfeld sollte grundsätzlich
+eine galvanische Trennung eingesetzt werden, damit unliebsame Störungen
+vermieden werden.<P>
+
+Neben der Masseleitung und den Datenleitungen gibt es noch eine ganze Reihe von
+Leitungen, die den Verkehr zwischen Rechner und Peripherie steuern. Meist interessieren
+aber nur einige Leitungen, um den Verkehr zwischen Computer und Peripherie oder
+zwischen zwei Computern aufrechtzuerhalten. Die anderen Leitungen bleiben unbeschaltet
+oder werden auf einen festen Pegel gelegt. Die wichtigsten Leitungen sind:<P>
+
+<UL>
+<LI> GND bildet das gemeinsame Massepotential für die Datenleitungen.
+<LI> TXD führt die Sendedaten des Computers zum Peripheriegerät.
+<LI> RXD liefert die Daten vom Peripheriegerät zum Rechner.
+<LI> RTS zeigt der Peripherie die Übertragungsbereitschaft des Computers an.
+<LI> CTS signalisiert die Bereitschaft der Peripherie, Daten zu empfangen.
+<LI> DTR steuert bei Modems das Anschalten an die Telefonleitung.
+</UL>
+
+Damit sind die sechs wichtigsten Leitungen aufgeführt. Oft sind noch die Leitungen
+DTR und DCD belegt, die dann meist auf die entsprechenden Anschlüsse des
+Schnittstellenbausteins führen. Die Norm definiert noch etliche weitere Signale,
+die am PC keine Entsprechung besitzen. Die folgende Tabelle liefert Aufschluss
+über Signalbezeichnungen, Steckerbelegungen (9-poliger und 25-poliger Stecker) sowie
+Signalbezeichnung der RS232-Schnittstelle.
+<P>
+
+<table align="center" border="1" cellpadding="4" cellspacing="0">
+<tr><th>ITU</th><th>DIN</th><th>US</th><th>25-pol.</th><th>9-pol.</th><th>Beschreibung</th><th>Richt.</th></tr>
+<tr><td> 101 </td><td> E 1 </td><td>- </td><td> 1 </td><td>-</td><td>Schutzerde </td><td> -  </td></tr>
+ <tr><td>102 </td><td> E 2 </td><td>GND</td><td> 7 </td><td>5</td><td>Signalerde (Ground) </td><td> -  </td></tr>
+ <tr><td>103 </td><td> D 1 </td><td>TXD</td><td> 2 </td><td>3</td><td>Sendedaten (Transmit Data) </td><td> &larr;  </td></tr>
+ <tr><td>104 </td><td> D 2 </td><td>RXD</td><td> 3 </td><td>2</td><td>Empfangsdaten (Receive Data) </td><td> &rarr;  </td></tr>
+ <tr><td>105 </td><td> S 2 </td><td>RTS</td><td> 4 </td><td>7</td><td>Sendeteil einschalten (Request To Send) </td><td> &larr;  </td></tr>
+ <tr><td>106 </td><td> M 2 </td><td>CTS</td><td> 5 </td><td>8</td><td>Sendebereitschaft (Clear To Send) </td><td> &rarr;  </td></tr>
+ <tr><td>107 </td><td> M 1 </td><td>DSR</td><td> 6 </td><td>6</td><td>Betriebsbereitschaft (Data Set Ready) </td><td> &rarr;  </td></tr>
+ <tr><td>108.2</td><td>S 1.2</td><td> DTR</td><td>20 </td><td>4</td><td>Terminal ist bereit (Data Terminal Ready) </td><td> &larr;  </td></tr>
+ <tr><td>109 </td><td> M 5 </td><td>DCD</td><td> 8 </td><td>1</td><td>Empfangspegel (Data Carrier Detect) </td><td> &rarr;  </td></tr>
+ <tr><td>125 </td><td> M 3 </td><td>RI </td><td>22 </td><td>9</td><td>Ankommender Ruf (Ring Indicator)</td><td>&rarr; </td></tr>
+</table><P>
+
+Die Richtungsangabe bezieht sich auf die Peripherie (&rarr; bedeutet Peripherie nach PC,
+&larr; entsprechend PC nach Peripherie). Werden Peripherie/Modem (DÜE =
+Datenübertragungseinrichtung) und Computer (DEE = Datenendeinrichtung) miteinander
+verbunden, verwendet man ein Kabel mit einer 1:1-Verbindung der wichtigsten Leitungen.
+<P>
+
+<div align="center"><img src="rs232x.gif"></div>
+<p>
+
+Sollen hingegen zwei Computer direkt, also ohne Modem miteinander verbunden werden, müssen die
+Leitungen gekreuzt werden. Werden die Steuerleitungen gleich im
+Stecker zurückgeführt (RTS auf CTS, DTR auf DSR), kommt man mit einer dreiadrigen Verbindung
+aus. So eine direkte Verbindung zwischen zwei Computern wird allgemein auch als "Nullmodem"
+bezeichnet, denn der Datenverkehr kann genauso ablaufen wie bei über Modem verbundenen
+Computern.
+<P>
+Bei allen Projekten mit seriellen Schnittstellen gilt nach wie vor das Prinzip 
+"Versuch und Irrtum". Das beginnt beim Anschluss des Geräts an den Computer
+mit der Frage: direkte Verbindung oder gekreuzte Leitungen ("Nullmodemkabel", siehe oben)?
+Es endet oft damit, dass ein individuelles Kabel gelötet wird. Wenn die Geräte
+dann rein elektrisch miteinander kommunizieren, beginnt das gleiche Spiel bei der
+Software: Schnittstellenparameter, Handshake-Format, Protokoll, Zeilenende mit
+Carriage Return oder Linefeed (oder beidem). Wie lange soll auf ein Zeichen 
+gewartet werden? Und so weiter... Lassen Sie sich also nicht gleich
+entmutigen! Oft hilft ein Schnittstellentester mit LED-Anzeige, der zwischen
+Computer und Gerät geschaltet wird.
+<p>
+
+Bei der Pegelwandlung von TTL nach RS232 können wir praktischerweise auf einen
+bewährten integrierten Baustein zurückgreifen, den MAX232 von Maxim, um den sich
+inzwischen eine ganze Familie von Pegelwandlern mit verschiedenen Gehäusebauformen
+und unterschiedlichen elektrischen Eigenschaften gebildet hat. Der Baustein kann
+zwei Leitungen von TTL nach RS232 umsetzen und zwei weitere Leitungen von RS232
+nach TTL. Somit kann ein Baustein die Sende- und Empfangsleitung (TXD, RXD) und
+zwei Handshakeleitungen (z. B.  CTS, RTS) umsetzen, was in vielen Fällen ausreicht.
+Zusätzlich sind im Chip noch zwei Ladungspumpen integriert, welche die benötigten
+Spannungen von +12 V und -12 V erzeugen. Für diese Spannungswandler werden als
+externe Beschaltung lediglich vier Kondensatoren benötigt (1-uF-Tantal-Elkos).
+Im folgenden Bild (nach Maxim-Unterlagen) sind die Innenschaltung des Bausteins,
+die Beschaltung mit den Kondensatoren sowie das Pin-Layout zu sehen. 
+
+<p><div align="center"><img src="max232.gif"></div></p>
+
+
+<a name="serielleprogrammierung"></a>
+<h3>Programmierung mit C</h3>
+In Linux-Systemen werden die seriellen Schnittstellen über <tt>/dev/ttySx</tt> 
+angesprochen, wobei hier bei x mit Null mit dem Zählen begonnen wird. 
+Die serielle Emulation von USB-Geräten heißt dann meist </tt>/dev/USBx</tt>. 
+Bei Windows heißen die Schnittstellen <tt>COMx</tt>, wobei hier das x mit 1 beginnt. 
+<tt>/dev/ttyS0</tt> von Linux  entspricht demnach <tt>COM1</tt> 
+von Windows. Unter Linux/Unix kann man auch einen Shell-Login auf eine serielle Schnittstelle 
+definieren, was für wichtige Server-Systeme einen Notzugang im Fehlerfall 
+ermöglicht. 
+<p>
+Die nötigen Grundlagen für die Programmierung liefern die beiden HOWTO-Dokumente,
+das "Linux Serial HOWTO" von David Lawyer, das "Linux Serial Programming HOWTO"
+von Peter H. Baumann und das "Text-Terminal-HOWTO" von David Lawyer (Die HOWTOs werden
+bei den meisten Distributionen schon mit installiert oder lassen sich über das
+Dokumentationspakete nachinstallieren - sie sind aber auch im Internet oder
+hier auf der Webseite zu finden). Da
+es sich bei den seriellen Schnittstellen um normale Gerätedateien handelt,
+gelten natürlich auch die entsprechenden Regeln der Programmierung für das
+Ansprechen von Geräten. Dafür können wir auf POSIX-standardisierte Funktionen
+zurückgreifen. Eine sehr gute Beschreibung finden Sie im GNU C-Library Reference
+Manual, welches den meisten Distributionen beiliegt (dort Kap. 12). Hier will ich Ihnen
+eine kurze Zusammenfassung des Terminal-IO bieten, was für die meisten Anwendungen
+ausreichen sollte.<P>
+
+Um mit einem User-Programm auf die serielle Schnittstelle zugreifen
+zu können, muss der entsprechende User auch die nötige Schreib- und Leseberechtigung
+für das Device haben (was normalerweise nicht der Fall ist). In der Regel reicht es,
+die User, die mit der seriellen Schnittstelle arbeiten, mit in die Gruppe <i>uucp</i>
+aufzunehmen (ggf. hilft ein Blick auf die Zugriffsrechte der Devices und in die
+Datei <i>/etc/group</i>). Sinnvoll ist auch das Anlegen eines eigenen (Pseudo-)Users
+für die Steuerungsprogramme.<P>
+
+Fast alle Veränderungen an den Übertragungsparametern von
+Terminals oder seriellen Schnittstellen erzielen Sie mit der Struktur <tt>termios</tt>
+(Terminal-IO-Settings). Diese Struktur besteht aus fünf Teilen, nämlich vier
+32-Bit-Masken für die verschiedenen Flags, der line discipline und dem c_cc-Array,
+das weitere Parameter, z. B.  Wartezeiten nach dem Senden bestimmter Zeichen und die
+Definition von Steuerzeichen, aufnimmt (adressiert wird es über Präprozessordefinitionen
+in <i>/usr/include/termbits.h</i>). Sie hat demnach folgendes Aussehen:<P>
+
+<PRE>
+struct termios
+  {
+  /* Bitmaske fuer die Eingabe-Flags */       tcflag_t c_iflag;
+  /* Bitmaske fuer die Ausgabe-Flags */       tcflag_t c_oflag;
+  /* Bitmaske fuer die Control-Flags */       tcflag_t c_cflag;
+  /* Bitmaske fuer lokale Einstellungen */    tcflag_t c_lflag;
+  /* line discipline */                       char    __c_line;
+  /* Array fuer Sonderzeichen/-funktionen */  cc_t c_cc[NCCS];
+  }
+</PRE>
+
+Mit dem Shell-Kommando <tt>stty -a &lt;/dev/ttyS0</tt> können Sie sich jederzeit
+alle Werte dieser Struktur anzeigen lassen. Mit diesem Kommando kann man
+auch zahlreiche Parameter setzen. Für den Zugriff auf die <tt>termios</tt>-Daten
+gibt es zwei Bibliotheksfunktionen:
+
+<PRE>
+int tcgetattr(int filedes, struct termios *termios_p)
+/* liefert aktuelle Terminal-Settings */<P>
+
+int tcsetattr(int filedes, int when, const struct termios *termios_p)
+/* setzt Terminal-Settings */
+</PRE>
+
+Beiden Funktionen wird neben dem Zeiger auf eine Variable vom
+Typ <tt>termios</tt> auch der Dateideskriptor des Terminal-Devices
+übergeben. <tt>tcsetattr</tt> erwartet zusätzlich den Parameter
+<tt>when</tt>, mit dem sich festlegen lässt, wann die neuen
+Einstellungen übernommen werden sollen. Es gibt drei Möglichkeiten:<P>
+
+<pre>
+<tt>TCSANOW:  </tt>      Einstellungen sofort ändern
+<tt>TCSADRAIN:</tt>      Einstellungen ändern, nachdem alle eventuell noch gepufferten
+<tt>          </tt>      Daten gesendet wurden
+<tt>TCSAFLUSH:</tt>      Einstellungen sofort ändern und Eingabepuffer löschen
+</pre>
+
+<tt>TCSAFLUSH</tt> wäre also neben <tt>TCSANOW</tt> eine gute Wahl. Theoretisch ließe sich
+die Übertragungsgeschwindigkeit auch mit der <tt>termios</tt>-Struktur und <tt>tcsetattr()</tt>
+einstellen. Davon wird im GNU-Handbuch jedoch ohne Angabe von Gründen abgeraten. Zum
+Einstellen der Übertragungsgeschwindigkeit gibt es nämlich eine weitere Bibliotheksfunktion:
+
+<XMP>
+int cfsetspeed(struct termios *termios_p, speed_t speed)
+</XMP>
+
+Damit wird die Datenrate richtig in die Variable eingetragen. Für Hardware, die getrennte
+Einstellung von Sende- und Empfangsdatenrate erlaubt, gibt es übrigens noch die Funktionen
+<tt>cfsetospeed()</tt> und <tt>cfsetispeed()</tt>, die im Prinzip auch verwendet werden könnten
+(beim PC natürlich beide mit der gleichen Datenrate). <P>
+
+Alle genannten Funktionen liefern
+im Erfolgsfall den Wert 0 zurück und im Fehlerfall -1. Die Komplexität des Terminal-IO
+entsteht durch zahllose Flags, aus denen die vier Bitmasken zusammengesetzt sind. Die Flags
+und auch die <tt>termios</tt>-Struktur sind in der Datei <i>/usr/include/termbits.h</i> definiert
+und unter anderem im Mini-HOWTO dokumentiert.<P>
+
+Normalerweise werden nicht alle Flags benötigt, um die serielle Schnittstelle zum
+Laufen zu bringen. Deshalb will ich im Folgenden nur die wichtigsten von ihnen
+behandeln. Beginnen wir mit den Eingabeflags in <tt>c_iflag</tt>:<P>
+<pre>
+IGNBRK   ignoriere Breaks
+BRKINT   beachte Breaks
+IGNPAR   ignoriere Parität
+INLCR    ersetze NL durch CR
+IGNCR    ignoriere CR
+ICRNL    ersetze CR durch NL
+IUCLC    Großbuchstaben in Kleinbuchstaben umwandeln
+IXON     XON/XOFF-Flusssteuerung einschalten
+IXANY    Ausgabe fortsetzen mit einem beliebigen Zeichen
+IXOFF    XON/XOFF-Flusssteuerung ausschalten
+IMAXBEL  akustisches Signal, wenn der Puffer voll ist (Zeilenende)
+</pre>
+
+Die  Ausgabeflags (<tt>c_oflag</tt>) sind noch wesentlich zahlreicher als die Eingabeflags,
+doch brauchen wir in der Regel nur wenige von ihnen. Meist reichen die folgenden:<P>
+
+<pre>
+ONLCR    ersetze NL durch CR
+OCRNL    ersetze CR durch NL
+ONOCR    Unterdrücken von CR in Spalte 0
+ONLRET   eein CR senden
+OFILL    Füllzeichen NUL senden anstelle einer Pause
+OFDEL    Füllzeichen ist DEL statt NUL
+</pre>
+
+Die dritte Gruppe von Flags, <tt>c_cflag</tt>, ist für die
+Übertragungsgeschwindigkeit und das Datenformat zuständig.
+Zunächst die Flags für die Geschwindigkeit:<P>
+
+<pre>
+B0       hang up       B50      50 bps
+B75      75 bps        B110     110 bps
+B150     150 bps       B300     300 bps
+B600     600 bps       B1200    1200 bps
+B1800    1800 bps      B2400    2400 bps
+B4800    4800 bps      B9600    9600 bps
+B19200   19200 bps     B38400   38400 bps
+B57600   57600 bps     B115200  115200 bps
+</pre>
+
+Die anderen Flags dieser Gruppe steuern das Datenformat:<P>
+
+<pre>
+CS5      5 Bit
+CS6      6 Bit
+CS7      7 Bit
+CS8      8 Bit
+CSTOPB   2 Stoppbits statt einem
+CREAD    Empfangsteil aktivieren
+PARENB   Paritätsbit erzeugen
+PARODD   ungerade Parität statt gerader
+HUPCL    Verbindungsabbruch bei Ende des letzten Prozesses
+CLOCAL   Terminal lokal angeschlossen (ignoriere CD)
+CRTSCTS  Hardware-Handshake einschalten
+CIGNORE  ignoriere Controlflags
+</pre>
+
+Aus der letzten Gruppe Flags (<tt>c_lflag</tt>) brauchen wir nur wenige:<P>
+
+<pre>
+ECHO  	 Einschalten der ECHO-Funktion
+ICANON   Zeilenorientierter Eingabemodus (kanonischer Modus)
+ISIG  	 bestimmte Sonderzeichen lösen ein Signal aus (z. B.  Ctrl-C)
+XCASE  	 Umwandeln von eingegebenen Groß- in Kleinbuchstaben
+</pre>
+Grundsätzlich unterscheidet man beim Terminal-IO zwei Arten:
+<UL>
+<LI> <b>kanonischer Modus:</b> (cooked mode) Hier erfolgt das Lesen und Schreiben auf
+das Device zeilenorientiert. Eine Eingabe wird erst weitergereicht,
+wenn ein Zeilenabschluss (Linefeed, NL) oder Carriage Return (CR)) übertragen
+wurde. Für diesen Mode benötigt man die Steuerzeichen des <tt>c_cc</tt>-Arrays.
+Ein Programm wartet beim Lesen in diesem Modus so lange, bis tatsächlich
+eine komplette Zeile empfangen wurde. Wird kein Zeilenabschluss gelesen,
+so wird für immer und ewig gewartet. Die Aufgabe des Zwischenspeicherns
+übernimmt der Kernel.<P>
+
+<LI> <b>nichtkanonischer Modus:</b> (raw mode) Hier wird nicht zeilenweise gelesen,
+sondern entweder auf eine bestimmte Anzahl von Bytes gewartet oder nach
+einer gewissen Zeit die bis dahin eingetroffenen Bytes abgeliefert. Hierfür
+müssen zwei Felder des Arrays <tt>c_cc</tt> gesetzt werden. In <tt>c_cc[VTIME]</tt>
+wird die Wartezeit in Zehntelsekunden und in <tt>c_cc[VMIN]</tt> das Minimum
+der zu lesenden Bytes angegeben. Die folgenden vier Konstellationen sind
+denkbar:
+<p>
+<ul>
+<li><b>1. Fall: c_cc[VTIME] &gt; 0 und c_cc[VMIN] &gt; 0</b><br>
+<tt>read()</tt> liefert MIN Bytes, bevor die Zeit TIME
+abläuft oder <tt>read()</tt> liefert weniger als MIN Bytes, weil die Zeit TIME
+abgelaufen ist. Sind noch keine Daten empfangen worden, wartet <tt>read()</tt> auf min.
+ein Byte. Wenn das erste Byte gelesen wurde, läuft der Timer los, wobei jedes
+ankommende Byte den Timer wieder neu startet. Diese Methode ist günstig, wenn
+man große Datenmengen lesen, aber auch auf einzelne Zeichen reagieren muss.
+Aber es kann eine Blockierung stattfinden.
+<p>
+<li><b>2. Fall: c_cc[VTIME] = 0 und c_cc[VMIN] &gt; 0</b><br>
+<tt>read()</tt> liefert mindestens MIN Bytes, sobald diese
+eingetroffen sind. Dieser Modus ist günstig, wenn möglichst viele Bytes mit einem
+<tt>read()</tt> gelesen werden sollen. Andererseits kann man auch auf ein einziges
+Byte reagieren (MIN = 1). Ist MIN größer als die Anzahl der bei <tt>read()</tt>
+angegebenen Zeichen, wird gewartet, bis MIN Bytes gelesen, aber nur n Bytes an
+<tt>read()</tt> geliefert wurden; ein zweites <tt>read()</tt> liefert dann den Rest.
+Auch hier kommt es zur Blockierung, wenn nicht genügend Bytes eintreffen.
+<p>
+<li><b>3. Fall: c_cc[VTIME] &gt; 0 und c_cc[VMIN] = 0</b><br>
+Diese Einstellung erlaubt es, das Lesen mit Timeout zu programmieren.
+Sobald ein Byte eintrifft, liefert <tt>read()</tt> dieses ab.
+Wenn die Zeit TIME seit dem Aufruf von <tt>read()</tt> verstrichen ist,
+liefert <tt>read()</tt> 0 (gelesene Bytes) zurück.
+<P>
+<li><b>4. Fall: c_cc[VTIME] = 0 und c_cc[VMIN] = 0</b><br>
+<tt>read</tt> liefert die Anzahl Bytes, die anliegen. Sind keine Daten vorhanden,
+wird sofort 0 (gelesene Bytes) zurückgegeben. Der Treiber wartet also niemals auf
+Daten, sondern kehrt immer sofort zurück.
+</ul>
+<p>
+Wenn das Programm nicht ewig auf eine Eingabe warten soll, nimmt man also am besten 
+den dritten Fall.
+</UL>
+<P>
+Die folgenden Funktionen zum Öffnen, Lesen, Schreiben und Schließen der Geräteschnittstelle
+sind im <A HREF="http://www.netzmafia.de/skripten/programmieren/ad8.html#5.9">Skript
+zur C-Programmierung</A> beschrieben.
+<P>
+
+<h4>Schnittstelle öffnen</h4>
+Da es sich bei den seriellen Schnittstellen nicht um normale Dateien handelt,
+können beim <tt>open()</tt>-Aufruf gegebenenfalls dateiuntypische Fehler auftreten.
+So kann zum Beispiel der Treiber den Fehlercode <tt>EBUSY</tt> zurückmelden, wenn
+gerade ein anderer Prozess das Device benutzt. Oder er hält das Programm
+so lange an ("blocking open"), bis die Carrier-Leitung des Modems aktiv wird
+(was bei direkt angeschlossenen Geräten durch das Fehlen dieser Leitung scheinbar
+auftritt). Es gibt jedoch einen Mechanismus, um das Blockieren zu umgehen: beim
+<tt>open()</tt>-Aufruf muss das Flag <tt>O_NDELAY</tt> mitgegeben werden. Das sieht
+folgendermaßen aus:
+<a name="ind-open()">
+
+<PRE>
+file_descr = open("/dev/ttyS0", O_RDWR | O_NDELAY | O_NOCTTY);
+/*                    Modus:    read      nicht     nicht              */
+/*                              write     warten    controlling entity */
+</PRE>
+
+Sobald die Gerätedatei erfolgreich geöffnet ist, stellen Sie <tt>O_NDELAY</tt> sofort
+wieder ab, da sonst zukünftige <tt>read()</tt>-Kommandos nicht auf Daten warten,
+sondern immer sofort zurückkommen und damit ein lastintensives "busy waiting"
+durchführen (<tt>fcntl( filedescriptor, F_SETFL, O_RDWR );</tt>). Eine Funktion zum
+Öffnen eines seriellen Ports könnte also folgendermaßen aussehen:
+
+<PRE>
+int open_port(int port)
+  {
+  /*
+   * Oeffnet seriellen Port
+   * Gibt das Filehandle zurueck oder -1 bei Fehler
+   * der Parameter port muss 0, 1, 2 oder 3 sein
+   *
+   * RS232-Parameter
+   * - 19200 baud
+   * - 8 bits/byte
+   * - no parity
+   * - no handshake
+   * - 1 stop bit
+   */
+   int fd;
+   struct termios options;
+   switch (port)
+     {
+     case 0: fd = open("/dev/ttyS0", O_RDWR | O_NOCTTY | O_NDELAY); break;
+     case 1: fd = open("/dev/ttyS1", O_RDWR | O_NOCTTY | O_NDELAY); break;
+     case 2: fd = open("/dev/ttyS2", O_RDWR | O_NOCTTY | O_NDELAY); break;
+     case 3: fd = open("/dev/ttyS3", O_RDWR | O_NOCTTY | O_NDELAY); break;
+     default: fd = -1;
+     }
+   if (fd &gt;= 0)
+     {
+     /* get the current options */
+     fcntl(fd, F_SETFL, 0);
+     if (tcgetattr(fd, &options) != 0) return(-1);
+     bzero(&options, sizeof(options)); /* Structure loeschen, ggf vorher sichern
+                                          und bei Programmende wieder restaurieren */
+
+     cfsetspeed(&options, B19200);       /* setze 19200 bps */
+     /* Alternativ:                                         */
+      * cfsetispeed(&options, B19200);                      *
+      * cfsetospeed(&options, B19200);                      */
+
+     /* setze Optionen */
+     options.c_cflag &= ~PARENB;         /* kein Paritybit */
+     options.c_cflag &= ~CSTOPB;         /* 1 Stoppbit */
+     options.c_cflag &= ~CSIZE;          /* 8 Datenbits */
+     options.c_cflag |= CS8;
+     options.c_cflag |= (CLOCAL | CREAD);/* CD-Signal ignorieren */
+     /* Kein Echo, keine Steuerzeichen, keine Interrupts */
+     options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
+     options.c_oflag &= ~OPOST;          /* setze "raw" Input */
+     options.c_cc[VMIN]  = 0;            /* warten auf min. 0 Zeichen */
+     options.c_cc[VTIME] = 10;           /* Timeout 1 Sekunde */
+     tcflush(fd,TCIOFLUSH);
+     if (tcsetattr(fd, TCSAFLUSH, &options) != 0) return(-1);
+
+     }
+  return(fd);
+  }
+</PRE>
+
+Benötigt werden meist die folgenden Headerdateien:
+<pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;sys/ioctl.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;termios.h&gt;
+#include &lt;strings.h&gt;
+</pre>
+Bei Bedarf werde noch die drei Headerdateien
+<pre>
+#include &lt;signal.h&gt;
+#include &lt;string.h&gt;
+#include &lt;errno.h&gt;
+</pre>
+zusätzlich benötigt.
+<P>
+
+Nach dem Öffnen können Sie nach Herzenslust mit <tt>read()</tt> und
+<tt>write()</tt> seriell Daten empfangen und senden. Jedoch kann
+- wie schon angedeutet - immer mal etwas Ungewöhnliches passieren.
+
+<h4>Bytes senden</h4>
+<p>
+Für das Senden wird in der Regel die Funktion <tt>write()</tt> verwendet, deren erster
+Parameter der Filedeskriptor ist. Weitere Parameter sind die Adresse des Sendepuffers
+und die Anzahl der zu sendenden Bytes. Es muss auf jeden Fall überprüft werden, wieviele
+Bytes gesendet wurden (Rückgabewert  von <tt>write()</tt>) und ob auch alle Bytes
+gesendet wurden.
+<pre>
+int sendbytes(char * Buffer, int Count)
+/* Sendet Count Bytes aus dem Puffer Buffer */
+  {
+  int sent;  /* return-Wert */
+  /*  Daten senden */
+  sent = write(fd, Buffer, Count);
+  if (sent &lt; 0)
+    {
+    perror("sendbytes failed - error!");
+    return -1;
+    }
+  if (sent &lt; Count) 
+    { 
+    perror("sendbytes failed - truncated!");
+    }
+  return sent;
+  }
+</pre>
+</p>
+
+<h4>Bytes empfangen</h4>
+<p>
+Für das Empfangen wird in der Regel die Funktion <tt>read()</tt> verwendet, deren erster
+Parameter der Filedeskriptor ist. Weitere Parameter sind die Adresse des Sendepuffers
+und die maximale Anzahl der zu empfangenden Bytes. Die Funktion gibt die Anzahl der
+empfangenen Bytes zurück, wobei dieser Wert auch 0 sein kann. Das Verhalten von
+<tt>read()</tt> hängt von den Konfigurationswerten <tt>c_cc[VTIME]</tt> und 
+<tt>c_cc[VMIN]</tt> ab. Bei der in <tt>open_serial()</tt> getroffenen Einstellung
+kehrt <tt>read()</tt> auf jeden Fall nach einer Sekunde zurück, ggf. ohne Zeichen
+empfangen zu haben. Dies ist bei der Programmierung zu berücksichtigen.
+</p>
+<p>
+Das erste Programmfragment liest bis zu 100 Zeichen in einen Puffer:
+<pre>
+char buf[101];   /* Eingabepuffer */
+int anz;         /* gelesene Zeichen */
+   ...
+
+anz = read(fd, (void*)buf, 100);
+if (anz &lt; 0) 
+  perror("Read failed!");
+else if (anz == 0) 
+   perror("No data!");
+else 
+  {
+  buf[anz] = '\0';      /* Stringterminator */
+  printf("%i Bytes: %s", anz, buf);
+  }
+   ...
+</pre>
+Das Verfahren eignet sich insbesondere dann, wenn Sie wissen, wieviele Bytes
+zu erwarten sind. Andernfalls gehen Sie vorsichtiger vor und lesen zeichenweise.
+Diese Methode eignet sich auch gut, wenn auf ein bestimmtes empfangenes Byte
+reagiert werden soll (Enter, Newline etc.):
+<pre>
+char buf[101];   /* Eingabepuffer für die komplette Eingabe */
+int anz;         /* gelesene Zeichen */
+char c;          /* Eingabepuffer fuer 1 Byte */
+int  i;          /* Zeichenposition bzw Index */
+   ...
+        
+i = 0;
+do               /* Lesen bis zum Carriage Return, max. 100 Bytes */
+  {
+  anz = read(fd, (void*)&c, 1);
+  if (anz &gt; 0)
+    {
+    if (c != '\r')
+      buf[i++] = c;
+    }
+  }
+while (c != '\r' && i &lt; 100 && anz &gt;= 0);
+
+if (anz &lt; 0) 
+  perror("Read failed!");
+else if (i == 0) 
+   perror("No data!");
+else 
+  {
+  buf[i] = '\0';        /* Stringterminator */
+  printf("%i Bytes: %s", i, buf);
+  }
+   ...
+</pre>
+Sie sehen schon, das Empfangen wirft mehr Probleme auf, als das Senden. 
+Hier muss immer eine speziell an die Kommunikation angepasste Lösung 
+entwickelt werden. Das folgende Beispiel vermeidet das byteweise Lesen
+und füllt den Eingabepuffer, bis ein Zeilenende gesendet wurde (danach
+wartet die andere Station normalerweise, bis sie wieder etwas bekommt).
+<pre>
+char buf[1000];    /* Eingabepuffer für die komplette Eingabe */
+char *bufptr;      /* aktuelle Position in buf */
+int  nbytes;       /* Number of bytes read */
+int  tries;        /* Number of tries so far */
+int anz;           /* gelesene Zeichen */
+char c;            /* Eingabepuffer fuer 1 Byte */
+int  i;            /* Zeichenposition bzw Index */
+         
+   ...
+
+/* Bytes in den Puffer einlesen, bis ein CR or NL auftaucht */
+bufptr = buf;
+/* Achtung:               Etwas seltsame Pointer-Arithmetik */
+while ((anz = read(fd, bufptr, buf + sizeof(buf) - bufptr - 1)) > 0)
+	{
+  if (anz &lt; 0) 
+    {
+    perror("Read failed!");
+    return -1;
+    }
+	bufptr += anz;
+  /* CR oder NL am Ende? */
+	if ((bufptr[-1] == '\n') || (bufptr[-1] == '\r'))
+    break; /* Schleife verlassen */
+	}
+/* Stringterninator anhaengen */
+*bufptr = '\0';
+printf("%s", buf);
+   ...
+</pre>
+</p>
+Noch besser ist es, das Einlesen einer Zeile in eine Funktion zu verlagern.
+Die folgende Funktion <tt>get_line()</tt> liest von einer vorherge&ouml;ffneten Schnittstelle
+genau eine Zeile ein (der Unterstrich in <tt>get_line()</tt> ist notwendig, weil <tt>getline()</tt>
+eine Bibliotheksfunktion ist). Als Parameter werden neben dem Filedescriptor das Array und 
+dessen maximale L&auml;nge &uuml;bergeben:
+<pre>
+int get_line(int fd, char *buffer, unsigned int len)
+  {
+  /* read a '\n' terminated line from fd into buffer
+   * of size len. The line in the buffer is terminated
+   * with '\0'. It returns -1 in case of error and -2 if the
+   * capacity of the buffer is exceeded.
+   * It returns 0 if EOF is encountered before reading '\n'.
+  */
+  int numbytes = 0;
+  int ret;
+  char buf;
+
+  buf = '\0';
+  while ((numbytes &lt;= len) && (buf != '\n'))
+    {
+    ret = read(fd, &buf, 1);   /* read a single byte */
+    if (ret == 0) break;       /* nothing more to read */
+    if (ret &lt; 0) return -1; /* error or disconnect */
+    buffer[numbytes] = buf;    /* store byte */
+    numbytes++;
+    }
+ if (buf != '\n') return -2;   /* numbytes &gt; len */
+ buffer[numbytes-1] = '\0';    /* overwrite '\n' */
+ return numbytes;
+ }
+</pre>
+Nachteil dieser L&ouml;sung ist die Geschwindigkeit bzw. deren Fehlen. Durch die vielen
+<tt>read()</tt>-Aufrufe ist die Funktion ziemlich langsam. Besser w&auml;re eine L&ouml;sung,
+bei der ein Datenpaket komplett eingelesen und
+dann Zeile f&uuml;r Zeile ans aufrufende Programm weitergereicht wird. Genau das macht
+die folgende Funktion, bei der die Parameter die gleiche Aufgabe haben wie oben.
+Diese Funktion hat einen internen Puffer, der mittels <tt>read()</tt> gef&uuml;llt
+wird und dessen Inhalt St&uuml;ck f&uuml;r St&uuml;ck bei jedem Aufruf weitergegeben wird. Dazu
+verwendet die Funktion die statischen Variablen <tt>bufptr</tt>, <tt>count</tt> 
+und <tt>mybuf</tt>, deren Werte erhalten bleiben und bei jedem Aufruf wieder zur
+Verf&uuml;gung stehen. Werden mit <tt>read()</tt> mehrere Zeilen gelesen, bleibt
+der jeweilige Rest in <tt>mybuf</tt> erhalten und wird beim n&auml;chsten Aufruf der
+Funktion verarbeitet:
+<pre>
+int readline(int fd, char *buffer, unsigned int len)
+  {
+  /* read a '\n' terminated line from fd into buffer
+   * bufptr of size len. The line in the buffer is terminated
+   * with '\0'. It returns -1 in case of error or -2 if the
+   * capacity of the buffer is exceeded.
+   * It returns 0 if EOF is encountered before reading '\n'.
+   * Notice also that this routine reads up to '\n' and overwrites
+   * it with '\0'. Thus if the line is really terminated with
+   * "\r\n", the '\r' will remain unchanged.
+  */
+  static char *bufptr;
+  static int count = 0;
+  static char mybuf[1500];
+  char *bufx = buffer;
+  char c;
+
+  while (--len &gt; 0)            /* repeat until end of line  */
+    {                             /* or end of external buffer */
+    count--;
+    if (count &lt;= 0)            /* internal buffer empty --> read data */
+      {
+      count = read(fd, mybuf, sizeof(mybuf));
+      if (count &lt; 0) return -1;/* error or disconnect */
+      if (count == 0) return 0;   /* nothing to read - so reset */
+      bufptr = mybuf;             /* internal buffer pointer    */
+      }
+    c = *bufptr++;                /* get c from internal buffer  */
+    if (c == '\n')
+      {
+      *buffer = '\0';             /* terminate string and exit  */
+      return buffer - bufx;
+      }
+    else
+      {
+      *buffer++ = c;              /* put c into  external buffer */
+      }
+    }
+  return -2;                      /* external buffer to short */
+  }
+</pre>
+<P>
+
+<h4>Timeout erkennen/behandeln</h4>
+Was tun, wenn irgend etwas schiefgeht und die Zeichenkette,
+auf die das Programm wartet, nie kommt? Das Programm würde
+warten, bis der Anwender es manuell abbricht. Was aber bei Programmen,
+die im Hintergrund laufen, nicht sinnvoll ist. Die Lösung ist
+recht einfach: mit den Bibliotheksfunktionen <tt>alarm()</tt> und
+<tt>signal()</tt> installiert man einen "Alarmtimer", der bei
+Bedarf einen Timeout erzeugt und der Routine sagt, dass die
+Wartezeit vorbei ist:
+
+<PRE>
+void alarm_handler(void)
+  { timeout = 1; }
+
+signal(SIGALRM, alarm_handler);
+alarm(60); /* Wartezeit setzen */
+
+...
+
+if (read(file_descr,buffer,1) != 1 && errno == EINTR && timeout)
+  {
+  fprintf(stderr,"TIMEOUT!\n"); break;
+  }
+...
+
+alarm(0);  /* Alarm abschalten */
+</PRE>
+
+Mit diesen Informationen lassen sich nicht-interaktive Programme für
+die serielle Schnittstelle schreiben. Was noch fehlt, ist die
+Möglichkeit, mehrere Schnittstellen gleichzeitig zu überwachen,
+beispielsweise gleichzeitig Schnittstelle und Tastatur. Je nach
+Programm würde <tt>read()</tt> so lange warten, bis etwas an der
+Schnittstelle eintrifft, auch wenn Sie in der Zwischenzeit
+wie wild auf die Tastatur hämmern. Eine Möglichkeit wäre, über
+<tt>O_NDELAY</tt> zu arbeiten oder <tt>VMIN</tt> auf 0 zu setzen.
+
+Das ist jedoch beides nicht effizient, weil das Programm "busy
+waiting" mit voller CPU-Leistung angestrengt auf Daten wartet.
+Glücklicherweise gibt es einen Mechanismus, mit dem man warten
+kann, bis auf einem File-Deskriptor etwas zum Lesen bereitliegt,
+nämlich <tt>select()</tt>. Der Aufrufer übergibt der <tt>select()</tt>-Funktion
+eine Liste mit File-Deskriptoren, von denen gelesen oder auf die
+geschrieben werden soll. Sobald es möglich ist (Daten eingetroffen
+oder Ausgabewarteschlange frei), kehrt <tt>select()</tt> mit der
+entsprechenden Information zurück. Zusätzlich kann man einen Timeout
+definieren, der angibt, nach welcher Zeit die Funktion in jedem Fall
+aufgeben soll. Das folgende Beispiel ist dem Serial-Programming-HOWTO
+entnommen:<P>
+
+<PRE>
+#include &lt;sys/time.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;unistd.h&gt;
+main()
+  {
+  int fd1, fd2; /* input sources 1 and 2 */
+  fd_set readfs; /* file descriptor set */
+  int maxfd; /* maximum file desciptor used */
+  int loop=1; /* loop while TRUE */
+
+  /* open_input_source opens a device, sets the port correctly, and
+     returns a file descriptor */
+  fd1 = open_input_source("/dev/ttyS0");
+  if (fd1&lt;0) exit(0);
+  fd2 = open_input_source("/dev/ttyS1");
+  if (fd2&lt;0) exit(0);
+  maxfd = MAX (fd1, fd2)+1; /* maximum bit entry (fd) to test */
+
+  /* loop for input */
+  while (loop)
+    {
+    FD_SET(fd1, &readfs); /* set testing for source 1 */
+    FD_SET(fd2, &readfs); /* set testing for source 2 */
+    /* block until input becomes available */
+    select(maxfd, &readfs, NULL, NULL, NULL);
+
+    if (FD_ISSET(fd1)) /* input from source 1 available */
+    handle_input_from_source1();
+    if (FD_ISSET(fd2)) /* input from source 2 available */
+    handle_input_from_source2();
+    }
+  }
+</PRE>
+
+Statt der zweiten seriellen Schnittstelle könnten Sie auch mittels
+<tt>FD_SET(STDIN, &amp;readfs);</tt> die Tastatur in <tt>select()</tt> einklinken
+und dann wahlweise Daten der Tastatur und der RS232 bearbeiten.
+Das Beispiel blockiert, bis Daten eintreffen. Will man nach einer
+bestimmten Zeit abbrechen, muss nur der <tt>select()</tt>-Aufruf
+geändert werden:<P>
+
+<PRE>
+int res;
+struct timeval Timeout;
+
+/* set timeout value within input loop */
+Timeout.tv_usec = 0; /* milliseconds */
+Timeout.tv_sec = 1; /* seconds */
+res = select(maxfd, &readfs, NULL, NULL, &Timeout);
+
+if (res == 0)
+  /* number of file descriptors with input = 0, timeout occurred. */
+</PRE>
+
+Bei diesem Beispiel gibt es nach einer Sekunde einen Timeout. In
+diesem Fall liefert <tt>select()</tt> 0 zurück.<P>
+
+
+
+<H3>Zugriff auf die Steuerleitungen</H3>
+In manchen Fällen wollen Anwendungen einzelne Kontrollleitungen gezielt
+auf bestimmte Pegel setzen oder einzelne Pegel abfragen. Man kann so
+z. B.  Tasten einlesen, ein Relais schalten oder die Signale eines
+Funkuhr-Empfängers detektieren (da reicht dann oft ein Transistor
+als Pegelwandler, und man kann auch noch auf den MAX232 verzichten).
+<P>
+Prinzipiell wäre das Lesen und Setzen der Statusinfo über das Modem-Control- 
+und das Modem-Status-Register möglich. Meist ist es jedoch sinnvoller, 
+die Standard-Systemcalls zu verwenden und die Programmierung via
+Betriebssystem zu erledigen. Dann ist das Programm auch zu anderer
+Schnittstellen-Hardware kompatibel.
+<P>
+Zum Abfragen der Statusleitungen gibt es den <tt>ioctl()</tt>-Aufruf
+mit den Parametern <tt>TIOCMGET</tt> (Status lesen) und <tt>TIOCMSET</tt>
+(Status schreiben). <tt>ioctl()</tt> liefert einen Integerwert zurück,
+in dem für jede Leitung ein dem Leitungspegel entsprechendes Bit
+gesetzt oder gelöscht ist. Die Bits sind über symbolische
+Konstanten (<tt>TIOCM_DTR</tt>, <tt>TIOCM_RTS</tt> usw.) ansprechbar.
+Ein Beispielprogramm, das alle Leitungen auf einem gegebenen Port
+überwacht und anzeigt, findet sich im folgenden Listing.
+Setzen kann ein Programm die Leitungen alle gemeinsam über
+den Aufruf <tt>ioctl(fd,TIOCMSET,&amp;status)</tt>. Die Bits in der Variablen
+<tt>status</tt> haben dieselbe Bedeutung wie bei <tt>TIOCMGET</tt>.<P>
+<P>
+
+<table align="center" border="1" cellpadding="4" cellspacing="0">
+<tr><th>Pin </th><th> Bitmaske </th><th> Konstante </th><th> I/O</th>
+    <th rowspan="7"><img src="db9.gif"></th></tr>
+<tr><td>DTR	</td><td> 0002 </td><td> <tt>TIOCM_DTR</tt> </td><td> &rarr;</td></tr>
+<tr><td>RTS	</td><td> 0004 </td><td> <tt>TIOCM_RTS</tt> </td><td> &rarr;</td></tr>
+<tr><td>CTS	</td><td> 0020 </td><td> <tt>TIOCM_CTS</tt> </td><td> &larr;</td></tr>
+<tr><td>CD 	</td><td> 0040 </td><td> <tt>TIOCM_CAR</tt> </td><td> &larr;</td></tr>
+<tr><td>RI	</td><td> 0080 </td><td> <tt>TIOCM_RNG</tt> </td><td> &larr;</td></tr>
+<tr><td>DSR	</td><td> 0100 </td><td> <tt>TIOCM_DSR</tt> </td><td> &larr;</td></tr>
+</table>
+<P>
+
+Das Listing enthält Funktionen zum Setzen und Rücksetzen von RTS und DTR,
+Funktionen für das Abfragen der Einzelwerte von CTS, CD, RI und DSR sowie
+eine Funktion zum Abfragen des Gesamtstatus (mit allen sechs Werten).
+Das Hauptprogramm demonstriert deren Anwendung.<P>
+
+<PRE>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;sys/ioctl.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;signal.h&gt;
+
+int fd = 0;
+
+void SetRTS(int fd)
+/* Setzt RTS auf ON */
+  {
+  int currstat;
+  ioctl(fd, TIOCMGET, &currstat);
+  currstat |= TIOCM_RTS;
+  ioctl(fd, TIOCMSET, &currstat);
+  }
+
+void ResetRTS(int fd)
+/* Setzt RTS auf OFF */
+  {
+  int currstat;
+  ioctl(fd, TIOCMGET, &currstat);
+  currstat &= ~TIOCM_RTS;
+  ioctl(fd, TIOCMSET, &currstat);
+  }
+
+void SetDTR(int fd)
+/* Setzt DTR auf ON */
+  {
+  int currstat;
+  ioctl(fd, TIOCMGET, &currstat);
+  currstat |= TIOCM_DTR;
+  ioctl(fd, TIOCMSET, &currstat);
+  }
+
+void ResetDTR(int fd)
+/* Setzt DTR auf OFF */
+  {
+  int currstat;
+  ioctl(fd, TIOCMGET, &currstat);
+  currstat &= ~TIOCM_DTR;
+  ioctl(fd, TIOCMSET, &currstat);
+  }
+
+void ClearSerPins(int fd)
+/* Setzt alle Pins der Schnittstelle auf OFF */
+  {
+  int currstat = 0;
+  ioctl(fd, TIOCMSET, &currstat);
+  }
+
+int GetRI(int fd)
+/* Gibt 1 zurueck, wenn RI gesetzt ist, sonst 0 */
+  {
+  int  currstat;
+  ioctl(fd, TIOCMGET, &currstat);
+  return((currstat & TIOCM_RNG)?1:0);
+  }
+
+int GetCD(int fd)
+/* Gibt 1 zurueck, wenn CD gesetzt ist, sonst 0 */
+  {
+  int  currstat;
+  ioctl(fd, TIOCMGET, &currstat);
+  return((currstat & TIOCM_CAR)?1:0);
+  }
+
+int GetDSR(int fd)
+/* Gibt 1 zurueck, wenn DSR gesetzt ist, sonst 0 */
+  {
+  int  currstat;
+  ioctl(fd, TIOCMGET, &currstat);
+  return((currstat & TIOCM_DSR)?1:0);
+  }
+
+int GetCTS(int fd)
+/* Gibt 1 zurueck, wenn CTS gesetzt ist, sonst 0 */
+  {
+  int  currstat;
+  ioctl(fd, TIOCMGET, &currstat);
+  return((currstat & TIOCM_CTS)?1:0);
+  }
+
+int GetSerStat(int fd)
+/* Gibt den kompletten seriellen Status zurueck *
+ * ggf. RTS und DTR ausblenden:                 *
+ * currstat &=  (TIOCM_DTR | TOICM_RTS)         */
+  {
+  int  currstat;
+  ioctl(fd, TIOCMGET, &currstat);
+  return(currstat);
+  }
+
+int main(int argc, char** argv)
+  {
+  int i, stat;
+
+  /* Parameterprüfung: Das zu verwendende Device muss  */
+  /* als erster Parameter angegeben werden.            */
+  if(argc != 2)
+    {
+    printf("Fehler: Ungültige Parameter-Anzahl.\n");
+    printf("Aufruf: serpin &lt;device&gt;\n");
+    return 1;
+    }
+
+  /* Das Device öffnen */
+  if((fd = open(argv[1], O_RDWR | O_NDELAY)) &lt; 0)
+    {
+      printf("Fehler: Device \"%s\" kann nicht geöffnet werden.\n",
+      argv[1]);
+      return 2;
+    }
+
+  /* alles loeschen */
+  ClearSerPins(fd);
+
+  /* mit RTS und DTR blinken */
+  for(i=0; i&lt;5; i++)
+    {
+    usleep(300000);
+    SetRTS(fd);
+    usleep(300000);
+    ResetRTS(fd);
+    usleep(300000);
+    SetDTR(fd);
+    usleep(300000);
+    ResetDTR(fd);
+    }
+/* Status abfragen, bis RI gesetzt wird */
+  while(!GetRI(fd))
+    {
+    stat = GetSerStat(fd);
+    printf("%6X  ",stat);
+    printf("+%d+ ",GetCTS(fd));
+    if (stat & TIOCM_RNG) puts("RI ");
+    if (stat & TIOCM_CAR) puts("CD ");
+    if (stat & TIOCM_DSR) puts("DSR ");
+    if (stat & TIOCM_CTS) puts("CTS ");
+    printf("\n");
+    sleep(1);
+    }
+  close(fd);
+  return 0;
+  }
+</PRE>
+<A HREF="serpin.c">Quellcode serpin.c</A>
+<P>
+Prinzipiell könnten Sie auch direkt auf den Modem-Port der Schnittstelle
+schreiben (mittels <tt>inb()</tt> und <tt>outb()</tt>, was aber nicht nur
+wegen der Portabilität unschön ist.<P>
+
+An die Ausgänge lassen sich LEDs direkt anschließen;
+wenn man Dual-LEDs nimmt, kann man sogar 0 und 1 aktiv anzeigen
+(z. B.  rot-grün - was einen Farbenblinden dann in den Wahnsinn treibt).
+Einen LED-Strom von 20 mA  verkraftet die Schnittstelle normalerweise
+wunderbar, nur einige Laptops sind manchmal schwach auf der Brust.
+Der Vorwiderstand wäre dann minimal (12-2)/0.02 = 1000 Ohm. Bei
+Low-Power-LEDs reicht meist der doppelte Wert.<P>
+
+Schaltet man einen Ausgang auf 1, kann er +12 V für die Eingänge liefern.
+Die Schnittstelle am PC liefert den Eingangswert 0, wenn der Eingang
+offen ist. Man kann also vier Taster oder Schalter einseitig mit dem
+RTS-Ausgang verbinden und die andere Seite dieser  Taster/Schalter
+wieder mit den Eingangspins - und braucht also keinerlei aktive Komponenten.<P>
+
+Diese Tasten bzw. Schalter kann man nun abfragen und im Programm darauf reagieren.
+Bei der Tastenabfrage muss man die Entprellung per Software durchführen,
+etwa in der Form:<P>
+
+<PRE>
+if (GetRI(fd))          /* Taste RI gedrückt */
+  {
+  usleep(100*1000);     /* 0,1 s Pause */
+  if (GetRI(fd))        /* Wenn immer noch gedrückt... */
+    {
+    while(GetRI(fd));   /* ... warten auf's Loslassen */
+    do_something_awful();
+    }
+  }
+</PRE>
+
+Bei Servern, die ohne Tastatur und Bildschirm laufen, kann man mit
+so einer Tastengruppe einige Funktionen steuern (Herunterfahren,
+NFS-Mount und -Unmount etc.). Per LED an DTR/RTS ist eine Rückmeldung
+möglich. 
+<P>
+
+<H3>Weitere ioctl-Aufrufe</h3>
+Mittels <tt>ioctl</tt> kann man nicht nur die Statuspins lesen und
+die Steuerpins setzen, sondern auch weitere Status- und Steuerinfos
+übermitteln. Der generelle Aufruf von <tt>ioctl</tt> lautet immer:
+<pre>
+ret = ioctl(fd, funkt, arg);
+</pre>
+wobei <tt>ret</tt> der Returncode, <tt>fd</tt> der Filedescrioptor und
+<tt>funkt</tt> eine Konstante ist, die angibt, welche Funktion man aufrufen
+möchte. Etwaige Argumente werden in <tt>arg</tt> übergeben. Die 
+Standard-ioctl-Funktionen sind:
+<pre>
+TIOCMGET     Lesen der Schnittstellen-Statusleitungen 
+TIOCMSET     Setzen der Schnittstellen-Steuerleitungen 
+TIOCMBIS     Modem-Steuersignale enablen
+TIOCMBIC     Modem-Steuersignale disablen
+TIOCMIWAIT   Warten, bis sich eines der angegebenen 
+             Statussignale ändert
+TIOCGICOUNT  Auslesen wie oft sich die angegebenen 
+             Statussignale geändert haben
+TIOCOUTQ     Anzahl der noch zu sendenden Bytes
+TIOCSETD     Setzen der line discipline (asynchron, synchron)
+</pre>
+<p>
+
+Die Funktionen TIOCMGET und TIOCMSET wurden weiter oben schon beschrieben. 
+Die Funktionen TIOCMBIS und TIOCMBIC geben die Steuerleitungen RTS und DTR
+frei bzw. schalten sie inaktiv. Zum Beispiel:
+<pre>
+int rc;
+int sig = TIOCM_RTS | TIOCM_DTR;
+
+/* enable */
+rc = ioctl(fd,TIOCMBIS,&sigs);
+
+/* disable */
+rc = ioctl(fd,TIOCMBIC,&sigs);
+</pre>
+<P>
+
+Statt im eigenen Programm die Statusleitungen mittels TIOCMGET in einer 
+Schleife zu pollen, bis sich endlich etwas tut, verlagert man die Arbeit
+besser in den Geräte-Treiber, der das besser kann. Mit der Funktion
+TIOCMIWAIT kann auf die Änderung (low-high-Flanke oder high-low-Flanke)
+definierter Statusleitungen warten. Allerdings "hängt" das Programm auch,
+bis sich etwas tut. Das Auslesen der Statusinfo erfolgt dann mittels
+TIOCMGET. Zum Beispiel:
+<pre>
+int rc;
+/* Die folgenden Statusbits duerfen beliebig kombiniert werden.   */
+/*   Carier Detect | Ring Indic. | Data Set Ready | Clear To Send */
+int sig = TIOCM_CAR | TIOCM_RNG | TIOCM_DSR | TIOCM_CTS;
+
+/* Warten ... */
+rc = ioctl(fd,TIOCMIWAIT,&sigs);
+</pre>
+<p>
+
+Am interessantesten ist die Funktion TIOCGICOUNT, die alle möglichen
+Zähler abfragt. Als Argument wird eine Strukturvariable übergeben.
+Die zugehörige Struktur ist in der Include-Datei <tt>linux/serial.h</tt>
+definiert:
+<pre>
+struct serial_icounter_struct {
+  int cts, dsr, rng, dcd;            /* Anzahl Pegelwechsel auf den Statusleitungen */
+  int rx, tx;                        /* Anzahl emfangener/gesendeter Bytes */
+  int frame, overrun, parity, brk;   /* Anzahl Fehler bzw. Break-Sequenzen */
+  int buf_overrun;                   /* Anzahl Empfangspuffer-Ueberlaeufe */
+  int reserved[9];
+  };
+</pre>
+Der Aufruf gleicht den vorhergehenden Beispielen:
+<pre>
+int rc;
+struct serial_icounter_struct zaehler;
+
+/* Daten abrufen */
+rc = ioctl(fd,TIOCGICOUNT,&zaehler);
+
+/* Zaehler auswerten */
+printf("Es hat %d mal geklingelt.\n", zaehler.rng);
+</pre>
+<p>
+
+Die Funktion TIOCOUTQ liefert die Anzahl der noch zu sendenden Bytes. Sie
+läßt sich einsetzen, um festzusellen, ob alle Daten gesendet wurden:
+<pre>
+int rc;
+int count;
+
+/* Warten, bis alles weg ist */
+while (rc = ioctl(fd,TIOCOUTQ,&count) != 0);
+</pre>
+<p>
+Die folgende Funktion <tt>serwait()</tt> wartet (schläft), bis sich eine oder 
+mehrere der vier Steuerleitungen ändern. Sie besitzt fünf Parameter:
+<pre>
+int serwait(int fd, int *dcd, int *rng, int *dsr, int *cts)
+</pre>
+Der Parameter <tt>fd</tt> ist das Handle einer bereits geöffneten Schnittstelle. 
+Welche Leitungen zu überwachen sind, wird in den Parametern <tt>dcd, rng, dsr</tt> 
+und <tt>cts</tt> festgelegt:
+<ul>
+<li>Hat der Parameter den Wert <tt>NULL</tt>, wird die entsprechende Leitung ignoriert.
+<li>Zeigt der Parameter dagegen auf eine Variable (Wert ungleich <tt>NULL</tt>),
+wird die entsprechende Leitung ueberwacht. Ändert sich der Zustand der entsprechenden
+Leitung, wird die entsprechende Variable auf 1 gesetzt. Ohne Änderung bleibt die
+Variable auf 0.  Der Rückgabewert der Funktion ist 0 fuer "OK" und -1 im Fehlerfall.
+<li>Die Structure <tt>serial_icounter_struct</tt> ist im Headerfile <tt>linux/serial.h</tt> 
+definiert.
+</ul>
+
+<pre>
+int serwait(int fd, int *dcd, int *rng, int *dsr, int *cts)
+  {
+  struct serial_icounter_struct beforec;  
+  struct serial_icounter_struct afterc;
+  int icstatus, flags;
+
+  flags = 0;
+  if(dcd != NULL) { *dcd = 0; flags |= TIOCM_CD;  } 
+  if(rng != NULL) { *rng = 0; flags |= TIOCM_RNG; } 
+  if(dsr != NULL) { *dsr = 0; flags |= TIOCM_DSR; } 
+  if(cts != NULL) { *cts = 0; flags |= TIOCM_CTS; } 
+
+  if(flags == 0) return(-1); /* Nothing to do ! */
+
+  memset(&beforec, 0, sizeof(struct serial_icounter_struct));
+  memset(&afterc, 0, sizeof(struct serial_icounter_struct));
+
+  icstatus = ioctl(fd, TIOCGICOUNT, &beforec);
+  if(icstatus == -1) 
+    {
+    printf("TIOCGICOUNT failed: %s\n", strerror(errno));
+    return(-1);
+    }
+
+  /* Wait on the selected flags here */
+  icstatus = ioctl(fd, TIOCMIWAIT, flags);
+  if(icstatus == -1) 
+    {
+    printf("TIOCMIWAIT failed: %s\n", strerror(errno));
+    return(-1);
+    }
+
+  icstatus = ioctl(fd, TIOCGICOUNT, &afterc);
+  if(icstatus == -1) 
+    {
+    printf("TIOCGICOUNT failed: %s\n", strerror(errno));
+    return(-1);
+    }
+
+  if(dcd != NULL) { *dcd = (beforec.dcd != afterc.dcd); }
+  if(cts != NULL) { *cts = (beforec.cts != afterc.cts); }
+  if(rng != NULL) { *rng = (beforec.rng != afterc.rng); }
+  if(dsr != NULL) { *dsr = (beforec.dsr != afterc.dsr); }
+
+  return(icstatus);
+  }
+</pre>
+
+Das folgende Demo-Programm zeigt das Anwendungsprinzip:
+
+<pre>
+int main(void)
+  {
+  int res, fd, dcd, rng, dsr, cts;
+
+  fd = open_port(1);
+
+  /* Alle Leitungen zweimal hintereinander abfragen */
+  res = serwait(fd, &dcd, &rng, &dsr, &cts);
+  printf("Res: %d, DCD: %d, RNG: %d, DSR: %d, CTS: %d\n",res, dcd, rng, dsr, cts);
+
+  res = serwait(fd, &dcd, &rng, &dsr, &cts);
+  printf("Res: %d, DCD: %d, RNG: %d, DSR: %d, CTS: %d\n",res, dcd, rng, dsr, cts);
+
+  /* Nur die CTS-Leitung abfragen */
+  res = serwait(fd, NULL, NULL, NULL, &cts);
+  printf("Res: %d, CTS: %d\n",res, cts);
+
+  close(fd);
+  return(0);
+  }
+</pre>
+<p>
+<A HREF="serwait.c">Quellcode serwait.c</A>
+<P>
+
+<h3>Programmierung mit Perl</H3>
+Prinzipiell funktioniert die serielle Schnittstelle auch unter Perl; man spricht
+sie einfach als Device an. Durch Aufrufen des Programms "stty" 
+per <tt>system()</tt>-Funktion lassen sich auch die Parameter der Schnittstelle
+setzen. Das folgende knappe Beispiel dient zum Abfragen des Status einer USV
+(Unterbrechungsfreie Strom-Versorgung: ein Gerät mit Akkus, das den Computer
+kurzzeitig mit Energie versorgt, wenn der Netzstrom mal ausfällt)
+mit Megatec-Protokoll. (<b>Achtung</b>: Viele USVs benutzen die serielle Schnittstelle
+nicht in der gezeigten Form, sondern ändern nur den Pegel einer Statusleitung.)
+Um die Schnittstellenparameter zu setzen, wird das  Systemkommando "stty" 
+aufgerufen. Wichtig ist, den seriellen Port nicht nur lesend oder schreibend, 
+sondern zum Lesen und Schreiben zu öffnen:
+<PRE>
+use strict;
+use warnings;
+
+$| = 1;
+# ttyS0 bei Linux entspricht COM1 bei Windows
+my $port = "/dev/ttyS0";	
+
+# Mit dem Linux-Kommando 'stty' die Port-Einstellungen setzen
+system "stty 2400 ixon -echo &lt; $port";
+
+# Port als Datei zum Lesen und Schreiben öffnen
+open(COM, "+&gt;$port") or die "Oops $port: $!\n";
+
+# Datei auch auf ungepuffertes Schreiben setzen
+select(COM);
+$| = 1;
+select(STDOUT);
+
+# Sendet Q1 an die USV zur Statusabfrage
+# die USV mag kein normales Newline, sondern
+# nur ein Carriage-Return
+print COM "Q1\r";	
+# 2400 BPS sind recht langsam
+sleep(1);
+# Antwort einlesen
+sysread(COM, my ($line), 50);
+# Ausgabe auf Console
+print $line, "\n";;
+close(COM);
+</PRE>
+
+Bis auf den <tt>system()</tt>-Aufruf war das eigentlich genauso wie bei einer
+Dateiausgabe. Für viele Anwendungen reicht das nicht, da man so weder
+das Blockieren beim Lesen vermeiden kann, noch lässt sich mit den
+Steuerleitungen "klappern". 
+<P>
+Unter den zahlreichen Modulen auf dem CPAN-Server findet sich auch das 
+passende für die serielle Schnittstelle: <tt>Device::SerialPort</tt>.
+Die englischsprachige Dokumentation ist umfassend, und letztendlich
+spiegeln die Methoden des Moduls die darunterliegenden Funktionen
+der C-Bibliothek nahezu identisch wider. Der erste Vorteil liegt schon
+mal darin, dass man auf einen <tt>system()</tt>-Aufruf verzichten kann.
+Alle Schnittstellenparameter lassen sich per Methodenaufruf einstellen.
+Der zweite Vorteil betrifft wieder die Windows-User, denn es gibt ein
+identisches Modul für Windows, das mit einem einzigen <tt>ppm</tt>-Kommando 
+wie gewohnt installiert werden kann. Erstaunlicherweise liegt das Modul
+nicht im Angebot von ActiveState vor, wir müssen es von woanders holen:
+<PRE>
+ppm install http://www.bribes.org/perl/ppm/Win32-SerialPort.ppd
+</PRE>
+Die beiden Module erlauben sogar das Schreiben von Programmen, die auf
+beiden Plattformen ohne Änderung laufen, sofern man nur darauf achtet,
+immer brav Newline als Zeilenende zu verwenden. Das folgende Beispiel
+skizziert die Vorgehensweise:
+<PRE>
+#!/usr/bin/perl
+use strict;
+use warnings;
+use vars qw($OS_win);
+
+# Vor allem anderen das Betriebssystem checken
+BEGIN 
+  {
+  $OS_win = ($^O eq "MSWin32") ? 1 : 0;
+  print "Perl_Vers.: $], Betriebssystem: $^O\n";   # Debug
+  # das Folgende geht nur innerhalb des BEGIN-Blocks 
+  if ($OS_win) 
+    {
+    print "Lade Windows-Modul\n";
+    eval "use Win32::SerialPort";
+	  die "Oops: $@\n" if ($@);
+    }
+  else 
+    {
+    print "Lade Unix-Modul\n";
+    eval "use Device::SerialPort";
+	  die "Oops: $@\n" if ($@);
+    }
+  }
+
+# Kommandozeilenparameter holen
+die "\nUsage: $0 PORT\n" unless (@ARGV);
+my $port = shift;
+
+# Serielle Schnittstelle oeffen (abhaengig vom Betriebssystem)
+my $serial_port; 
+if ($OS_win) 
+  { $serial_port = Win32::SerialPort->new ($port,1); }
+else 
+  { $serial_port = Device::SerialPort->new ($port,1); }
+die "Kann seriellen Port $port nicht oeffen: $^E\n" 
+   unless ($serial_port);
+
+# Ab hier ist dann alles identisch
+my $baud = $serial_port->baudrate();
+print "Schnittstelle $port arbeitet mit $baud BPS\n";
+
+# Schnittstellenparameter lesen
+my $handshake = $serial_port->handshake();
+print "Handshake: $handshake\n";
+my $databits = $serial_port->databits();
+my $parity = $serial_port->parity();
+my $stopp = $serial_port->stopbits();
+print "$databits Databits, $stopp Stoppbit(s), "
+      . "Paritaet:  $parity\n";
+
+# ... usw.
+
+# Schnittstelle schliessen
+$serial_port->close;
+undef $serial_port;
+</PRE>
+
+Unter Windows führt ein Aufruf des Programms zu folgender Ausgabe:
+
+<PRE>
+D:\Test\Code\Hardware>perl ser1.pl COM1
+Perl_Vers.: 5.010001, Betriebssystem: MSWin32
+Lade Windows-Modul
+Schnittstelle COM1 arbeitet mit 1200 BPS
+Handshake: none
+7 Databits, 1 Stoppbit(s), Paritaet:  none
+</PRE>
+
+
+Das Modul kann anstelle des seriellen Ports auch mit einem Dateinamen 
+aufgerufen werden. In dieser Datei stehen dann alle Daten einer früher
+gespeicherten Konfiguration. Das erspart das fest verdrahtete Setzen 
+der Werte im Programm selbst und damit Programmänderungen bei sich
+ändernden Parametern. Das folgende Beispiel zeigt die Vorgehensweise.
+Zuerst wird ein serielles Objekt erzeugt, dessen Parameter geändert
+und in einer Datei gespeichert werden. Danach wird ein neues Objekt mit der
+Konfiguration aus der Datei versorgt, die natürlich wieder eine
+reine Textdatei ist: Weil es bei Linux meist einfacher 
+läuft, mache ich jetzt mal wieder die Beispiele unter Windows.
+
+<PRE>
+use strict;
+use warnings;
+use Win32::SerialPort;    # Windows-Variante
+
+my $port1 = Win32::SerialPort-&gt;new('COM1')
+    or die "Oops!\n";
+
+# Parameter setzen
+$port1-&gt;baudrate(9600)	  || die "baudrate geht nicht\n";
+$port1-&gt;parity('even')	  || die "parity geht nicht\n";
+$port1-&gt;databits(7)       || die "databits geht nicht\n";
+$port1-&gt;stopbits(2)       || die "stopbits geht nicht\n";
+$port1-&gt;handshake("rts")	|| die "handshake geht nicht\n";
+
+# defined, weil "0" ein legaler Rueckgabewert ist
+defined $port1-&gt;parity_enable('T')	|| die "parity_enable geht nicht\n";
+
+# Man kann auch noch Meta-Info hinzufuegen
+$port1-&gt;alias('GSM_Modem');
+$port1-&gt;devicetype('modem');
+
+# Devicecontrolblock schreiben
+$port1-&gt;write_settings	    || die "write_settings geht nicht\n";
+
+# Konfigurationsdatei erzeugen
+$port1-&gt;save('mymodem.cfg')	|| die "save geht nicht\n";
+undef $port1;
+
+# Konfiguration laden
+my $port2 = Win32::SerialPort-&gt;new('COM1')
+    or die "Oops!\n";
+# Alternativ auch:   $port1-&gt;restart('mymodem.cfg');
+
+# und mal ausgeben ...
+print "handshake problem\n" unless ("rts" eq $port2-&gt;handshake);
+print "baudrate problem\n" unless (9600 == $port2-&gt;baudrate);
+print "parity problem\n" unless ("even" eq $port2-&gt;parity);
+print "databits problem\n" unless (7 == $port2-&gt;databits);
+print "stopbits problem\n" unless (2 == $port2-&gt;stopbits);
+
+undef $port2;
+</PRE>
+
+Das serielle Modul ist leider so umfangreich, dass ich es hier nicht
+in voller epischer Breite behandeln kann.
+<P>
+
+Auch die Steuerleitungen lassen sich vom Modul aus direkt ansteuern. Es ist sogar
+möglich, die Sendeleitung (TXD) auf 0- oder 1-Pegel zu setzen. Es kann also
+nur die Empfangsleitung nicht direkt angesteuert werden. Es gibt übrigens auch 
+Geräte, die nur über die Steuer- und Statusleitungen mit dem Rechner kommunizieren
+und die Sende- und Empfangsleitung gar nicht verwenden. Das folgende Listing 
+verwendet die Methoden <tt>dtr\_active()</tt>, <tt>rts\_active()</tt> und
+<tt>break\_active()</tt>, um die drei Steuerleitungen zu schalten. Zum Lesen
+der Statusleitungen wird die Methode <tt>is\_modemlines()</tt> verwendet.
+Zur Auswahl der einzelnen Statusleitungen dienen einige Konstanten, die
+vom seriellen Modul per <tt>qw(:STAT)</tt> exportiert werden.
+<p>
+Zur Vereinfachung habe ich mit zwei Funktionen geschrieben, die jeweils
+als ersten Parameter das serielle Port-Objekt und als zweiten Parameter den 
+Namen der jeweiligen Steuerleitung übernehmen. Bei <tt>SetPin()</tt> kommt als
+dritter Parameter noch ein Wahrheitswert (in der Regel 0 oder 1) hinzu.
+Mit <tt>SetPin()</tt> kann einer der drei Ausgänge geschaltet werden, mit
+<tt>GetPin()</tt> erhält man den Wert einer Statusleitung. Schließlich kann
+mittels <tt>linestatus()</tt> auch der komplette Leitungsstatus ausgegeben 
+werden. Das Programm läuft natürlich auch unter Linux, ich erspare mir
+aus Platzgründen den Vorspann zur Auswahl des richtigen Moduls:
+
+<PRE>
+use strict;
+use warnings;
+use Win32::SerialPort qw(:STAT);    # Windows-Variante
+
+$| = 1;
+
+my $port = Win32::SerialPort-&gt;new('COM1')
+    or die "Oops!\n";
+
+# Mit DTR, RTS und TXD klappern
+for my $pin('DTR', 'RTS', 'TXD')
+  {
+  SetPin($port, $pin, 1);
+  sleep 1;
+  SetPin($port, $pin, 0);
+  sleep 1;
+  }
+
+# Status einlesen
+while (1)
+  {
+  linestatus();
+  sleep 1;
+  }
+
+# Port schliessen (hier sorgt Strg-C dafuer)
+undef $port;
+
+
+sub SetPin # ($port, $pin, 0|1)
+  {
+  my $result;
+  my $port = shift;
+  my $pin = uc(shift);
+  my $value = shift;
+  if ($pin eq 'DTR')
+    { $result = $port-&gt;dtr_active($value); }
+  elsif ($pin eq 'RTS')
+    { $result = $port-&gt;rts_active($value); }
+  elsif ($pin eq 'TXD')
+    { $result = $port-&gt;break_active($value); }
+  else
+    { return undef; }
+  return $result;
+  }
+
+sub GetPin # ($port, $pin)
+  {
+  my $port = shift;
+  my $pin = uc(shift);
+  my $status = $port-&gt;is_modemlines();
+  if ($pin eq 'CTS')
+    { return ($status & MS_CTS_ON) ? 1 : 0; }
+  elsif ($pin eq 'DSR')
+    { return ($status & MS_DSR_ON) ? 1 : 0; }
+  elsif ($pin eq 'DCD')
+    { return ($status & MS_RLSD_ON) ? 1 : 0; }
+  elsif ($pin eq 'RI')
+    { return ($status & MS_RING_ON) ? 1 : 0; }
+  else
+    { return undef; }
+  }
+
+sub linestatus
+  {
+  my $status = $port-&gt;is_modemlines();
+  printf("Modem status=0x%04X (CTS=%s DSR=%s RNG=%s CD=%s)\n",
+         $status,
+        ($status & MS_CTS_ON) ? "ON " : "off",
+        ($status & MS_DSR_ON) ? "ON " : "off",
+        ($status & MS_RING_ON) ? "ON " : "off",
+        ($status & MS_RLSD_ON) ? "ON " : "off",
+    );
+  }
+</PRE>
+
+
+<H3>Weiterf&uuml;hrende Links</h3>
+  <ul>
+   <li><a HREF="SerialPort_Programming_c.pdf">Serial Port programming in C (PDF)</A>
+   <li><A HREF="http://www.tldp.org/HOWTO/Serial-HOWTO.html">Linux Serial-HOWTO</A>
+   <li><a href="http://www.tldp.org/HOWTO/Serial-Programming-HOWTO/index.html">Serial-Programming-HOWTO</a>
+  </ul>
+
+
+<hr>
+<h6><i>Copyright &copy; Hochschule M&uuml;nchen, FK 04, Prof. J&uuml;rgen Plate</i><br>
+Letzte Aktualisierung: <SCRIPT LANGUAGE="JavaScript">document.write(document.lastModified);</SCRIPT></I></H6>
+</body>
+</html>

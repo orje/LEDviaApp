@@ -444,7 +444,7 @@ else {
       </state_glyph>
      </state>
      <state_glyph node="4,3,32,117">
-      <entry box="1,2,24,5"/>
+      <entry box="1,2,30,5"/>
       <exit box="1,7,21,2"/>
      </state_glyph>
     </state>
@@ -457,8 +457,8 @@ If the start sign is detected, the processing of the data starts.</documentation
       <choice target="../../1">
        <guard brief="detect_start_sign">Serial.read() == '&lt;'</guard>
        <action brief="reset value">me-&gt;value = 0U;</action>
-       <choice_glyph conn="51,25,4,3,6,2">
-        <action box="0,1,23,2"/>
+       <choice_glyph conn="51,25,4,3,8,2">
+        <action box="0,1,14,4"/>
        </choice_glyph>
       </choice>
       <tran_glyph conn="40,25,3,-1,11">
@@ -503,17 +503,17 @@ On exit an acknowledge is send to the handy.</documentation>
 }</entry>
       <exit brief="acknowledge communication">Serial.print(F(&quot;A&quot;));</exit>
       <tran trig="STOP" target="../../../1">
-       <tran_glyph conn="71,43,1,3,-33,79,-36,-115,2">
+       <tran_glyph conn="71,45,1,3,-33,77,-36,-115,2">
         <action box="-5,-2,6,2"/>
        </tran_glyph>
       </tran>
-      <state_glyph node="53,29,18,16">
+      <state_glyph node="53,31,18,16">
        <entry box="1,2,14,5"/>
        <exit box="1,7,12,4"/>
       </state_glyph>
      </state>
-     <state_glyph node="40,14,33,33">
-      <entry box="1,2,20,3"/>
+     <state_glyph node="40,14,33,35">
+      <entry box="1,2,21,3"/>
       <exit box="1,5,21,2"/>
      </state_glyph>
     </state>
