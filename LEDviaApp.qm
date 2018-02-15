@@ -469,7 +469,7 @@ else {
        <guard>else</guard>
        <choice>
         <guard brief="check_communication">me-&gt;com_counter &gt; 10U</guard>
-        <action brief="stop commnication">QACTIVE_POST((QActive *)me, STOP_SIG, 0U);
+        <action brief="stop communication">QACTIVE_POST((QActive *)me, STOP_SIG, 0U);
 digitalWrite(DEBUG_L, HIGH);</action>
         <choice_glyph conn="54,36,4,-1,6">
          <action box="0,1,17,4"/>
