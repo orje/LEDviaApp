@@ -48,6 +48,7 @@ typedef struct LEDviaApp {
     uint8_t run_bwd;
     uint8_t run_nr;
     uint8_t run_nr_index;
+    uint8_t com_counter;
 } LEDviaApp;
 
 /* protected: */
@@ -244,6 +245,7 @@ static QState LEDviaApp_branch(LEDviaApp * const me) {
         }
         /* ${AOs::LEDviaApp::SM::branch::COMMUNICATION} */
         case COMMUNICATION_SIG: {
+            me->com_counter = 0U;
             status_ = Q_TRAN(&LEDviaApp_communication);
             break;
         }
@@ -661,14 +663,30 @@ static QState LEDviaApp_communication(LEDviaApp * const me) {
         }
         /* ${AOs::LEDviaApp::SM::communication::Q_TIMEOUT} */
         case Q_TIMEOUT_SIG: {
+            me->com_counter++;
             /* ${AOs::LEDviaApp::SM::communication::Q_TIMEOUT::[detect_start_sign]} */
             if (Serial.read() == '<') {
                 me->value = 0U;
                 status_ = Q_TRAN(&LEDviaApp_process_data);
             }
+            /* ${AOs::LEDviaApp::SM::communication::Q_TIMEOUT::[else]} */
             else {
-                status_ = Q_UNHANDLED();
+                /* ${AOs::LEDviaApp::SM::communication::Q_TIMEOUT::[else]::[check_communication]} */
+                if (me->com_counter > 10U) {
+                    QACTIVE_POST((QActive *)me, STOP_SIG, 0U);
+                    digitalWrite(DEBUG_L, HIGH);
+                    status_ = Q_HANDLED();
+                }
+                /* ${AOs::LEDviaApp::SM::communication::Q_TIMEOUT::[else]::[else]} */
+                else {
+                    status_ = Q_TRAN(&LEDviaApp_communication);
+                }
             }
+            break;
+        }
+        /* ${AOs::LEDviaApp::SM::communication::STOP} */
+        case STOP_SIG: {
+            status_ = Q_TRAN(&LEDviaApp_branch);
             break;
         }
         default: {
@@ -715,11 +733,6 @@ static QState LEDviaApp_process_data(LEDviaApp * const me) {
         case Q_EXIT_SIG: {
             Serial.print(F("A"));
             status_ = Q_HANDLED();
-            break;
-        }
-        /* ${AOs::LEDviaApp::SM::communication::process_data::STOP} */
-        case STOP_SIG: {
-            status_ = Q_TRAN(&LEDviaApp_branch);
             break;
         }
         default: {
