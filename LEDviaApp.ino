@@ -672,7 +672,7 @@ static QState LEDviaApp_communication(LEDviaApp * const me) {
             /* ${AOs::LEDviaApp::SM::communication::Q_TIMEOUT::[else]} */
             else {
                 /* ${AOs::LEDviaApp::SM::communication::Q_TIMEOUT::[else]::[check_communication]} */
-                if (me->com_counter > 10U) {
+                if (me->com_counter > 1U) {
                     QACTIVE_POST((QActive *)me, STOP_SIG, 0U);
                     digitalWrite(DEBUG_L, HIGH);
                     status_ = Q_HANDLED();
