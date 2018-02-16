@@ -83,7 +83,7 @@ me-&gt;run_x = zero;</action>
       <action box="1,-1,12,2"/>
      </initial_glyph>
     </initial>
-    <state name="branch">
+    <state name="LEDcontrol">
      <documentation>First is checked, whether there is a request from the handy in the receive buffer of the USART. If so, a transmit order is send to the handy and it is changed into the communication state. If not, it is changed into  the active program substate.
 
 Periodically a time tick is generated to recheck the receive buffer. This timer is also used to progress the LED programs with animations.</documentation>
