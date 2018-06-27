@@ -11,8 +11,8 @@
   <item name="backups">0</item>
  </group>
  <group name="windows">
-  <item id=".::LEDviaApp.ino">0,0,950,915,*</item>
-  <item id="AOs::LEDviaApp::SM">-3,15,950,915</item>
+  <item id=".::LEDviaApp.ino">0,0,693,906,*</item>
+  <item id="AOs::LEDviaApp::SM">0,15,950,915</item>
  </group>
  <group name="search">
   <item name="options">4129280</item>
