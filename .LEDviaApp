@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<session version="4.0.3">
+<session version="4.3.0">
  <item name="license">GPL</item>
  <group name="locked">
   <item name="item">~</item>
  </group>
  <group name="settings">
   <item name="tabs">1</item>
-  <item name="windows">0</item>
+  <item name="windows">1</item>
   <item name="grid">0</item>
   <item name="backups">0</item>
  </group>
- <group name="windows">
-  <item id=".::LEDviaApp.ino">0,0,693,906,*</item>
-  <item id="AOs::LEDviaApp::SM">0,15,950,915</item>
- </group>
+ <group name="windows"/>
  <group name="search">
   <item name="options">4129280</item>
   <item name="replace">0</item>
