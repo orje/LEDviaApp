@@ -96,12 +96,12 @@ enum {
 
     BLUETOOTH_POWER = 4,               // pin of the transistor base
 
-    DEBUG_L = 9                        // pin number of debug LED
+    DEBUG_L = 9                        // pin of debug LED
 };
 
 // various signals for the application...
 enum {
-    STOP_SIG        = Q_USER_SIG,      // end of data
+    STOP_SIG            = Q_USER_SIG,  // end of data
     COMMUNICATION_SIG,                 // communication request
     COLOUR_SIG,                        // display colour
     DIM_SIG,                           // dim animation
