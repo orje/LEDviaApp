@@ -2,9 +2,9 @@
 [Demo video](https://www.youtube.com/watch?v=NQhEtg-nRmY)
 #### See the Wiki for further informations!
 ###### This file is at least needed. The ino file is generated throughout QM.
-* LEDviaApp.qm = QM model file
+* LEDviaApp.qm = QM model file  
 ###### The parameters has to be adjusted according to Arduino IDE installation path and COM.
-* .LEDviaApp = QM External Tools parameter file
+* .LEDviaApp = QM External Tools parameter file  
 ###### These files are orginally [from](https://github.com/nickgammon/NeoPixels_SPI) here.
 * NeoPixels_SPI.cpp = library from Nick Gammon  
 * NeoPixels_SPI.h = library from Nick Gammon  
