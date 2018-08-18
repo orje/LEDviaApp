@@ -13,5 +13,4 @@
 * SPI.h = Arduino library  
 ###### The app files
 * source = aia  
-* run = apk
 ###### The doc directory includes the app and further information pictures.
