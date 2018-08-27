@@ -12,5 +12,5 @@
 * SPI.cpp = Arduino library  
 * SPI.h = Arduino library  
 ###### The app file
-* aia = source
+* aia = exported source file for import in MIT App Inventor 2
 ###### The doc directory includes the app and further information pictures.
