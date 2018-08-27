@@ -12,5 +12,5 @@
 * SPI.cpp = Arduino library  
 * SPI.h = Arduino library  
 ###### The app file
-* source = aia  
+* aia = source
 ###### The doc directory includes the app and further information pictures.
