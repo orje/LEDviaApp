@@ -11,6 +11,6 @@
 ###### These files belong to the Arduino IDE [distribution](https://github.com/arduino/Arduino/tree/master/hardware/arduino/avr/libraries/SPI/src).
 * SPI.cpp = Arduino library  
 * SPI.h = Arduino library  
-###### The app files
+###### The app file
 * source = aia  
 ###### The doc directory includes the app and further information pictures.
