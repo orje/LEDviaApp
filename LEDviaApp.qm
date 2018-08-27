@@ -357,7 +357,9 @@ At exit, the processed LED is incremented.
 If the processed LED reaches the end of the stripe, the direction flag is set true to change the direction and the running_bwd state is prepared.</documentation>
       <entry brief="calculate LED, run LED">// build into in-memory array, as these calculations take too long to do on the fly
 // calculate with shifted 0 and PIXELS
-for (me-&gt;led_index = zero; me-&gt;led_index &lt;= pixels - me-&gt;run_nr; me-&gt;led_index++) {
+for (me-&gt;led_index = zero; me-&gt;led_index &lt;= (uint16_t)pixels - me-&gt;run_nr; me-&gt;led_index++) {
+/* compiler warning: &quot;comparison between signed and unsigned integer expressions&quot;,
+if pixels isn't castet */
     if (me-&gt;led_index == me-&gt;run_x) {
         for (me-&gt;run_nr_index = 0U; me-&gt;run_nr_index &lt; me-&gt;run_nr;
             me-&gt;run_nr_index++, me-&gt;led_index++) {
@@ -385,7 +387,9 @@ for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
 QF_INT_ENABLE();
 
 show();</entry>
-      <exit brief="inc processed LED, check run direction">if (me-&gt;run_x &lt; pixels - me-&gt;run_nr) {
+      <exit brief="inc processed LED, check run direction">if (me-&gt;run_x &lt; (uint16_t)pixels - me-&gt;run_nr) {
+/* compiler warning: &quot;comparison between signed and unsigned integer expressions&quot;,
+if pixels isn't castet */
     me-&gt;run_x++;
 }
 else {
@@ -407,7 +411,9 @@ At exit, the processed LED is decremented.
 If the processed LED reaches the begin of the stripe, the direction flag is set false to change the direction and the running_fwd state is prepared.</documentation>
       <entry brief="calculate LED, run LED">// build into in-memory array, as these calculations take too long to do on the fly
 // calculate with shifted 0 and PIXELS
-for (me-&gt;led_index = pixels; me-&gt;led_index &gt;= me-&gt;run_nr + zero; me-&gt;led_index--) {
+for (me-&gt;led_index = pixels; me-&gt;led_index &gt;= me-&gt;run_nr + (uint16_t)zero; me-&gt;led_index--) {
+/* compiler warning: &quot;comparison between signed and unsigned integer expressions&quot;,
+if zero isn't castet */
     if (me-&gt;led_index == me-&gt;run_x) {
         for (me-&gt;run_nr_index = me-&gt;run_nr;  me-&gt;run_nr_index &gt; 0U;
             me-&gt;run_nr_index--, me-&gt;led_index--) {
@@ -435,7 +441,9 @@ for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
 QF_INT_ENABLE();
 
 show();</entry>
-      <exit brief="dec processed LED, check run direction">if (me-&gt;run_x &gt; me-&gt;run_nr + zero) {
+      <exit brief="dec processed LED, check run direction">if (me-&gt;run_x &gt; me-&gt;run_nr + (uint16_t)zero) {
+/* compiler warning: &quot;comparison between signed and unsigned integer expressions&quot;,
+if zero isn't castet */
     me-&gt;run_x--;
 }
 else {
@@ -560,7 +568,7 @@ $declare(AOs::LEDviaApp)
 
 // AO instances and event queue buffers for them...
 LEDviaApp AO_LEDviaApp;
-static QEvt l_ledviaappQSto[10]; // Event queue storage for LEDviaApp
+static QEvt l_ledviaappQSto[10];       // Event queue storage for LEDviaApp
 //...
 
 //============================================================================

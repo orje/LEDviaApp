@@ -540,7 +540,8 @@ static QState LEDviaApp_run_fwd(LEDviaApp * const me) {
         case Q_ENTRY_SIG: {
             // build into in-memory array, as these calculations take too long to do on the fly
             // calculate with shifted 0 and PIXELS
-            for (me->led_index = zero; me->led_index <= pixels - me->run_nr; me->led_index++) {
+            for (me->led_index = zero; me->led_index <= (uint16_t)pixels - me->run_nr; me->led_index++) {
+            // warning: comparison between signed and unsigned integer expressions
                 if (me->led_index == me->run_x) {
                     for (me->run_nr_index = 0U; me->run_nr_index < me->run_nr;
                         me->run_nr_index++, me->led_index++) {
@@ -573,7 +574,8 @@ static QState LEDviaApp_run_fwd(LEDviaApp * const me) {
         }
         /*${AOs::LEDviaApp::SM::LEDcontrol::run_fwd} */
         case Q_EXIT_SIG: {
-            if (me->run_x < pixels - me->run_nr) {
+            if (me->run_x < (uint16_t)pixels - me->run_nr) {
+            // warning: comparison between signed and unsigned integer expressions
                 me->run_x++;
             }
             else {
@@ -598,7 +600,8 @@ static QState LEDviaApp_run_bwd(LEDviaApp * const me) {
         case Q_ENTRY_SIG: {
             // build into in-memory array, as these calculations take too long to do on the fly
             // calculate with shifted 0 and PIXELS
-            for (me->led_index = pixels; me->led_index >= me->run_nr + zero; me->led_index--) {
+            for (me->led_index = pixels; me->led_index >= me->run_nr + (uint16_t)zero; me->led_index--) {
+            // warning: comparison between signed and unsigned integer expressions
                 if (me->led_index == me->run_x) {
                     for (me->run_nr_index = me->run_nr;  me->run_nr_index > 0U;
                         me->run_nr_index--, me->led_index--) {
@@ -631,7 +634,8 @@ static QState LEDviaApp_run_bwd(LEDviaApp * const me) {
         }
         /*${AOs::LEDviaApp::SM::LEDcontrol::run_bwd} */
         case Q_EXIT_SIG: {
-            if (me->run_x > me->run_nr + zero) {
+            if (me->run_x > me->run_nr + (uint16_t)zero) {
+            // warning: comparison between signed and unsigned integer expressions
                 me->run_x--;
             }
             else {
