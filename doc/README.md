@@ -1,3 +1,3 @@
-The MIT App Inventor 2 apk file for installation  
-The Fritzing file  
-pictures
+* MIT App Inventor 2 apk file for installation  
+* Fritzing file  
+* pictures
