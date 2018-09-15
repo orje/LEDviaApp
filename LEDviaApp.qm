@@ -359,7 +359,7 @@ If the processed LED reaches the end of the stripe, the direction flag is set tr
 // calculate with shifted 0 and PIXELS
 for (me-&gt;led_index = zero; me-&gt;led_index &lt;= (uint16_t)pixels - me-&gt;run_nr; me-&gt;led_index++) {
 /* compiler warning: &quot;comparison between signed and unsigned integer expressions&quot;,
-if pixels isn't castet */
+if pixels isn't casted */
     if (me-&gt;led_index == me-&gt;run_x) {
         for (me-&gt;run_nr_index = 0U; me-&gt;run_nr_index &lt; me-&gt;run_nr;
             me-&gt;run_nr_index++, me-&gt;led_index++) {
@@ -389,7 +389,7 @@ QF_INT_ENABLE();
 show();</entry>
       <exit brief="inc processed LED, check run direction">if (me-&gt;run_x &lt; (uint16_t)pixels - me-&gt;run_nr) {
 /* compiler warning: &quot;comparison between signed and unsigned integer expressions&quot;,
-if pixels isn't castet */
+if pixels isn't casted */
     me-&gt;run_x++;
 }
 else {
@@ -413,7 +413,7 @@ If the processed LED reaches the begin of the stripe, the direction flag is set 
 // calculate with shifted 0 and PIXELS
 for (me-&gt;led_index = pixels; me-&gt;led_index &gt;= me-&gt;run_nr + (uint16_t)zero; me-&gt;led_index--) {
 /* compiler warning: &quot;comparison between signed and unsigned integer expressions&quot;,
-if zero isn't castet */
+if zero isn't casted */
     if (me-&gt;led_index == me-&gt;run_x) {
         for (me-&gt;run_nr_index = me-&gt;run_nr;  me-&gt;run_nr_index &gt; 0U;
             me-&gt;run_nr_index--, me-&gt;led_index--) {
@@ -443,7 +443,7 @@ QF_INT_ENABLE();
 show();</entry>
       <exit brief="dec processed LED, check run direction">if (me-&gt;run_x &gt; me-&gt;run_nr + (uint16_t)zero) {
 /* compiler warning: &quot;comparison between signed and unsigned integer expressions&quot;,
-if zero isn't castet */
+if zero isn't casted */
     me-&gt;run_x--;
 }
 else {
@@ -613,7 +613,7 @@ enum {
     RUN_SIG                            // run light animation
 };
 
-// store the rainbox in memory (from Nick Gammon)
+// store the rainbow in memory (from Nick Gammon)
 // WARNING! 3 bytes per pixel - take care you don't exceed available RAM
 colour pixelArray [PIXELS];
 

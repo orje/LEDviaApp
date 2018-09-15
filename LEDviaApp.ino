@@ -112,7 +112,7 @@ enum {
     RUN_SIG                            // run light animation
 };
 
-// store the rainbox in memory (from Nick Gammon)
+// store the rainbow in memory (from Nick Gammon)
 // WARNING! 3 bytes per pixel - take care you don't exceed available RAM
 colour pixelArray [PIXELS];
 
@@ -542,7 +542,7 @@ static QState LEDviaApp_run_fwd(LEDviaApp * const me) {
             // calculate with shifted 0 and PIXELS
             for (me->led_index = zero; me->led_index <= (uint16_t)pixels - me->run_nr; me->led_index++) {
             /* compiler warning: "comparison between signed and unsigned integer expressions",
-            if pixels isn't castet */
+            if pixels isn't casted */
                 if (me->led_index == me->run_x) {
                     for (me->run_nr_index = 0U; me->run_nr_index < me->run_nr;
                         me->run_nr_index++, me->led_index++) {
@@ -577,7 +577,7 @@ static QState LEDviaApp_run_fwd(LEDviaApp * const me) {
         case Q_EXIT_SIG: {
             if (me->run_x < (uint16_t)pixels - me->run_nr) {
             /* compiler warning: "comparison between signed and unsigned integer expressions",
-            if pixels isn't castet */
+            if pixels isn't casted */
                 me->run_x++;
             }
             else {
@@ -604,7 +604,7 @@ static QState LEDviaApp_run_bwd(LEDviaApp * const me) {
             // calculate with shifted 0 and PIXELS
             for (me->led_index = pixels; me->led_index >= me->run_nr + (uint16_t)zero; me->led_index--) {
             /* compiler warning: "comparison between signed and unsigned integer expressions",
-            if zero isn't castet */
+            if zero isn't casted */
                 if (me->led_index == me->run_x) {
                     for (me->run_nr_index = me->run_nr;  me->run_nr_index > 0U;
                         me->run_nr_index--, me->led_index--) {
@@ -639,7 +639,7 @@ static QState LEDviaApp_run_bwd(LEDviaApp * const me) {
         case Q_EXIT_SIG: {
             if (me->run_x > me->run_nr + (uint16_t)zero) {
             /* compiler warning: "comparison between signed and unsigned integer expressions",
-            if zero isn't castet */
+            if zero isn't casted */
                 me->run_x--;
             }
             else {
