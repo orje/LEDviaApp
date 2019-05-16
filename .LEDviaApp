@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<session version="4.5.0">
+<session version="4.5.1">
  <item name="license">GPL</item>
  <group name="locked">
   <item name="item">~</item>
   <item name="item">~</item>
   <item name="item">~</item>
   <item name="item">~</item>
+  <item name="item">${.}</item>
+  <item name="item">${.::LEDviaApp.ino}</item>
+  <item name="item">${AOs}</item>
  </group>
  <group name="settings">
   <item name="tabs">1</item>
@@ -14,8 +17,8 @@
   <item name="backups">0</item>
  </group>
  <group name="windows">
-  <item id="AOs::LEDviaApp::SM">0,0,1129,706,*</item>
-  <item id=".::LEDviaApp.ino">0,24,646,706</item>
+  <item id="AOs::LEDviaApp::SM">0,0,1076,909,*</item>
+  <item id=".::LEDviaApp.ino">0,227,646,706</item>
  </group>
  <group name="search">
   <item name="options">4129280</item>
