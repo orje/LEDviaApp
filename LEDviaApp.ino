@@ -25,98 +25,42 @@
 //============================================================================
 // declare all AO classes...
 /*$declare${AOs::LEDviaApp} vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv*/
-
-//----------------------------------------------------------------------------
 /*${AOs::LEDviaApp} ........................................................*/
 typedef struct LEDviaApp {
 /* protected: */
     QActive super;
 
 /* private: */
-
-    //----------------------------------------------------------------------------
     uint8_t value;
-
-    //----------------------------------------------------------------------------
     uint8_t red;
-
-    //----------------------------------------------------------------------------
     uint8_t green;
-
-    //----------------------------------------------------------------------------
     uint8_t blue;
-
-    //----------------------------------------------------------------------------
     uint8_t program;
-
-    //----------------------------------------------------------------------------
     uint16_t led_index;
-
-    //----------------------------------------------------------------------------
     uint8_t brightness;
-
-    //----------------------------------------------------------------------------
     uint8_t dim_up;
-
-    //----------------------------------------------------------------------------
     uint8_t rain_x;
-
-    //----------------------------------------------------------------------------
     uint8_t splash_x;
-
-    //----------------------------------------------------------------------------
     uint16_t run_x;
-
-    //----------------------------------------------------------------------------
     uint8_t run_bwd;
-
-    //----------------------------------------------------------------------------
     uint8_t run_nr;
-
-    //----------------------------------------------------------------------------
     uint8_t run_nr_index;
-
-    //----------------------------------------------------------------------------
     uint8_t com_counter;
 } LEDviaApp;
 
 /* protected: */
 static QState LEDviaApp_initial(LEDviaApp * const me);
-
-//----------------------------------------------------------------------------
 static QState LEDviaApp_LEDcontrol(LEDviaApp * const me);
-
-//----------------------------------------------------------------------------
 static QState LEDviaApp_colour(LEDviaApp * const me);
-
-//----------------------------------------------------------------------------
 static QState LEDviaApp_dim_up(LEDviaApp * const me);
-
-//----------------------------------------------------------------------------
 static QState LEDviaApp_dim_down(LEDviaApp * const me);
-
-//----------------------------------------------------------------------------
 static QState LEDviaApp_rainbow(LEDviaApp * const me);
-
-//----------------------------------------------------------------------------
 static QState LEDviaApp_flash(LEDviaApp * const me);
-
-//----------------------------------------------------------------------------
 static QState LEDviaApp_splash(LEDviaApp * const me);
-
-//----------------------------------------------------------------------------
 static QState LEDviaApp_snow(LEDviaApp * const me);
-
-//----------------------------------------------------------------------------
 static QState LEDviaApp_run_fwd(LEDviaApp * const me);
-
-//----------------------------------------------------------------------------
 static QState LEDviaApp_run_bwd(LEDviaApp * const me);
-
-//----------------------------------------------------------------------------
 static QState LEDviaApp_communication(LEDviaApp * const me);
-
-//----------------------------------------------------------------------------
 static QState LEDviaApp_process_data(LEDviaApp * const me);
 /*$enddecl${AOs::LEDviaApp} ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 //...
@@ -244,8 +188,6 @@ void Q_onAssert(char const Q_ROM * const file, int line) {
 #endif
 /*$endskip${QP_VERSION} ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 /*$define${AOs::LEDviaApp} vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv*/
-
-//----------------------------------------------------------------------------
 /*${AOs::LEDviaApp} ........................................................*/
 /*${AOs::LEDviaApp::SM} ....................................................*/
 static QState LEDviaApp_initial(LEDviaApp * const me) {
@@ -254,8 +196,6 @@ static QState LEDviaApp_initial(LEDviaApp * const me) {
     me->run_x = zero;
     return Q_TRAN(&LEDviaApp_LEDcontrol);
 }
-
-//----------------------------------------------------------------------------
 /*${AOs::LEDviaApp::SM::LEDcontrol} ........................................*/
 static QState LEDviaApp_LEDcontrol(LEDviaApp * const me) {
     QState status_;
@@ -374,8 +314,6 @@ static QState LEDviaApp_LEDcontrol(LEDviaApp * const me) {
     }
     return status_;
 }
-
-//----------------------------------------------------------------------------
 /*${AOs::LEDviaApp::SM::LEDcontrol::colour} ................................*/
 static QState LEDviaApp_colour(LEDviaApp * const me) {
     QState status_;
@@ -393,8 +331,6 @@ static QState LEDviaApp_colour(LEDviaApp * const me) {
     }
     return status_;
 }
-
-//----------------------------------------------------------------------------
 /*${AOs::LEDviaApp::SM::LEDcontrol::dim_up} ................................*/
 static QState LEDviaApp_dim_up(LEDviaApp * const me) {
     QState status_;
@@ -426,8 +362,6 @@ static QState LEDviaApp_dim_up(LEDviaApp * const me) {
     }
     return status_;
 }
-
-//----------------------------------------------------------------------------
 /*${AOs::LEDviaApp::SM::LEDcontrol::dim_down} ..............................*/
 static QState LEDviaApp_dim_down(LEDviaApp * const me) {
     QState status_;
@@ -459,8 +393,6 @@ static QState LEDviaApp_dim_down(LEDviaApp * const me) {
     }
     return status_;
 }
-
-//----------------------------------------------------------------------------
 /*${AOs::LEDviaApp::SM::LEDcontrol::rainbow} ...............................*/
 static QState LEDviaApp_rainbow(LEDviaApp * const me) {
     QState status_;
@@ -506,8 +438,6 @@ static QState LEDviaApp_rainbow(LEDviaApp * const me) {
     }
     return status_;
 }
-
-//----------------------------------------------------------------------------
 /*${AOs::LEDviaApp::SM::LEDcontrol::flash} .................................*/
 static QState LEDviaApp_flash(LEDviaApp * const me) {
     QState status_;
@@ -529,8 +459,6 @@ static QState LEDviaApp_flash(LEDviaApp * const me) {
     }
     return status_;
 }
-
-//----------------------------------------------------------------------------
 /*${AOs::LEDviaApp::SM::LEDcontrol::splash} ................................*/
 static QState LEDviaApp_splash(LEDviaApp * const me) {
     QState status_;
@@ -574,8 +502,6 @@ static QState LEDviaApp_splash(LEDviaApp * const me) {
     }
     return status_;
 }
-
-//----------------------------------------------------------------------------
 /*${AOs::LEDviaApp::SM::LEDcontrol::snow} ..................................*/
 static QState LEDviaApp_snow(LEDviaApp * const me) {
     QState status_;
@@ -618,8 +544,6 @@ static QState LEDviaApp_snow(LEDviaApp * const me) {
     }
     return status_;
 }
-
-//----------------------------------------------------------------------------
 /*${AOs::LEDviaApp::SM::LEDcontrol::run_fwd} ...............................*/
 static QState LEDviaApp_run_fwd(LEDviaApp * const me) {
     QState status_;
@@ -687,8 +611,6 @@ static QState LEDviaApp_run_fwd(LEDviaApp * const me) {
     }
     return status_;
 }
-
-//----------------------------------------------------------------------------
 /*${AOs::LEDviaApp::SM::LEDcontrol::run_bwd} ...............................*/
 static QState LEDviaApp_run_bwd(LEDviaApp * const me) {
     QState status_;
@@ -756,8 +678,6 @@ static QState LEDviaApp_run_bwd(LEDviaApp * const me) {
     }
     return status_;
 }
-
-//----------------------------------------------------------------------------
 /*${AOs::LEDviaApp::SM::communication} .....................................*/
 static QState LEDviaApp_communication(LEDviaApp * const me) {
     QState status_;
@@ -809,8 +729,6 @@ static QState LEDviaApp_communication(LEDviaApp * const me) {
     }
     return status_;
 }
-
-//----------------------------------------------------------------------------
 /*${AOs::LEDviaApp::SM::communication::process_data} .......................*/
 static QState LEDviaApp_process_data(LEDviaApp * const me) {
     QState status_;
