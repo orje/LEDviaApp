@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <model version="4.5.1" links="0">
- <documentation>//============================================================================
+ <documentation>//----------------------------------------------------------------------------
 Prototyp of controlling a LED stripe with an Arduino from a handy with
 Bluetooth communication.
 For the reason that the Bluetooth communication needs interrupts,
@@ -34,77 +34,77 @@ But the author of the framework supposes it, because of a clean programing.</doc
  <framework name="qpn"/>
  <package name="AOs" stereotype="0x02">
   <class name="LEDviaApp" superclass="qpn::QActive">
-   <documentation>//============================================================================
+   <documentation>//----------------------------------------------------------------------------
 use for debuging:
 digitalWrite(DEBUG_L, HIGH);
 digitalWrite(DEBUG_L, LOW);</documentation>
    <attribute name="value" type="uint8_t" visibility="0x02" properties="0x00">
-    <documentation>//============================================================================
+    <documentation>//----------------------------------------------------------------------------
 for all transmitted values</documentation>
    </attribute>
    <attribute name="red" type="uint8_t" visibility="0x02" properties="0x00">
-    <documentation>//============================================================================
+    <documentation>//----------------------------------------------------------------------------
 for the transmitted red value</documentation>
    </attribute>
    <attribute name="green" type="uint8_t" visibility="0x02" properties="0x00">
-    <documentation>//============================================================================
+    <documentation>//----------------------------------------------------------------------------
 for the transmitted green value</documentation>
    </attribute>
    <attribute name="blue" type="uint8_t" visibility="0x02" properties="0x00">
-    <documentation>//============================================================================
+    <documentation>//----------------------------------------------------------------------------
 for the transmitted blue value</documentation>
    </attribute>
    <attribute name="program" type="uint8_t" visibility="0x02" properties="0x00">
-    <documentation>//============================================================================
+    <documentation>//----------------------------------------------------------------------------
 for the transmitted program</documentation>
    </attribute>
    <attribute name="led_index" type="uint16_t" visibility="0x02" properties="0x00">
-    <documentation>//============================================================================
+    <documentation>//----------------------------------------------------------------------------
 index of the LED in the stripe
 
 The variable is often used but without causing conflicts
 because everytime it is initialized new.</documentation>
    </attribute>
    <attribute name="brightness" type="uint8_t" visibility="0x02" properties="0x00">
-    <documentation>//============================================================================
+    <documentation>//----------------------------------------------------------------------------
 for the brightness value</documentation>
    </attribute>
    <attribute name="dim_up" type="uint8_t" visibility="0x02" properties="0x00">
-    <documentation>//============================================================================
+    <documentation>//----------------------------------------------------------------------------
 flag for dimming direction
 0U = up, 1U = down</documentation>
    </attribute>
    <attribute name="rain_x" type="uint8_t" visibility="0x02" properties="0x00">
-    <documentation>//============================================================================
+    <documentation>//----------------------------------------------------------------------------
 variable for Nick Gammon's rainbow</documentation>
    </attribute>
    <attribute name="splash_x" type="uint8_t" visibility="0x02" properties="0x00">
-    <documentation>//============================================================================
+    <documentation>//----------------------------------------------------------------------------
 processed LED of the stripe for the splash animation</documentation>
    </attribute>
    <attribute name="run_x" type="uint16_t" visibility="0x02" properties="0x00">
-    <documentation>//============================================================================
+    <documentation>//----------------------------------------------------------------------------
 processed LED of the stripe for the run animation</documentation>
    </attribute>
    <attribute name="run_bwd" type="uint8_t" visibility="0x02" properties="0x00">
-    <documentation>//============================================================================
+    <documentation>//----------------------------------------------------------------------------
 flag for running light direction
 0U = forward, 1U = backward</documentation>
    </attribute>
    <attribute name="run_nr" type="uint8_t" visibility="0x02" properties="0x00">
-    <documentation>//============================================================================
+    <documentation>//----------------------------------------------------------------------------
 number of LED that run
 
 if more than 256 PIXELS type must be raised</documentation>
    </attribute>
    <attribute name="run_nr_index" type="uint8_t" visibility="0x02" properties="0x00">
-    <documentation>//============================================================================
+    <documentation>//----------------------------------------------------------------------------
 index of the LED of the running group
 
 if more than 256 PIXELS type must be raised</documentation>
    </attribute>
    <attribute name="com_counter" type="uint8_t" visibility="0x02" properties="0x00">
-    <documentation>//============================================================================
+    <documentation>//----------------------------------------------------------------------------
 counter to guard the communication</documentation>
    </attribute>
    <statechart properties="0x01">
@@ -116,7 +116,7 @@ me-&gt;run_x = zero;</action>
      </initial_glyph>
     </initial>
     <state name="LEDcontrol">
-     <documentation>//============================================================================
+     <documentation>//----------------------------------------------------------------------------
 First is checked, whether there is a request from the handy in the receive
 buffer of the USART. If so, a transmit order is send to the handy and it is
 changed into the communication state. If not, it is changed into  the active
@@ -232,7 +232,7 @@ QActive_armX((QActive *)me, 0U, COMMUNICATION_TICK, 0U);</entry>
       </tran_glyph>
      </tran>
      <state name="colour">
-      <documentation>//============================================================================
+      <documentation>//----------------------------------------------------------------------------
 just show the adjusted colours</documentation>
       <entry brief="show LED colour">showColor(PIXELS, me-&gt;red, me-&gt;green, me-&gt;blue);</entry>
       <state_glyph node="15,14,31,5">
@@ -240,7 +240,7 @@ just show the adjusted colours</documentation>
       </state_glyph>
      </state>
      <state name="dim_up">
-      <documentation>//============================================================================
+      <documentation>//----------------------------------------------------------------------------
 The colours are multiplicated with an incrementing brightness value.
 
 At exit the brightness is incremented.
@@ -261,7 +261,7 @@ if (me-&gt;brightness &gt; 246U) {
       </state_glyph>
      </state>
      <state name="dim_down">
-      <documentation>//============================================================================
+      <documentation>//----------------------------------------------------------------------------
 The colours are multiplicated with an decrementing brightness value.
 
 At exit the brightness is decremented.
@@ -283,7 +283,7 @@ if (me-&gt;brightness &lt; 10U) {
       </state_glyph>
      </state>
      <state name="rainbow">
-      <documentation>//============================================================================
+      <documentation>//----------------------------------------------------------------------------
 adapted from Nick Gammon</documentation>
       <entry brief="calculate colour, run rainbow">// cycle the starting point
 if (me-&gt;rain_x == 255U) {
@@ -319,7 +319,7 @@ show();
       </state_glyph>
      </state>
      <state name="flash">
-      <documentation>//============================================================================
+      <documentation>//----------------------------------------------------------------------------
 show colour by cyclic random</documentation>
       <entry brief="flash LED">showColor(PIXELS,
     me-&gt;red = random(255U),
@@ -331,7 +331,7 @@ show colour by cyclic random</documentation>
       </state_glyph>
      </state>
      <state name="splash">
-      <documentation>//============================================================================
+      <documentation>//----------------------------------------------------------------------------
 show colour for single LED by cyclic random
 
 Because of the strict timing of the SPI bus while sending the colour values to
@@ -370,7 +370,7 @@ show();</entry>
       </state_glyph>
      </state>
      <state name="snow">
-      <documentation>//============================================================================
+      <documentation>//----------------------------------------------------------------------------
 randomly snowing
 
 Because of the strict timing of the SPI bus while sending the colour values to
@@ -410,7 +410,7 @@ for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
       </state_glyph>
      </state>
      <state name="run_fwd">
-      <documentation>//============================================================================
+      <documentation>//----------------------------------------------------------------------------
 To avoid calculating into negativ numbers the numeral area is shifted.
 Then, first build into in-memory array, as these calculations take too long to
 do on the fly.
@@ -475,7 +475,7 @@ else {
       </state_glyph>
      </state>
      <state name="run_bwd">
-      <documentation>//============================================================================
+      <documentation>//----------------------------------------------------------------------------
 To avoid calculating into negativ numbers the numeral area is shifted.
 Then, first build into in-memory array, as these calculations take too long to
 do on the fly.
@@ -545,7 +545,7 @@ else {
      </state_glyph>
     </state>
     <state name="communication">
-     <documentation>//============================================================================
+     <documentation>//----------------------------------------------------------------------------
 The communication is designed as a handshake, because of its asynchronous
 nature. A timer is cyclic started. If it shoots, the receive buffer is checked
 for the start sign. If the start sign is detected, the processing of the data
@@ -592,7 +592,7 @@ digitalWrite(DEBUG_L, HIGH);</action>
       </tran_glyph>
      </tran>
      <state name="process_data">
-      <documentation>//============================================================================
+      <documentation>//----------------------------------------------------------------------------
 To process the message char by char, the value has to be transmitted first,
 because it is asigned with the following colour or program order.
 
