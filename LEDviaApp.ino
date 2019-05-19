@@ -25,42 +25,98 @@
 //============================================================================
 // declare all AO classes...
 /*$declare${AOs::LEDviaApp} vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv*/
+
+//============================================================================
 /*${AOs::LEDviaApp} ........................................................*/
 typedef struct LEDviaApp {
 /* protected: */
     QActive super;
 
 /* private: */
+
+    //============================================================================
     uint8_t value;
+
+    //============================================================================
     uint8_t red;
+
+    //============================================================================
     uint8_t green;
+
+    //============================================================================
     uint8_t blue;
+
+    //============================================================================
     uint8_t program;
+
+    //============================================================================
     uint16_t led_index;
+
+    //============================================================================
     uint8_t brightness;
+
+    //============================================================================
     uint8_t dim_up;
+
+    //============================================================================
     uint8_t rain_x;
+
+    //============================================================================
     uint8_t splash_x;
+
+    //============================================================================
     uint16_t run_x;
+
+    //============================================================================
     uint8_t run_bwd;
+
+    //============================================================================
     uint8_t run_nr;
+
+    //============================================================================
     uint8_t run_nr_index;
+
+    //============================================================================
     uint8_t com_counter;
 } LEDviaApp;
 
 /* protected: */
 static QState LEDviaApp_initial(LEDviaApp * const me);
+
+//============================================================================
 static QState LEDviaApp_LEDcontrol(LEDviaApp * const me);
+
+//============================================================================
 static QState LEDviaApp_colour(LEDviaApp * const me);
+
+//============================================================================
 static QState LEDviaApp_dim_up(LEDviaApp * const me);
+
+//============================================================================
 static QState LEDviaApp_dim_down(LEDviaApp * const me);
+
+//============================================================================
 static QState LEDviaApp_rainbow(LEDviaApp * const me);
+
+//============================================================================
 static QState LEDviaApp_flash(LEDviaApp * const me);
+
+//============================================================================
 static QState LEDviaApp_splash(LEDviaApp * const me);
+
+//============================================================================
 static QState LEDviaApp_snow(LEDviaApp * const me);
+
+//============================================================================
 static QState LEDviaApp_run_fwd(LEDviaApp * const me);
+
+//============================================================================
 static QState LEDviaApp_run_bwd(LEDviaApp * const me);
+
+//============================================================================
 static QState LEDviaApp_communication(LEDviaApp * const me);
+
+//============================================================================
 static QState LEDviaApp_process_data(LEDviaApp * const me);
 /*$enddecl${AOs::LEDviaApp} ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 //...
@@ -188,6 +244,8 @@ void Q_onAssert(char const Q_ROM * const file, int line) {
 #endif
 /*$endskip${QP_VERSION} ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 /*$define${AOs::LEDviaApp} vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv*/
+
+//============================================================================
 /*${AOs::LEDviaApp} ........................................................*/
 /*${AOs::LEDviaApp::SM} ....................................................*/
 static QState LEDviaApp_initial(LEDviaApp * const me) {
@@ -196,6 +254,8 @@ static QState LEDviaApp_initial(LEDviaApp * const me) {
     me->run_x = zero;
     return Q_TRAN(&LEDviaApp_LEDcontrol);
 }
+
+//============================================================================
 /*${AOs::LEDviaApp::SM::LEDcontrol} ........................................*/
 static QState LEDviaApp_LEDcontrol(LEDviaApp * const me) {
     QState status_;
@@ -314,6 +374,8 @@ static QState LEDviaApp_LEDcontrol(LEDviaApp * const me) {
     }
     return status_;
 }
+
+//============================================================================
 /*${AOs::LEDviaApp::SM::LEDcontrol::colour} ................................*/
 static QState LEDviaApp_colour(LEDviaApp * const me) {
     QState status_;
@@ -331,6 +393,8 @@ static QState LEDviaApp_colour(LEDviaApp * const me) {
     }
     return status_;
 }
+
+//============================================================================
 /*${AOs::LEDviaApp::SM::LEDcontrol::dim_up} ................................*/
 static QState LEDviaApp_dim_up(LEDviaApp * const me) {
     QState status_;
@@ -362,6 +426,8 @@ static QState LEDviaApp_dim_up(LEDviaApp * const me) {
     }
     return status_;
 }
+
+//============================================================================
 /*${AOs::LEDviaApp::SM::LEDcontrol::dim_down} ..............................*/
 static QState LEDviaApp_dim_down(LEDviaApp * const me) {
     QState status_;
@@ -393,6 +459,8 @@ static QState LEDviaApp_dim_down(LEDviaApp * const me) {
     }
     return status_;
 }
+
+//============================================================================
 /*${AOs::LEDviaApp::SM::LEDcontrol::rainbow} ...............................*/
 static QState LEDviaApp_rainbow(LEDviaApp * const me) {
     QState status_;
@@ -407,19 +475,22 @@ static QState LEDviaApp_rainbow(LEDviaApp * const me) {
                 me->rain_x++;
             }
 
-            // build into in-memory array, as these calculations take too long to do on the fly
+            /* build into in-memory array, as these calculations take too long
+            to do on the fly */
             for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
                 byte r, g, b;
-                Wheel ((me->led_index + me->rain_x) & 255U, r, g, b);
-                pixelArray [me->led_index].r = r;
-                pixelArray [me->led_index].g = g;
-                pixelArray [me->led_index].b = b;
+                Wheel((me->led_index + me->rain_x) & 255U, r, g, b);
+                pixelArray[me->led_index].r = r;
+                pixelArray[me->led_index].g = g;
+                pixelArray[me->led_index].b = b;
             }
 
             // now show results
             QF_INT_DISABLE();
             for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
-                sendPixel (pixelArray [me->led_index].r, pixelArray [me->led_index].g, pixelArray [me->led_index].b);
+                sendPixel(pixelArray[me->led_index].r,
+                    pixelArray[me->led_index].g,
+                    pixelArray[me->led_index].b);
             }
             QF_INT_ENABLE();
 
@@ -435,6 +506,8 @@ static QState LEDviaApp_rainbow(LEDviaApp * const me) {
     }
     return status_;
 }
+
+//============================================================================
 /*${AOs::LEDviaApp::SM::LEDcontrol::flash} .................................*/
 static QState LEDviaApp_flash(LEDviaApp * const me) {
     QState status_;
@@ -456,6 +529,8 @@ static QState LEDviaApp_flash(LEDviaApp * const me) {
     }
     return status_;
 }
+
+//============================================================================
 /*${AOs::LEDviaApp::SM::LEDcontrol::splash} ................................*/
 static QState LEDviaApp_splash(LEDviaApp * const me) {
     QState status_;
@@ -464,24 +539,27 @@ static QState LEDviaApp_splash(LEDviaApp * const me) {
         case Q_ENTRY_SIG: {
             me->splash_x = random(PIXELS - 1U);
 
-            // build into in-memory array, as these calculations take too long to do on the fly
+            /* build into in-memory array, as these calculations take too long
+            to do on the fly */
             for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
                 if (me->led_index == me->splash_x) {
-                    pixelArray [me->led_index].r = random(255U);
-                    pixelArray [me->led_index].g = random(255U);
-                    pixelArray [me->led_index].b = random(255U);
+                    pixelArray[me->led_index].r = random(255U);
+                    pixelArray[me->led_index].g = random(255U);
+                    pixelArray[me->led_index].b = random(255U);
                 }
                 else {
-                    pixelArray [me->led_index].r = 0U;
-                    pixelArray [me->led_index].g = 0U;
-                    pixelArray [me->led_index].b = 0U;
+                    pixelArray[me->led_index].r = 0U;
+                    pixelArray[me->led_index].g = 0U;
+                    pixelArray[me->led_index].b = 0U;
                 }
             }
 
             // now show results
             QF_INT_DISABLE();
             for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
-                sendPixel (pixelArray [me->led_index].r, pixelArray [me->led_index].g, pixelArray [me->led_index].b);
+                sendPixel(pixelArray[me->led_index].r,
+                    pixelArray[me->led_index].g,
+                    pixelArray[me->led_index].b);
             }
             QF_INT_ENABLE();
 
@@ -496,32 +574,39 @@ static QState LEDviaApp_splash(LEDviaApp * const me) {
     }
     return status_;
 }
+
+//============================================================================
 /*${AOs::LEDviaApp::SM::LEDcontrol::snow} ..................................*/
 static QState LEDviaApp_snow(LEDviaApp * const me) {
     QState status_;
     switch (Q_SIG(me)) {
         /*${AOs::LEDviaApp::SM::LEDcontrol::snow} */
         case Q_ENTRY_SIG: {
-            // build into in-memory array, as these calculations take too long to do on the fly
-            for (me->led_index = random(0U, PIXELS); me->led_index < PIXELS; me->led_index = me->led_index + random(2U, 4U)) {
-                pixelArray [me->led_index].r = 100U;
-                pixelArray [me->led_index].g = 100U;
-                pixelArray [me->led_index].b = random(100U, 255U);
+            /* build into in-memory array, as these calculations take too long
+            to do on the fly */
+            for (me->led_index = random(0U, PIXELS);
+                    me->led_index < PIXELS;
+                    me->led_index = me->led_index + random(2U, 4U)) {
+                        pixelArray[me->led_index].r = 100U;
+                        pixelArray[me->led_index].g = 100U;
+                        pixelArray[me->led_index].b = random(100U, 255U);
             }
 
             // now show results
             QF_INT_DISABLE();
             for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
-                sendPixel (pixelArray [me->led_index].r, pixelArray [me->led_index].g, pixelArray [me->led_index].b);
+                sendPixel(pixelArray[me->led_index].r,
+                    pixelArray[me->led_index].g,
+                    pixelArray[me->led_index].b);
             }
             QF_INT_ENABLE();
 
             show();
 
             for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
-                pixelArray [me->led_index].r = 0U;
-                pixelArray [me->led_index].g = 0U;
-                pixelArray [me->led_index].b = 0U;
+                pixelArray[me->led_index].r = 0U;
+                pixelArray[me->led_index].g = 0U;
+                pixelArray[me->led_index].b = 0U;
             }
             status_ = Q_HANDLED();
             break;
@@ -533,32 +618,37 @@ static QState LEDviaApp_snow(LEDviaApp * const me) {
     }
     return status_;
 }
+
+//============================================================================
 /*${AOs::LEDviaApp::SM::LEDcontrol::run_fwd} ...............................*/
 static QState LEDviaApp_run_fwd(LEDviaApp * const me) {
     QState status_;
     switch (Q_SIG(me)) {
         /*${AOs::LEDviaApp::SM::LEDcontrol::run_fwd} */
         case Q_ENTRY_SIG: {
-            // build into in-memory array, as these calculations take too long to do on the fly
+            /* build into in-memory array, as these calculations take too long
+            to do on the fly */
             // calculate with shifted 0 and PIXELS
-            for (me->led_index = zero; me->led_index <= (uint16_t)pixels - me->run_nr; me->led_index++) {
-            /* compiler warning: "comparison between signed and unsigned integer expressions",
-            if pixels isn't casted */
+            for (me->led_index = zero;
+                me->led_index <= (uint16_t)pixels - me->run_nr; me->led_index++) {
+            /* compiler warning: "comparison between signed and unsigned
+            integer expressions", if pixels isn't casted */
                 if (me->led_index == me->run_x) {
                     for (me->run_nr_index = 0U; me->run_nr_index < me->run_nr;
                         me->run_nr_index++, me->led_index++) {
                             // address the absolute, not shifted LED
-                            pixelArray [me->led_index - PIXELS - 1U].r = me->red;
-                            pixelArray [me->led_index - PIXELS - 1U].g = me->green;
-                            pixelArray [me->led_index - PIXELS - 1U].b = me->blue;
+                            pixelArray[me->led_index - PIXELS - 1U].r = me->red;
+                            pixelArray[me->led_index - PIXELS - 1U].g = me->green;
+                            pixelArray[me->led_index - PIXELS - 1U].b = me->blue;
                     }
-                    me->led_index--; // otherwise led_index would be two times counted
+                    me->led_index--;
+                    // otherwise led_index would be two times counted
                 }
                 else {
                     // address the absolute, not shifted LED
-                    pixelArray [me->led_index - PIXELS - 1U].r = 0U;
-                    pixelArray [me->led_index - PIXELS - 1U].g = 0U;
-                    pixelArray [me->led_index - PIXELS - 1U].b = 0U;
+                    pixelArray[me->led_index - PIXELS - 1U].r = 0U;
+                    pixelArray[me->led_index - PIXELS - 1U].g = 0U;
+                    pixelArray[me->led_index - PIXELS - 1U].b = 0U;
                 }
             }
 
@@ -566,7 +656,9 @@ static QState LEDviaApp_run_fwd(LEDviaApp * const me) {
             QF_INT_DISABLE();
             // address the absolute, not shifted LED
             for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
-                sendPixel (pixelArray [me->led_index].r, pixelArray [me->led_index].g, pixelArray [me->led_index].b);
+                sendPixel(pixelArray[me->led_index].r,
+                    pixelArray [me->led_index].g,
+                    pixelArray [me->led_index].b);
             }
             QF_INT_ENABLE();
 
@@ -577,8 +669,8 @@ static QState LEDviaApp_run_fwd(LEDviaApp * const me) {
         /*${AOs::LEDviaApp::SM::LEDcontrol::run_fwd} */
         case Q_EXIT_SIG: {
             if (me->run_x < (uint16_t)pixels - me->run_nr) {
-            /* compiler warning: "comparison between signed and unsigned integer expressions",
-            if pixels isn't casted */
+            /* compiler warning: "comparison between signed and unsigned
+            integer expressions", if pixels isn't casted */
                 me->run_x++;
             }
             else {
@@ -595,32 +687,37 @@ static QState LEDviaApp_run_fwd(LEDviaApp * const me) {
     }
     return status_;
 }
+
+//============================================================================
 /*${AOs::LEDviaApp::SM::LEDcontrol::run_bwd} ...............................*/
 static QState LEDviaApp_run_bwd(LEDviaApp * const me) {
     QState status_;
     switch (Q_SIG(me)) {
         /*${AOs::LEDviaApp::SM::LEDcontrol::run_bwd} */
         case Q_ENTRY_SIG: {
-            // build into in-memory array, as these calculations take too long to do on the fly
+            /* build into in-memory array, as these calculations take too long
+            to do on the fly */
             // calculate with shifted 0 and PIXELS
-            for (me->led_index = pixels; me->led_index >= me->run_nr + (uint16_t)zero; me->led_index--) {
-            /* compiler warning: "comparison between signed and unsigned integer expressions",
-            if zero isn't casted */
+            for (me->led_index = pixels;
+                me->led_index >= me->run_nr + (uint16_t)zero; me->led_index--) {
+            /* compiler warning: "comparison between signed and unsigned
+            integer expressions", if zero isn't casted */
                 if (me->led_index == me->run_x) {
                     for (me->run_nr_index = me->run_nr;  me->run_nr_index > 0U;
                         me->run_nr_index--, me->led_index--) {
                             // address the absolute, not shifted LED
-                            pixelArray [me->led_index - PIXELS - 2U].r = me->red;
-                            pixelArray [me->led_index - PIXELS - 2U].g = me->green;
-                            pixelArray [me->led_index - PIXELS - 2U].b = me->blue;
+                            pixelArray[me->led_index - PIXELS - 2U].r = me->red;
+                            pixelArray[me->led_index - PIXELS - 2U].g = me->green;
+                            pixelArray[me->led_index - PIXELS - 2U].b = me->blue;
                     }
-                    me->led_index++; // otherwise led_index would be two times counted
+                    me->led_index++;
+                    // otherwise led_index would be two times counted
                 }
                 else {
                     // address the absolute, not shifted LED
-                    pixelArray [me->led_index - PIXELS - 2U].r = 0U;
-                    pixelArray [me->led_index - PIXELS - 2U].g = 0U;
-                    pixelArray [me->led_index - PIXELS - 2U].b = 0U;
+                    pixelArray[me->led_index - PIXELS - 2U].r = 0U;
+                    pixelArray[me->led_index - PIXELS - 2U].g = 0U;
+                    pixelArray[me->led_index - PIXELS - 2U].b = 0U;
                 }
             }
 
@@ -628,7 +725,9 @@ static QState LEDviaApp_run_bwd(LEDviaApp * const me) {
             QF_INT_DISABLE();
             // address the absolute, not shifted LED
             for (me->led_index = 0U; me->led_index < PIXELS; me->led_index++) {
-                sendPixel (pixelArray [me->led_index].r, pixelArray [me->led_index].g, pixelArray [me->led_index].b);
+                sendPixel(pixelArray[me->led_index].r,
+                    pixelArray [me->led_index].g,
+                    pixelArray [me->led_index].b);
             }
             QF_INT_ENABLE();
 
@@ -639,8 +738,8 @@ static QState LEDviaApp_run_bwd(LEDviaApp * const me) {
         /*${AOs::LEDviaApp::SM::LEDcontrol::run_bwd} */
         case Q_EXIT_SIG: {
             if (me->run_x > me->run_nr + (uint16_t)zero) {
-            /* compiler warning: "comparison between signed and unsigned integer expressions",
-            if zero isn't casted */
+            /* compiler warning: "comparison between signed and unsigned
+            integer expressions", if zero isn't casted */
                 me->run_x--;
             }
             else {
@@ -657,6 +756,8 @@ static QState LEDviaApp_run_bwd(LEDviaApp * const me) {
     }
     return status_;
 }
+
+//============================================================================
 /*${AOs::LEDviaApp::SM::communication} .....................................*/
 static QState LEDviaApp_communication(LEDviaApp * const me) {
     QState status_;
@@ -708,6 +809,8 @@ static QState LEDviaApp_communication(LEDviaApp * const me) {
     }
     return status_;
 }
+
+//============================================================================
 /*${AOs::LEDviaApp::SM::communication::process_data} .......................*/
 static QState LEDviaApp_process_data(LEDviaApp * const me) {
     QState status_;
