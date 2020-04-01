@@ -1,0 +1,1 @@
+Der Ordner muss in das Verzeichnis "xyz:\Users\xyz\Documents\Arduino\libraries" kopiert werden.

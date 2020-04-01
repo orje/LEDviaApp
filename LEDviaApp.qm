@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<model version="4.5.1" links="0">
+<model version="5.0.0" links="0">
  <documentation>Prototyp of controlling a LED stripe with an Arduino from a handy with
 Bluetooth communication.
 For the reason that the Bluetooth communication needs interrupts,
@@ -101,7 +101,7 @@ me-&gt;run_x = zero;</action>
     <state name="LEDcontrol">
      <documentation>First is checked, whether there is a request from the handy in the receive
 buffer of the USART. If so, a transmit order is send to the handy and it is
-changed into the communication state. If not, it is changed into  the active
+changed into the communication state. If not, it is changed into the active
 program substate.
 
 Periodically a time tick is generated to recheck the receive buffer. This timer
@@ -619,10 +619,8 @@ On exit an acknowledge is send to the handy.</documentation>
  <directory name=".">
   <file name="LEDviaApp.ino">
    <text>#include &quot;qpn.h&quot;                       // QP-nano framework
-#include &quot;Arduino.h&quot;                   // Arduino API
 
-#include &lt;NeoPixels_SPI.h&gt;             // from Nick Gammon
-#include &lt;SPI.h&gt;                       // Pin 11 = MOSI
+#include &lt;NeoPixels_SPI.h&gt;             // from Nick Gammon, Pin 11 = MOSI
 
 //============================================================================
 // declare all AO classes...

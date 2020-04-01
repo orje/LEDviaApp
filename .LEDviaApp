@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<session version="4.5.1">
+<session version="5.0.0">
  <item name="license">GPL</item>
  <group name="locked">
-  <item name="item">~</item>
+  <item name="item">${qpn}</item>
  </group>
  <group name="settings">
   <item name="tabs">1</item>
@@ -11,7 +11,7 @@
   <item name="backups">0</item>
  </group>
  <group name="windows">
-  <item id="AOs::LEDviaApp::SM">0,0,799,988,*</item>
+  <item id="AOs::LEDviaApp::SM">0,0,772,871,*</item>
   <item id=".::LEDviaApp.ino">0,0,646,706</item>
  </group>
  <group name="search">
