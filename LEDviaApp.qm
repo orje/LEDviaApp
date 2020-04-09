@@ -645,12 +645,12 @@ enum {
 // number of system clock ticks in one second
     BSP_TICKS_PER_SEC      = 100U,
 
-// handshake and program timing = 20 ms
-    COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 50U,
+// handshake and program timing = 100 ms
+    COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 10U,
 
 // max 256 PIXELS possible, else some Class Attribute types has to be adjusted
-//    PIXELS = 120,                      // number of LEDs in the stripe
-    PIXELS = 8U,                       // number of LED in the stick
+    PIXELS = 120,                      // number of LEDs in the stripe
+//    PIXELS = 8U,                       // number of LED in the stick
 
 // shift 0 to 'zero' for never calculating below 0
     zero = PIXELS + 1U,                // shift 0 to avoid coming below 0
