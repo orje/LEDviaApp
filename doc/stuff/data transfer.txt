@@ -37,4 +37,4 @@ benötigte Zeit zur Ansteuerung des LED stripe lt. Nick Gammon:
 	LED stripe mit reset = 360 µs + 9 µs = 369 µs
 
 mein Kommunikationstakt:
-	20 ms
+	100 ms
