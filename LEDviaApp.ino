@@ -18,8 +18,7 @@
 /*.$endhead${.::LEDviaApp.ino} ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 #include "qpn.h"                       // QP-nano framework
 
-#include <NeoPixels_SPI.h>             // from Nick Gammon
-//#include <SPI.h>                       // Pin 11 = MOSI
+#include <NeoPixels_SPI.h>             // from Nick Gammon, Pin 11 = MOSI
 
 //============================================================================
 // declare all AO classes...
@@ -83,7 +82,7 @@ enum {
     BSP_TICKS_PER_SEC      = 100U,
 
 // handshake and program timing = 20 ms
-    COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 5U,
+    COMMUNICATION_TICK     = BSP_TICKS_PER_SEC / 50U,
 
 // max 256 PIXELS possible, else some Class Attribute types has to be adjusted
 //    PIXELS = 120,                      // number of LEDs in the stripe
