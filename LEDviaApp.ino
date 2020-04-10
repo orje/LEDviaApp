@@ -442,11 +442,13 @@ static QState LEDviaApp_flash(LEDviaApp * const me) {
     switch (Q_SIG(me)) {
         /*.${AOs::LEDviaApp::SM::LEDcontrol::flash} */
         case Q_ENTRY_SIG: {
-            showColor(PIXELS,
-                me->red = random(255U),
-                me->green = random(255U),
-                me->blue = random(255U)
-            );
+            // calculate first
+            me->red = random(255U);
+            me->green = random(255U);
+            me->blue = random(255U);
+
+            // then show results
+            showColor(PIXELS, me->red, me->green, me->blue);
             status_ = Q_HANDLED();
             break;
         }

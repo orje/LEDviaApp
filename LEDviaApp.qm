@@ -298,11 +298,13 @@ show();
      </state>
      <state name="flash">
       <documentation>show colour by cyclic random</documentation>
-      <entry brief="flash LED">showColor(PIXELS,
-    me-&gt;red = random(255U),
-    me-&gt;green = random(255U),
-    me-&gt;blue = random(255U)
-);</entry>
+      <entry brief="flash LED">// calculate first
+me-&gt;red = random(255U);
+me-&gt;green = random(255U);
+me-&gt;blue = random(255U);
+
+// then show results
+showColor(PIXELS, me-&gt;red, me-&gt;green, me-&gt;blue);</entry>
       <state_glyph node="18,53,32,5">
        <entry box="1,2,11,2"/>
       </state_glyph>
