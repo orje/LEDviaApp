@@ -1,5 +1,5 @@
 ![Demo video](https://github.com/orje/LEDviaApp_UNO/blob/master/doc/stuff/LEDviaApp.jpg)  
-[Demo video](https://www.youtube.com/watch?v=NQhEtg-nRmY)
+[Demo video](https://youtu.be/p4o3Cnaa4Ys)
 
 #### See the Wiki for further informations!
 ###### This file is at least needed. The ino file is generated throughout QM.
