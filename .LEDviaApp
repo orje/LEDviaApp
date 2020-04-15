@@ -2,9 +2,10 @@
 <session version="5.0.0">
  <item name="license">GPL</item>
  <group name="locked">
-  <item name="item">~</item>
-  <item name="item">${AOs}</item>
+  <item name="item">${qpn}</item>
   <item name="item">${.}</item>
+  <item name="item">${AOs}</item>
+  <item name="item">~</item>
  </group>
  <group name="settings">
   <item name="tabs">1</item>
