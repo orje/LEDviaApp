@@ -145,78 +145,78 @@ QActive_armX((QActive *)me, 0U, COMMUNICATION_TICK, 0U);</entry>
      <exit brief="stop communication tick">QActive_disarmX((QActive *)me, 0U);</exit>
      <tran trig="COMMUNICATION" target="../../2">
       <action brief="init com_counter">me-&gt;com_counter = 0U;</action>
-      <tran_glyph conn="4,17,3,3,52">
+      <tran_glyph conn="4,18,3,3,36,1,2">
        <action box="1,-2,27,2"/>
       </tran_glyph>
      </tran>
      <tran trig="COLOUR" target="../9">
-      <tran_glyph conn="4,21,3,3,14">
+      <tran_glyph conn="4,22,3,3,14">
        <action box="1,-2,9,2"/>
       </tran_glyph>
      </tran>
      <tran trig="DIM">
       <choice target="../../10">
        <guard brief="up">!me-&gt;dim_up</guard>
-       <choice_glyph conn="10,28,5,3,8">
+       <choice_glyph conn="10,29,5,3,8">
         <action box="2,-2,4,2"/>
        </choice_glyph>
       </choice>
       <choice target="../../11">
        <guard brief="down">else</guard>
-       <choice_glyph conn="10,28,4,3,10,8">
-        <action box="1,8,6,2"/>
+       <choice_glyph conn="10,29,4,3,12,8">
+        <action box="1,10,6,2"/>
        </choice_glyph>
       </choice>
-      <tran_glyph conn="4,28,3,-1,6">
+      <tran_glyph conn="4,29,3,-1,6">
        <action box="1,-2,5,2"/>
       </tran_glyph>
      </tran>
      <tran trig="RAINBOW" target="../12">
-      <tran_glyph conn="4,48,3,3,14">
+      <tran_glyph conn="4,53,3,3,14">
        <action box="1,-2,9,2"/>
       </tran_glyph>
      </tran>
      <tran trig="FLASH" target="../13">
-      <tran_glyph conn="4,55,3,3,14">
+      <tran_glyph conn="4,63,3,3,14">
        <action box="1,-2,7,2"/>
       </tran_glyph>
      </tran>
      <tran trig="SPLASH" target="../14">
-      <tran_glyph conn="4,62,3,3,14">
+      <tran_glyph conn="4,70,3,3,14">
        <action box="1,-2,8,2"/>
       </tran_glyph>
      </tran>
      <tran trig="SNOW" target="../15">
-      <tran_glyph conn="4,69,3,3,14">
+      <tran_glyph conn="4,80,3,3,14">
        <action box="1,-2,7,2"/>
       </tran_glyph>
      </tran>
      <tran trig="RUN">
       <choice target="../../16">
        <guard brief="fwd">!me-&gt;run_bwd</guard>
-       <choice_glyph conn="11,76,5,3,7">
+       <choice_glyph conn="11,90,5,3,7">
         <action box="2,-2,5,2"/>
        </choice_glyph>
       </choice>
       <choice target="../../17">
        <guard brief="bwd">else</guard>
-       <choice_glyph conn="11,76,4,3,10,7">
-        <action box="1,8,6,2"/>
+       <choice_glyph conn="11,90,4,3,14,7">
+        <action box="1,12,6,2"/>
        </choice_glyph>
       </choice>
-      <tran_glyph conn="4,76,3,-1,7">
+      <tran_glyph conn="4,90,3,-1,7">
        <action box="1,-2,5,2"/>
       </tran_glyph>
      </tran>
      <tran trig="Q_TIMEOUT" target="..">
-      <tran_glyph conn="52,96,1,3,-48">
+      <tran_glyph conn="38,117,1,3,-34">
        <action box="-10,-2,11,2"/>
       </tran_glyph>
      </tran>
      <state name="colour">
       <documentation>just show the adjusted colours</documentation>
       <entry brief="show LED colour">showColor(PIXELS, me-&gt;red, me-&gt;green, me-&gt;blue);</entry>
-      <state_glyph node="18,19,32,5">
+      <state_glyph node="18,20,18,5">
        <entry box="1,2,16,2"/>
       </state_glyph>
      </state>
@@ -235,9 +235,9 @@ If the brightness reaches an upper limit, the direction flag is set true to chan
 if (me-&gt;brightness &gt; 246U) {
     me-&gt;dim_up = 1U;
 }</exit>
-      <state_glyph node="18,26,32,8">
+      <state_glyph node="18,27,18,10">
        <entry box="1,2,10,3"/>
-       <exit box="1,5,28,2"/>
+       <exit box="1,5,15,4"/>
       </state_glyph>
      </state>
      <state name="dim_down">
@@ -256,9 +256,9 @@ change the direction.</documentation>
 if (me-&gt;brightness &lt; 10U) {
     me-&gt;dim_up = 0U;
 }</exit>
-      <state_glyph node="18,36,32,8">
+      <state_glyph node="18,39,18,10">
        <entry box="1,2,10,3"/>
-       <exit box="1,5,28,2"/>
+       <exit box="1,5,15,4"/>
       </state_glyph>
      </state>
      <state name="rainbow">
@@ -292,8 +292,8 @@ QF_INT_ENABLE();
 
 show();
 // end of for each cycle</entry>
-      <state_glyph node="18,46,32,5">
-       <entry box="1,2,24,2"/>
+      <state_glyph node="18,51,18,8">
+       <entry box="1,2,14,4"/>
       </state_glyph>
      </state>
      <state name="flash">
@@ -305,7 +305,7 @@ me-&gt;blue = random(255U);
 
 // then show results
 showColor(PIXELS, me-&gt;red, me-&gt;green, me-&gt;blue);</entry>
-      <state_glyph node="18,53,32,5">
+      <state_glyph node="18,61,18,5">
        <entry box="1,2,11,2"/>
       </state_glyph>
      </state>
@@ -343,8 +343,8 @@ for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
 QF_INT_ENABLE();
 
 show();</entry>
-      <state_glyph node="18,60,32,5">
-       <entry box="1,2,23,2"/>
+      <state_glyph node="18,68,18,8">
+       <entry box="1,2,13,4"/>
       </state_glyph>
      </state>
      <state name="snow">
@@ -382,8 +382,8 @@ for (me-&gt;led_index = 0U; me-&gt;led_index &lt; PIXELS; me-&gt;led_index++) {
     pixelArray[me-&gt;led_index].g = 0U;
     pixelArray[me-&gt;led_index].b = 0U;
 }</entry>
-      <state_glyph node="18,67,32,5">
-       <entry box="1,2,23,2"/>
+      <state_glyph node="18,78,18,8">
+       <entry box="1,2,13,4"/>
       </state_glyph>
      </state>
      <state name="run_fwd">
@@ -445,9 +445,9 @@ else {
     me-&gt;run_bwd = 1U;
     me-&gt;run_x = pixels; // initialization for run_bwd
 }</exit>
-      <state_glyph node="18,74,32,8">
-       <entry box="1,2,20,3"/>
-       <exit box="1,5,31,2"/>
+      <state_glyph node="18,88,18,12">
+       <entry box="1,2,13,5"/>
+       <exit box="1,7,16,4"/>
       </state_glyph>
      </state>
      <state name="run_bwd">
@@ -509,14 +509,14 @@ else {
     me-&gt;run_bwd = 0U;
     me-&gt;run_x = zero; // initialization for run_fwd
 }</exit>
-      <state_glyph node="18,84,32,8">
-       <entry box="1,2,20,3"/>
-       <exit box="1,5,25,2"/>
+      <state_glyph node="18,102,18,12">
+       <entry box="1,2,13,5"/>
+       <exit box="1,7,16,4"/>
       </state_glyph>
      </state>
-     <state_glyph node="4,4,48,94">
-      <entry box="1,2,30,5"/>
-      <exit box="1,7,21,2"/>
+     <state_glyph node="4,4,34,115">
+      <entry box="1,2,18,7"/>
+      <exit box="1,9,21,2"/>
      </state_glyph>
     </state>
     <state name="communication">
@@ -532,7 +532,7 @@ communication is aborted and its going back to the LED remote branch.</documenta
       <choice target="../../2">
        <guard brief="detect_start_sign">Serial.read() == '&lt;'</guard>
        <action brief="reset value">me-&gt;value = 0U;</action>
-       <choice_glyph conn="76,28,5,3,17">
+       <choice_glyph conn="58,30,5,3,18">
         <action box="2,-4,13,4"/>
        </choice_glyph>
       </choice>
@@ -542,26 +542,26 @@ communication is aborted and its going back to the LED remote branch.</documenta
         <guard brief="check_communication">me-&gt;com_counter &gt; 10U</guard>
         <action brief="stop communication">QACTIVE_POST((QActive *)me, STOP_SIG, 0U);
 digitalWrite(DEBUG_L, HIGH);</action>
-        <choice_glyph conn="76,34,4,-1,6">
-         <action box="-18,3,18,4"/>
+        <choice_glyph conn="58,36,4,-1,6">
+         <action box="0,1,18,4"/>
         </choice_glyph>
        </choice>
        <choice target="../../..">
         <guard>else</guard>
-        <choice_glyph conn="76,34,5,3,-22,-15,2">
-         <action box="-18,-2,6,2"/>
+        <choice_glyph conn="58,36,5,3,-18,-15,2">
+         <action box="-5,-2,5,2"/>
         </choice_glyph>
        </choice>
-       <choice_glyph conn="76,28,4,-1,6">
-        <action box="1,1,6,2"/>
+       <choice_glyph conn="58,30,4,-1,6">
+        <action box="0,1,6,2"/>
        </choice_glyph>
       </choice>
-      <tran_glyph conn="56,28,3,-1,20">
+      <tran_glyph conn="42,30,3,-1,16">
        <action box="1,-4,12,4"/>
       </tran_glyph>
      </tran>
      <tran trig="STOP" target="../../1">
-      <tran_glyph conn="111,44,1,3,-57,56,-52,-92,2">
+      <tran_glyph conn="92,47,1,3,-52,74,-38,-113,2">
        <action box="-5,-2,6,2"/>
       </tran_glyph>
      </tran>
@@ -604,17 +604,17 @@ On exit an acknowledge is send to the handy.</documentation>
     }
 }</entry>
       <exit brief="acknowledge communication">Serial.print(F(&quot;A&quot;));</exit>
-      <state_glyph node="93,26,16,13">
-       <entry box="1,2,15,5"/>
-       <exit box="1,7,12,4"/>
+      <state_glyph node="76,28,14,16">
+       <entry box="1,2,7,9"/>
+       <exit box="1,11,13,4"/>
       </state_glyph>
      </state>
-     <state_glyph node="56,15,55,31">
+     <state_glyph node="42,17,50,32">
       <entry box="1,2,21,3"/>
       <exit box="1,5,21,2"/>
      </state_glyph>
     </state>
-    <state_diagram size="113,102"/>
+    <state_diagram size="94,123"/>
    </statechart>
   </class>
  </package>
