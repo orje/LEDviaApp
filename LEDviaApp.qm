@@ -145,7 +145,7 @@ QActive_armX((QActive *)me, 0U, COMMUNICATION_TICK, 0U);</entry>
      <exit brief="stop communication tick">QActive_disarmX((QActive *)me, 0U);</exit>
      <tran trig="COMMUNICATION" target="../../2">
       <action brief="init com_counter">me-&gt;com_counter = 0U;</action>
-      <tran_glyph conn="4,18,3,3,36,1,2">
+      <tran_glyph conn="4,18,3,3,36,0,2">
        <action box="1,-2,27,2"/>
       </tran_glyph>
      </tran>
@@ -532,7 +532,7 @@ communication is aborted and its going back to the LED remote branch.</documenta
       <choice target="../../2">
        <guard brief="detect_start_sign">Serial.read() == '&lt;'</guard>
        <action brief="reset value">me-&gt;value = 0U;</action>
-       <choice_glyph conn="58,30,5,3,18">
+       <choice_glyph conn="58,29,5,3,18">
         <action box="2,-4,13,4"/>
        </choice_glyph>
       </choice>
@@ -542,26 +542,26 @@ communication is aborted and its going back to the LED remote branch.</documenta
         <guard brief="check_communication">me-&gt;com_counter &gt; 10U</guard>
         <action brief="stop communication">QACTIVE_POST((QActive *)me, STOP_SIG, 0U);
 digitalWrite(DEBUG_L, HIGH);</action>
-        <choice_glyph conn="58,36,4,-1,6">
+        <choice_glyph conn="58,35,4,-1,6">
          <action box="0,1,18,4"/>
         </choice_glyph>
        </choice>
        <choice target="../../..">
         <guard>else</guard>
-        <choice_glyph conn="58,36,5,3,-18,-15,2">
+        <choice_glyph conn="58,35,5,3,-18,-15,2">
          <action box="-5,-2,5,2"/>
         </choice_glyph>
        </choice>
-       <choice_glyph conn="58,30,4,-1,6">
+       <choice_glyph conn="58,29,4,-1,6">
         <action box="0,1,6,2"/>
        </choice_glyph>
       </choice>
-      <tran_glyph conn="42,30,3,-1,16">
+      <tran_glyph conn="42,29,3,-1,16">
        <action box="1,-4,12,4"/>
       </tran_glyph>
      </tran>
      <tran trig="STOP" target="../../1">
-      <tran_glyph conn="92,47,1,3,-52,74,-38,-113,2">
+      <tran_glyph conn="92,46,1,3,-52,75,-38,-113,2">
        <action box="-5,-2,6,2"/>
       </tran_glyph>
      </tran>
@@ -604,12 +604,12 @@ On exit an acknowledge is send to the handy.</documentation>
     }
 }</entry>
       <exit brief="acknowledge communication">Serial.print(F(&quot;A&quot;));</exit>
-      <state_glyph node="76,28,14,16">
+      <state_glyph node="76,27,14,16">
        <entry box="1,2,7,9"/>
        <exit box="1,11,13,4"/>
       </state_glyph>
      </state>
-     <state_glyph node="42,17,50,32">
+     <state_glyph node="42,16,50,32">
       <entry box="1,2,21,3"/>
       <exit box="1,5,21,2"/>
      </state_glyph>

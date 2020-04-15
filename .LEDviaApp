@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <session version="5.0.0">
  <item name="license">GPL</item>
- <group name="locked"/>
+ <group name="locked">
+  <item name="item">~</item>
+  <item name="item">${AOs}</item>
+  <item name="item">${.}</item>
+ </group>
  <group name="settings">
   <item name="tabs">1</item>
   <item name="windows">0</item>
