@@ -68,10 +68,10 @@ because everytime it is initialized new.</documentation>
     <documentation>variable for Nick Gammon's rainbow</documentation>
    </attribute>
    <attribute name="splash_x" type="uint8_t" visibility="0x02" properties="0x00">
-    <documentation>processed LED of the stripe for the splash animation</documentation>
+    <documentation>processed LED of the stripe in the splash animation</documentation>
    </attribute>
    <attribute name="run_x" type="uint16_t" visibility="0x02" properties="0x00">
-    <documentation>processed LED of the stripe for the run animation</documentation>
+    <documentation>processed LED of the stripe in the run animation</documentation>
    </attribute>
    <attribute name="run_bwd" type="uint8_t" visibility="0x02" properties="0x00">
     <documentation>flag for running light direction
@@ -80,12 +80,12 @@ because everytime it is initialized new.</documentation>
    <attribute name="run_nr" type="uint8_t" visibility="0x02" properties="0x00">
     <documentation>number of LED that run
 
-if more than 256 PIXELS type must be raised</documentation>
+if more than 256 PIXELS type must be adjusted</documentation>
    </attribute>
    <attribute name="run_nr_index" type="uint8_t" visibility="0x02" properties="0x00">
     <documentation>index of the LED of the running group
 
-if more than 256 PIXELS type must be raised</documentation>
+if more than 256 PIXELS type must be adjusted</documentation>
    </attribute>
    <attribute name="com_counter" type="uint8_t" visibility="0x02" properties="0x00">
     <documentation>counter to guard the communication</documentation>
@@ -145,7 +145,7 @@ QActive_armX((QActive *)me, 0U, COMMUNICATION_TICK, 0U);</entry>
      <exit brief="stop communication tick">QActive_disarmX((QActive *)me, 0U);</exit>
      <tran trig="COMMUNICATION" target="../../2">
       <action brief="init com_counter">me-&gt;com_counter = 0U;</action>
-      <tran_glyph conn="4,18,3,3,36,0,2">
+      <tran_glyph conn="4,18,3,3,38">
        <action box="1,-2,27,2"/>
       </tran_glyph>
      </tran>

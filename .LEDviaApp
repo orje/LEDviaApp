@@ -3,9 +3,6 @@
  <item name="license">GPL</item>
  <group name="locked">
   <item name="item">${qpn}</item>
-  <item name="item">${.}</item>
-  <item name="item">${AOs}</item>
-  <item name="item">~</item>
  </group>
  <group name="settings">
   <item name="tabs">1</item>
@@ -14,8 +11,8 @@
   <item name="backups">0</item>
  </group>
  <group name="windows">
-  <item id="AOs::LEDviaApp::SM">0,0,1653,1268,*</item>
-  <item id=".::LEDviaApp.ino">0,0,1349,880</item>
+  <item id="AOs::LEDviaApp::SM">-901,0,1653,1268</item>
+  <item id=".::LEDviaApp.ino">0,0,811,1073,*</item>
  </group>
  <group name="search">
   <item name="options">4129280</item>
